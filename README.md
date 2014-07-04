@@ -1,0 +1,1 @@
+This is a Solitaire clone Web App. More will be put here soon.
