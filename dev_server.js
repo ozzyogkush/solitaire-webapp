@@ -15,14 +15,18 @@
 var connect = require('connect');
 var serveStatic = require('serve-static');
 
-var portWasSpecified = (process.argv[2] != null);
-var parsedPort = null;
+// The default port is 8080.
+var port = 8080;
 
-// If specified, the port is only valid if it parses as a number.
-var portValid = (! portWasSpecified || ! isNaN(parsedPort = parseInt(process.argv[2])));
+if (process.argv[2] != null) {
+	// The user passed in a port argument...
+	var parsedPort = parseInt(process.argv[2]);
 
-// The port's valid, so determine if we're using a passed in value or the default.
-var port = portValid && parsedPort ? parsedPort : 8080;
+	if (! isNaN(parsedPort)) { 
+		// ...and the argument was a valid number, so set the port to that number.
+		port = parsedPort; 
+	}
+}
 
 // Special port for prototyping ideas that shouldn't be done in the branch source 
 // (ie throwaway implementations). This is the "/bin" port number + 1.
