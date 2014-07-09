@@ -1,6 +1,6 @@
 /**
  * Basic webserver that sets up two connections:
- *	1.) to the /bin directory, for feature development
+ *	1.) to the /devbuild directory, for feature development
  *	2.) to the /prototype directory, for testing out ideas separate of the current in-dev feature
  *
  * This allows you to specify a port as the first parameter after the name of the application.
@@ -29,11 +29,11 @@ if (process.argv[2] != null) {
 }
 
 // Special port for prototyping ideas that shouldn't be done in the branch source 
-// (ie throwaway implementations). This is the "/bin" port number + 1.
+// (ie throwaway implementations). This is the "/devbuild" port number + 1.
 var prototypePort = port + 1;
 
 // We serve the "/bin" directory out of the port we determined.
-connect().use(serveStatic(__dirname + "/bin")).listen(port);
+connect().use(serveStatic(__dirname + "/devbuild")).listen(port);
 
 // Lastly we serve the "/prototype" directory out of the special port we determined.
 connect().use(serveStatic(__dirname + "/prototype")).listen(prototypePort);
