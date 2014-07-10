@@ -63,9 +63,13 @@ module.exports = function(grunt) {
         mainFiles : {
           'joii' : [
             'src/joii.js'
+          ],
+          'color' : [
+            'Color.js'
           ]
         },
         include : [
+          'color',
           'joii',
           'jquery',
           'bootstrap'
@@ -77,9 +81,13 @@ module.exports = function(grunt) {
         mainFiles : {
           'joii' : [
             'src/joii.js'
+          ],
+          'color' : [
+            'Color.js'
           ]
         },
         include : [
+          'color',
           'joii',
           'jquery',
           'bootstrap'
@@ -94,12 +102,12 @@ module.exports = function(grunt) {
       },
       dev: {
         // Dev assets go to /src
-        src: 'src/js/*.js',
+        src: 'src/js/**/*.js',
         dest: '<%= paths.devOut %>/js/solitaire-webapp.js'
       },
       prod: {
         // Dist assets go to /bin
-        src: 'src/js/*.js',
+        src: 'src/js/**/*.js',
         dest: '<%= paths.prodOut %>/js/solitaire-webapp.js'
       }
     },
@@ -152,7 +160,7 @@ module.exports = function(grunt) {
         src : [
           'dev_server.js',
           'Gruntfile.js',
-          'src/js/*.js',
+          'src/js/**/*.js',
           'unit-tests/**/*.js'
         ]
       }
