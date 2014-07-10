@@ -18,7 +18,7 @@ var serveStatic = require('serve-static');
 // The default port is 8080.
 var port = 8080;
 
-if (process.argv[2] != null) {
+if (process.argv[2] !== null) {
 	// The user passed in a port argument...
 	var parsedPort = parseInt(process.argv[2]);
 
