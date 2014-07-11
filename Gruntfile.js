@@ -56,7 +56,7 @@ module.exports = function(grunt) {
     /* Eventually I want to get Grunt to re-compile the complete Bootstrap source first before doing the above. */
 
     /* Next we want to get all our JS dependencies brought into our JS folder */
-    bower_concat: {
+    bower_concat : { // jshint ignore:line
       dev : {
         // Dev assets go to /src
         dest : "<%= paths.devOut %>/js/assets.js",
@@ -132,8 +132,13 @@ module.exports = function(grunt) {
     /* Set up our linter for JS files */
     jshint : {
       options : {
-        curly : true, /* Force curly braces where optional */
-        jquery : true /* Make jQuery globals available */
+        globals : {
+          curly : true, /* Force curly braces where optional */
+          jquery : true, /* Make jQuery globals available */
+          console : true, /* Make cnosole object global available */
+          module : true /* Make module object global available */
+        },
+        camelcase : true /* Variables and object properties must be camelCased */
       },
       dev : {
         src : [
