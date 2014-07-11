@@ -129,6 +129,22 @@ module.exports = function(grunt) {
       }
     },
 
+    /* Set up our linter for JS files */
+    jshint : {
+      options : {
+        curly : true, /* Force curly braces where optional */
+        jquery : true /* Make jQuery globals available */
+      },
+      dev : {
+        src : [
+          'dev_server.js',
+          'Gruntfile.js',
+          'src/js/**/*.js',
+          'unit-tests/**/*.js'
+        ]
+      }
+    },
+
     /* Set Up QUnit tests */
     qunit : {
       options : {
@@ -148,33 +164,17 @@ module.exports = function(grunt) {
           base : '.'
         }
       }
-    },
-
-    /* Set up our linter for JS files */
-    jshint : {
-      options : {
-        curly : true, /* Force curly braces where optional */
-        jquery : true /* Make jQuery globals available */
-      },
-      dev : {
-        src : [
-          'dev_server.js',
-          'Gruntfile.js',
-          'src/js/**/*.js',
-          'unit-tests/**/*.js'
-        ]
-      }
     }
   });
 
   // Load up all appropriate Tasks
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-bower-concat');
+  grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-bower-concat');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   /* Register our tasks */
@@ -182,8 +182,11 @@ module.exports = function(grunt) {
   // The development build will lint all JS, compile CSS from source, copy fonts, concatinate all dependency JS, and concatinate project source JS.
   grunt.registerTask('dev', ['jshint:dev', 'less:dev', 'copy:dev', 'bower_concat:dev', 'concat:dev']);
 
+  // Just run unit tests without re-building the development source each time.
+  grunt.registerTask('unitTests', ['connect:unitTests', 'qunit:test']);
+
   // The test build will build the development source and unit test that.
-  grunt.registerTask('test', ['dev', 'connect:unitTests', 'qunit:test']);  
+  grunt.registerTask('test', ['dev', 'unitTests']);
 
   // Our production build will first unit test all development code before producing production output.
   grunt.registerTask('build', ['test', 'less:prod', 'copy:prod', 'bower_concat:prod', 'concat:prod', 'uglify:prod']);
