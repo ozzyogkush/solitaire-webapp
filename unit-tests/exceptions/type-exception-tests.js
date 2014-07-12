@@ -15,7 +15,7 @@ QUnit.test( "constructor tests expected failures", function( assert ) {
 });
 
 QUnit.test( "constructor tests expected success", function( assert ) {
-	expect(1);
+	expect(2);
 
 	var te = new TypeException(goodExpectedType, goodCallingMethod);
 	var exceptionMsg = "Type mismatch: expected type is `" + goodExpectedType + "`.";
@@ -23,5 +23,22 @@ QUnit.test( "constructor tests expected success", function( assert ) {
 		exceptionMsg,
 		te.message,
 		"`message` property does not equal the constructed string."
+	);
+
+	assert.strictEqual(
+		goodExpectedType,
+		te.type,
+		"`type` property does not equal the parameter."
+	);
+});
+
+QUnit.test( "property accessor method tests", function( assert ) {
+	expect(1);
+
+	var good = new TypeException(goodExpectedType, goodCallingMethod);
+	assert.strictEqual(
+		goodExpectedType, 
+		good.getType(), 
+		"`getType()` return value does not equal supplied `type` property."
 	);
 });

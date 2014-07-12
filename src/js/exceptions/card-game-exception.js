@@ -63,7 +63,7 @@ var CardGameException = Class({ extends : CardGameDebugMessage },
 		// Call the CardGameDebugMessage constructor...
 		this.super('__construct', message, callingMethod);
 		
-		if (severity !== null && typeof severity === "object") {
+		if (severity !== undefined && typeof severity === "object") {
 			this.severity = severity;
 		}
 	},
@@ -88,8 +88,8 @@ var CardGameException = Class({ extends : CardGameDebugMessage },
 	{
 
 		var prefix = (this.getSeverity().prefix !== undefined ? this.getSeverity().prefix : "Error: ");
-		var string_val = prefix + this.getCallingMethod() + "() - " + this.getMessage();
+		var stringVal = prefix + this.getCallingMethod() + "() - " + this.getMessage();
 	
-		return string_val;
+		return stringVal;
 	}
 });

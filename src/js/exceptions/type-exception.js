@@ -17,6 +17,31 @@ var TypeException = Class({ extends : CardGameException },
 	//
 	//--------------------------------------------------------------------------
 	
+	/**
+	 * The type of data that the throwing function was expecting.
+	 *
+	 * @private
+	 * @type		String
+	 * @memberOf	TypeException
+	 * @since		
+	 * @default		null
+	 */
+	type : null,
+
+	/**
+	 * Returns the `type` property.
+	 * 
+	 * @public
+	 * @memberOf	TypeException
+	 * @since		
+	 *
+	 * @return		mixed			type			Returns the type.
+	 */
+	getType : function()
+	{
+		return this.type;
+	},
+	
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -36,13 +61,16 @@ var TypeException = Class({ extends : CardGameException },
 	__construct : function(expectedType, callingMethod) 
 	{
 		if (typeof expectedType !== "string") {
-			throw "The `expectedType` parameter must be a string.";
+			throw "TypeException.__construct() - The `expectedType` parameter must be a string.";
 		}
 
 		var message = "Type mismatch: expected type is `" + expectedType + "`."; 
 
 		// Call the parent class's constructor...
 		this.super('__construct', message, callingMethod);
+
+		// Set the `type` property.
+		this.type = expectedType;
 	}
 
 	/** Private Functions **/

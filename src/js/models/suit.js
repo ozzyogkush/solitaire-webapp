@@ -1,5 +1,6 @@
 /**
- * 
+ * Represents a Suit in a deck of cards. A Suit consists of 13 individual cards;
+ * the numbers 2 - 10, a Jack, Queen, King, and an Ace.
  *
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		Suit
@@ -23,10 +24,10 @@ var Suit = Class({
 	 * @since		
 	 * @default		null
 	 */
-	name : null,
+	suitName : null,
 
 	/**
-	 * Sets the `name` property to the value of `n`.
+	 * Sets the `suitName` property to the value of `n`.
 	 * 
 	 * @private
 	 * @throws		TypeException
@@ -34,26 +35,26 @@ var Suit = Class({
 	 * @since		
 	 * @param		String			n			The name of the Suit. Required.
 	 */
-	__setName : function(n)
+	__setSuitName : function(n)
 	{
 		if (typeof n !== "string") {
-			throw new TypeException("string", 'Suit.__setName');
+			throw new TypeException("string", 'Suit.__setSuitName');
 		}
-		this.name = n;
+		this.suitName = n;
 	},
 
 	/**
-	 * Returns the `name` property.
+	 * Returns the `suitName` property.
 	 * 
 	 * @public
 	 * @memberOf	Suit
 	 * @since		
 	 *
-	 * @return		String			name			Returns the name string.
+	 * @return		String			suitName			Returns the name string.
 	 */
-	getName : function()
+	getSuitName : function()
 	{
-		return this.name;
+		return this.suitName;
 	},
 
 	/**
@@ -113,30 +114,30 @@ var Suit = Class({
 	 * @memberOf	CardGameDebugMessage
 	 * @since		
 	 *
-	 * @param		String				n				The name of the Suit. Required.
+	 * @param		String				suitName		The name of the Suit. Required.
 	 * @param		Color				color			The color of the Suit. Required.
 	 *
-	 * @return		Object									The public API for an object of this type.
+	 * @return		Object								The public API for an object of this type.
 	 */
-	__construct : function(name, color)
+	__construct : function(suitName, color)
 	{
-		if (name === null) {
-			throw new CardGameException('Name cannot be null.', 'Suit.__construct');
+		if (suitName === undefined) {
+			throw new CardGameException('Suit name cannot be null.', 'Suit.__construct');
 		}
 
-		if (color === null) {
+		if (color === undefined) {
 			throw new CardGameException('Color cannot be null.', 'Suit.__construct');
 		}
 
 		// We have a valid name and color, so set those properties.
-		this.__setName(name);
+		this.__setSuitName(suitName);
 		this.__setColor(color);
 
-		// We only allow people to get the name and color properties via getters.
+		/*// We only allow people to get the name and color properties via getters.
 		return {
 			getName : this.getName,
 			getColor : this.getColor,
-		};
+		};*/
 	}
 
 	/** Private Functions **/

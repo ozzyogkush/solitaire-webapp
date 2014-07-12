@@ -86,13 +86,13 @@ var CardGameDebugMessage = Class({
 	 */
 	__construct : function(message, callingMethod)
 	{
-		if (message === null ||
+		if (message === undefined ||
 			(typeof message !== "string" &&
 			 typeof message !== "object")) {
 			throw "CardGameDebugMessage.__construct() - The required `message` parameter must be string, array, or object.";
 		}
 		
-		if (callingMethod === null ||
+		if (callingMethod === undefined ||
 			typeof callingMethod !== "string") {
 			throw "CardGameDebugMessage.__construct() - The required `callingMethod` parameter must be a string.";
 		}
@@ -120,9 +120,9 @@ var CardGameDebugMessage = Class({
 	 */
 	toString : function()
 	{
-		var string_val = "Debug: " + this.getCallingMethod() + "() - " + this.getMessage();
+		var stringVal = "Debug: " + this.getCallingMethod() + "() - " + this.getMessage();
 		
-		return string_val;
+		return stringVal;
 	},
 
 	/**
