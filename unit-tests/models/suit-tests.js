@@ -1,4 +1,4 @@
-// Unit tests for .js
+// Unit tests for models/suit.js
 
 var goodName = "SomeString";
 var goodColor = new Color('red');
