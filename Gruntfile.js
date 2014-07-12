@@ -56,16 +56,20 @@ module.exports = function(grunt) {
     /* Eventually I want to get Grunt to re-compile the complete Bootstrap source first before doing the above. */
 
     /* Next we want to get all our JS dependencies brought into our JS folder */
-    bower_concat: {
+    bower_concat : { // jshint ignore:line
       dev : {
         // Dev assets go to /src
         dest : "<%= paths.devOut %>/js/assets.js",
         mainFiles : {
           'joii' : [
             'src/joii.js'
+          ],
+          'color' : [
+            'Color.js'
           ]
         },
         include : [
+          'color',
           'joii',
           'jquery',
           'bootstrap'
@@ -77,9 +81,13 @@ module.exports = function(grunt) {
         mainFiles : {
           'joii' : [
             'src/joii.js'
+          ],
+          'color' : [
+            'Color.js'
           ]
         },
         include : [
+          'color',
           'joii',
           'jquery',
           'bootstrap'
@@ -94,12 +102,12 @@ module.exports = function(grunt) {
       },
       dev: {
         // Dev assets go to /src
-        src: 'src/js/*.js',
+        src: 'src/js/**/*.js',
         dest: '<%= paths.devOut %>/js/solitaire-webapp.js'
       },
       prod: {
         // Dist assets go to /bin
-        src: 'src/js/*.js',
+        src: 'src/js/**/*.js',
         dest: '<%= paths.prodOut %>/js/solitaire-webapp.js'
       }
     },
@@ -118,6 +126,27 @@ module.exports = function(grunt) {
           dest: '<%= paths.prodOut %>/js/',
           ext: '.min.js'
         }]
+      }
+    },
+
+    /* Set up our linter for JS files */
+    jshint : {
+      options : {
+        globals : {
+          curly : true, /* Force curly braces where optional */
+          jquery : true, /* Make jQuery globals available */
+          console : true, /* Make cnosole object global available */
+          module : true /* Make module object global available */
+        },
+        camelcase : true /* Variables and object properties must be camelCased */
+      },
+      dev : {
+        src : [
+          'dev_server.js',
+          'Gruntfile.js',
+          'src/js/**/*.js',
+          'unit-tests/**/*.js'
+        ]
       }
     },
 
@@ -140,33 +169,17 @@ module.exports = function(grunt) {
           base : '.'
         }
       }
-    },
-
-    /* Set up our linter for JS files */
-    jshint : {
-      options : {
-        curly : true, /* Force curly braces where optional */
-        jquery : true /* Make jQuery globals available */
-      },
-      dev : {
-        src : [
-          'dev_server.js',
-          'Gruntfile.js',
-          'src/js/*.js',
-          'unit-tests/**/*.js'
-        ]
-      }
     }
   });
 
   // Load up all appropriate Tasks
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-bower-concat');
+  grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-bower-concat');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   /* Register our tasks */
@@ -174,8 +187,11 @@ module.exports = function(grunt) {
   // The development build will lint all JS, compile CSS from source, copy fonts, concatinate all dependency JS, and concatinate project source JS.
   grunt.registerTask('dev', ['jshint:dev', 'less:dev', 'copy:dev', 'bower_concat:dev', 'concat:dev']);
 
+  // Just run unit tests without re-building the development source each time.
+  grunt.registerTask('unitTests', ['connect:unitTests', 'qunit:test']);
+
   // The test build will build the development source and unit test that.
-  grunt.registerTask('test', ['dev', 'connect:unitTests', 'qunit:test']);  
+  grunt.registerTask('test', ['dev', 'unitTests']);
 
   // Our production build will first unit test all development code before producing production output.
   grunt.registerTask('build', ['test', 'less:prod', 'copy:prod', 'bower_concat:prod', 'concat:prod', 'uglify:prod']);
