@@ -102,12 +102,22 @@ module.exports = function(grunt) {
       },
       dev: {
         // Dev assets go to /src
-        src: 'src/js/**/*.js',
+        src: [ 
+          'src/js/exceptions/*.js', 
+          'src/js/models/imodel-rules.js', /* Interface definitions must come before any Class that uses them */
+          'src/js/models/*.js', 
+          'src/js/**/*.js' 
+        ],
         dest: '<%= paths.devOut %>/js/solitaire-webapp.js'
       },
       prod: {
         // Dist assets go to /bin
-        src: 'src/js/**/*.js',
+        src: [ 
+          'src/js/exceptions/*.js', 
+          'src/js/models/imodel-rules.js', /* Interface definitions must come before any Class that uses them */
+          'src/js/models/*.js', 
+          'src/js/**/*.js' 
+        ],
         dest: '<%= paths.prodOut %>/js/solitaire-webapp.js'
       }
     },
