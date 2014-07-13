@@ -17,13 +17,25 @@
       Below is the current in-development version of the Solitaire game as last built.
     </p>
 
-    <div data-role="solitaire" data-solitaire-variation="solitaire"></div>
+    <div data-role="card-game" data-card-game="Solitaire"></div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) - ->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    -->
     <!-- Include all compiled plugins (below) - shall contain jQuery, bootstrap, and the solitaire app -->
-    <script src="js/assets.js"></script>
-    <script src="js/solitaire-webapp.js"></script>
+    <script type="text/javascript" src="js/assets.js"></script>
+    <script type="text/javascript" src="js/solitaire-webapp.js"></script>
+    <script type="text/javascript">
+      var cardGame = null;
+      $(document).ready(function() {
+        cardGame = new CardGameApp(
+          $('div[data-role="card-game"]'), 
+          [
+            'Solitaire',
+            'FortyThieves'
+          ],
+          true
+        );
+
+        console.log(cardGame);
+      });
+    </script>
   </body>
 </html>
