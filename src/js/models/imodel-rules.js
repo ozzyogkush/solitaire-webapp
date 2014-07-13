@@ -16,6 +16,17 @@ var IModelRules = Interface({
 	//--------------------------------------------------------------------------
 
 	/**
+	 * This name of the Variation.
+	 *
+	 * @public
+	 * @type		string
+	 * @memberOf	IModelRules
+	 * @since		
+	 * @default		"string"
+	 */
+	_variationName : "string",
+
+	/**
 	 * Contains the number of cards a player is able currently allowed to move
 	 * from an "In Play" stack to another "In Play" Stack (with cards or empty).
 	 *
@@ -89,60 +100,5 @@ var IModelRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	gameWon : "function",
-
-	/**
-	 * This method will be run when a user triggers a `mousedown` or `tapdown` event on a single Card.
-	 *
-	 * @public
-	 * @type		string
-	 * @memberOf	IModelRules
-	 * @since		
-	 * @default		"function"
-	 */
-	mouseOrTapDownCard : "function",
-
-	/**
-	 * This method will be run when a user triggers a `mouseup` or `tapup` event on a single Card.
-	 *
-	 * @public
-	 * @type		string
-	 * @memberOf	IModelRules
-	 * @since		
-	 * @default		"function"
-	 */
-	mouseOrTapUpCard : "function",
-
-	/**
-	 * This method will be run when a user triggers a `mousedown` or `tapdown` event on a Stack of Cards.
-	 *
-	 * @public
-	 * @type		string
-	 * @memberOf	IModelRules
-	 * @since		
-	 * @default		"function"
-	 */
-	mouseOrTapDownStack : "function",
-
-	/**
-	 * This method will be run when a user triggers a `mouseup` or `tapup` event on a Stack of Cards.
-	 *
-	 * @public
-	 * @type		string
-	 * @memberOf	IModelRules
-	 * @since		
-	 * @default		"function"
-	 */
-	mouseOrTapUpStack : "function",
-
-	/**
-	 * This method will be run when a user triggers a `mousemove` or `drag` event on a Card or Stack of Cards.
-	 *
-	 * @public
-	 * @type		string
-	 * @memberOf	IModelRules
-	 * @since		
-	 * @default		"function"
-	 */
-	mouseMoveOrDrag : "function"
+	gameWon : "function"
 });

@@ -96,17 +96,21 @@ module.exports = function(grunt) {
     },
 
     /* Concatanate all source JS files into a single application */
+    /* Interface definitions must come before any Class that uses them */
     concat : {
       options : {
-        separator : ';'
+        separator : ';\r\n'
       },
       dev: {
         // Dev assets go to /src
         src: [ 
           'src/js/exceptions/*.js', 
-          'src/js/models/imodel-rules.js', /* Interface definitions must come before any Class that uses them */
+          'src/js/models/imodel-rules.js',
           'src/js/models/*.js', 
-          'src/js/**/*.js' 
+          'src/js/views/iview-rules.js',
+          'src/js/views/*.js', 
+          'src/js/static/*.js',
+          'src/js/*.js'
         ],
         dest: '<%= paths.devOut %>/js/solitaire-webapp.js'
       },
@@ -114,9 +118,12 @@ module.exports = function(grunt) {
         // Dist assets go to /bin
         src: [ 
           'src/js/exceptions/*.js', 
-          'src/js/models/imodel-rules.js', /* Interface definitions must come before any Class that uses them */
+          'src/js/models/imodel-rules.js',
           'src/js/models/*.js', 
-          'src/js/**/*.js' 
+          'src/js/views/iview-rules.js',
+          'src/js/views/*.js', 
+          'src/js/static/*.js',
+          'src/js/*.js'
         ],
         dest: '<%= paths.prodOut %>/js/solitaire-webapp.js'
       }

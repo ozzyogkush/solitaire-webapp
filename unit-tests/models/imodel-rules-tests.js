@@ -1,7 +1,7 @@
 // Unit tests for models/imodel-rules.js
 
 QUnit.test( "property tests", function( assert ) {
-	expect(11);
+	expect(6);
 
 	// Property/attribute property tests
 
@@ -41,35 +41,5 @@ QUnit.test( "property tests", function( assert ) {
 		IModelRules.gameWon,
 		'function',
 		'`IModelRules.gameWon` must be a "function".'
-	);
-
-	assert.strictEqual(
-		IModelRules.mouseOrTapDownCard,
-		'function',
-		'`IModelRules.mouseOrTapDownCard` must be a "function".'
-	);
-
-	assert.strictEqual(
-		IModelRules.mouseOrTapUpCard,
-		'function',
-		'`IModelRules.mouseOrTapUpCard` must be a "function".'
-	);
-
-	assert.strictEqual(
-		IModelRules.mouseOrTapDownStack,
-		'function',
-		'`IModelRules.mouseOrTapDownStack` must be a "function".'
-	);
-
-	assert.strictEqual(
-		IModelRules.mouseOrTapUpStack,
-		'function',
-		'`IModelRules.mouseOrTapUpStack` must be a "function".'
-	);
-
-	assert.strictEqual(
-		IModelRules.mouseMoveOrDrag,
-		'function',
-		'`IModelRules.mouseMoveOrDrag` must be a "function".'
 	);
 });
