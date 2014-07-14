@@ -14,7 +14,8 @@ var CardGameApp = Class({
 	 */
 	__setModel : function(model)
 	{
-		if (! model.hasOwnProperty('instanceOf') || ! model.instanceOf(GameRules)) {
+		if (model !== null &&
+			(! model.hasOwnProperty('instanceOf') || ! model.instanceOf(GameRules))) {
 			throw new TypeException("GameRules", "CardGameApp.__setModel");
 		}
 
@@ -49,7 +50,8 @@ var CardGameApp = Class({
 	 */
 	__setView : function(view)
 	{
-		if (! view.hasOwnProperty('instanceOf') || ! view.instanceOf(GameView)) {
+		if (view !== null &&
+			(! view.hasOwnProperty('instanceOf') || ! view.instanceOf(GameView))) {
 			throw new TypeException("PluginView", "CardGameApp.__setView");
 		}
 		
@@ -70,8 +72,6 @@ var CardGameApp = Class({
 		return this._view;
 	},
 
-	_cards : null,
-
 	_registeredVariations : [],
 	loadedVariation : false,
 	debug : false,
@@ -82,25 +82,25 @@ var CardGameApp = Class({
 	//
 	//--------------------------------------------------------------------------
 
-	__construct : function(containerElement, variations, debug)
+	__construct : function($containerElement, variations, debug)
 	{
 		var callStackCurrent = "CardGameApp.__construct";
 
 		try {
 			// Check for required parameters
-			if ($.type(containerElement) === "undefined") {
+			if ($.type($containerElement) === "undefined") {
 				throw new CardGameException("No container element specified.", callStackCurrent);
 			}
 			else if (
-				$.type(containerElement) !== "object" ||
-			 	$.type(containerElement.jquery) === "undefined"
+				$.type($containerElement) !== "object" ||
+			 	$.type($containerElement.jquery) === "undefined"
 			) {
 				throw new TypeException("jQuery", callStackCurrent);
 			}
-			else if (containerElement.length === 0) {
+			else if ($containerElement.length === 0) {
 				throw new CardGameException("Specified element could not be found.", callStackCurrent);
 			}
-			// `containerElement` is valid.
+			// `$containerElement` is valid.
 
 			if ($.type(variations) !== "array") {
 				throw new TypeException("array", callStackCurrent);
@@ -124,10 +124,22 @@ var CardGameApp = Class({
 			this.debug = debug;
 		}
 
-		// Set the overall view to the `containerElement` param, and register event handlers
-		// for the buttons that control the overall application.
-		this.__setView(new GameView(containerElement));
+		// Step 1: register all Variation plugins
+		try {
+			this.__registerVariations(variations);
+		}
+		catch (e) {
+			// If it reaches this point, it means that no Variations could be registered,
+			// so there's nothing more to do.
+			this.logConsoleDebugMessage(e);
+			return this;
+		}
+
+		// Set the overall view to the `$containerElement` param, and register event handlers
+		// for the buttons that control the overall application. Create the Modal that will
+		// give the Player the choice of available variations/plugins/games to play.
 		var that = this;
+		this.__setView(new GameView($containerElement));
 		this.getView().getButtons().each(function() {
 			var curBtn = $(this);
 			if (curBtn.attr('data-card-game-button') === 'startNewGame') {
@@ -137,15 +149,6 @@ var CardGameApp = Class({
 				curBtn.on('click', that.restartCurrentGameHandler);
 			}
 		});
-
-		// Step 1: register all Variation plugins
-		try {
-			this.__registerVariations(variations);
-		}
-		catch (e) {
-			this.logConsoleDebugMessage(e);
-			return this;
-		}
 
 		// Load the specified Variation
 		this.loadedVariation = this.__loadDefaultVariation();
@@ -221,11 +224,18 @@ var CardGameApp = Class({
 		var successOrFail = false;
 
 		this.__setModel(null);
+		this.getView().resetPluginView();
 
 		try {
+			// Generate the model/rules specific to the variation plugin
 			this.__setModel(this.__generateVariationModel(variationName));
+
+			// Init the variation plugin's view and apply it to the main application view
 			this.getView().initPluginView(this.__generateVariationView(variationName));
 
+			// Add the proper event handlers:
+
+			// Both above operations succeeded without throwing an exception.
 			successOrFail = true;
 		}
 		catch (e) {
@@ -252,7 +262,7 @@ var CardGameApp = Class({
 			throw new TypeException(viewClassName, "CardGameApp.__generateVariationView");
 		}
 
-		return new window[viewClassName](this.getModel().getStacks(), this.getModel().getLayout());
+		return new window[viewClassName](this.getModel());
 	},
 
 	/** Public Functions **/
