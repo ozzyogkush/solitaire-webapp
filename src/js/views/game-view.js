@@ -27,21 +27,21 @@ var GameView = Class({
 	_container : null,
 	
 	/**
-	 * Sets the `_container` property to the value of `con`.
+	 * Sets the `_container` property to the value of `$con`.
 	 * 
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameView
 	 * @since		
 	 * 
-	 * @param		jQuery			con			The container element which contains all game elements. Required.
+	 * @param		jQuery			$con			The container element which contains all game elements. Required.
 	 */
-	__setContainer : function(con)
+	__setContainer : function($con)
 	{
-		if (typeof con !== "object" || con.jquery === undefined) {
+		if (typeof $con !== "object" || $con.jquery === undefined) {
 			throw new TypeException("jQuery", "GameView.__setContainer");
 		}
-		this._container = con;
+		this._container = $con;
 	},
 	
 	/**
@@ -71,21 +71,41 @@ var GameView = Class({
 	_buttons : null,
 	
 	/**
-	 * Sets the `_buttons` property to the value of `btns`.
+	 * Sets the `_buttons` property to the value of `$btns`.
 	 * 
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameView
 	 * @since		
 	 * 
-	 * @param		jQuery			btns			The set of Buttons that the user will use to interact with the game. Required.
+	 * @param		jQuery			$btns			The set of Buttons that the user will use to interact with the game. Required.
 	 */
-	__setButtons : function(btns)
+	__setButtons : function($btns)
 	{
-		if (typeof btns !== "object" || btns.jquery === undefined) {
+		// Make sure the param is null or a jQuery object instance
+		if ($btns !== null &&
+			(typeof $btns !== "object" || $btns.jquery === undefined)) {
 			throw new TypeException("jQuery", "GameView.__setButtons");
 		}
-		this._buttons = btns;
+		if (this._buttons !== null) {
+			// Always remove an existing set of Buttons first
+			this.getContainer()
+				.find('div[data-card-game-view-element="button-container"]')
+				.remove();
+		}
+
+		if ($btns !== null) {
+			// Create the button container, add the buttons to it,
+			// and add the button container to the DOM.
+			var $buttonContainer = $('<div></div>')
+				.attr('data-card-game-view-element', 'button-container')
+				.append($btns);
+
+			this.getContainer().prepend($buttonContainer);
+		}
+
+		// Set the object property to the supplied param either way
+		this._buttons = $btns;
 	},
 	
 	/**
@@ -102,6 +122,55 @@ var GameView = Class({
 		return this._buttons;
 	},
 
+	_gameChoiceModal : null,
+	
+	/**
+	 * Sets the `_gameChoiceModal` property to the value of `$gcm`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	
+	 * @since		
+	 * 
+	 * @param		jQuery			$gcm			The Modal element giving the Player a choice of games to load. Required.
+	 */
+	__setGameChoiceModal : function($gcm)
+	{
+		// Make sure the param is null or a jQuery object instance
+		if ($gcm !== null &&
+			(typeof $gcm !== "object" || $gcm.jquery === undefined)) {
+			throw new TypeException("jQuery", "GameView.__setGameChoiceModal");
+		}
+		if (this._gameChoiceModal !== null) {
+			// Always remove an existing game choice modal first
+			this.getContainer()
+				.find('div[data-card-game-view-element="game-choice-modal"]')
+				.remove();
+		}
+
+		if ($gcm !== null) {
+			// Add the modal element to the DOM.
+			this.getContainer().append($gcm);
+		}
+
+		// Set the object property to the supplied param either way
+		this._gameChoiceModal = $gcm;
+	},
+	
+	/**
+	 * Returns the `_gameChoiceModal` property.
+	 * 
+	 * @public
+	 * @memberOf	
+	 * @since		
+	 *
+	 * @return		jQuery			_gameChoiceModal		Returns the `_gameChoiceModal` property.
+	 */
+	getGameChoiceModal : function()
+	{
+		return this._gameChoiceModal;
+	},
+
 	/**
 	 * PluginView that represents the actual game play area.
 	 *
@@ -114,7 +183,9 @@ var GameView = Class({
 	_pluginCanvas : null,
 	
 	/**
-	 * Sets the `_pluginCanvas` property to the value of `cvs`.
+	 * Sets the `_pluginCanvas` property to the value of `cvs`, and adds or removes it
+	 * from the DOM (depending on whether this is setting it to `null` or to a valid
+	 * PluginView element).
 	 * 
 	 * @private
 	 * @throws		TypeException
@@ -125,9 +196,25 @@ var GameView = Class({
 	 */
 	__setPluginCanvas : function(cvs)
 	{
-		if (! cvs.hasOwnProperty('instanceOf') || ! cvs.instanceOf(PluginView)) {
+		// Make sure the param is null or a PluginView instance
+		if (cvs !== null &&
+			(! cvs.hasOwnProperty('instanceOf') || ! cvs.instanceOf(PluginView))) {
 			throw new TypeException("PluginView", "GameView.__setPluginCanvas");
 		}
+
+		if (this._pluginCanvas !== null) {
+			// Always remove an existing plugin canvas first
+			this.getContainer()
+				.find(this._pluginCanvas.getDOMElements())
+				.remove();
+		}
+
+		// Add the new plugin canvas if it isn't null
+		if (cvs !== null) {
+			this.getGameChoiceModal().before(cvs.getDOMElements());
+		}
+
+		// Set the object property to the supplied param either way
 		this._pluginCanvas = cvs;
 	},
 	
@@ -153,106 +240,125 @@ var GameView = Class({
 
 	/** This is an abstract class and should never be instantiated as is. **/
 
-	__construct : function(container)
-	{
-		// This, and the methods it calls internally, should only be called once per
-		// card game container element.
-		this.__initLayout(container);
-	},
-
-	/** Private Functions **/
-
-	__initLayout : function(container)
-	{
-		this.__setContainer(container);
-		this.__createButtons();
-	},
-
-	__createButtons : function()
-	{
-		// Create the buttons and their container element...
-		var buttonContainer = $('<div></div>').attr('data-card-game-view-element', 'button-container');
-		buttonContainer.append(
-			$('<button></button>')
-				.attr(
-					'data-card-game-button', 
-					'startNewGame'
-				)
-				.text(
-					"Start New Game"
-				)
-		);
-		buttonContainer.append(
-			$('<button></button>')
-				.attr(
-					'data-card-game-button',
-					'restartCurrentGame'
-				)
-				.text(
-					"Restart Current Game"
-				)
-		);
-
-		var buttons = buttonContainer.children('button');
-
-		// ...store references to them in this object...
-		this.__setButtons(buttons);
-
-		// ...add the buttons to their container...
-		buttonContainer.append(this.getButtons());
-
-		// ...and add them to the DOM.
-		this.getContainer().prepend(buttonContainer);
-	},
-
-	/** Public Functions **/
-
-	initPluginView : function(pluginView)
-	{
-		this.__setPluginCanvas(pluginView);
-	}
-});/*
-
 	/**
-	 * This function will perform a check of specified logic conditions that, when 
-	 * evaluated to `true`, indicates that the Player has won the current game.
+	 * Initialize the basic layout of the game view.
 	 *
+	 * @constructor
 	 * @public
 	 * @memberOf	GameView
 	 * @since		
 	 *
-	 * @return		Boolean					Returns true when the condititions for winning the game have been met.
-	 * /
-	gameWon : function() {}
-
-{
-	// read layout file
-	
-	numDecksInGame : int,
-	includeJokers : boolean,
-	stacks : {
-		'dealer' : Stack(StackType.dealer, numFacingDown.all, numFacingUp.zero)
-		'inPlay' : [
-			Stack(StackType.inPlay, numFacingDown, numFacingUp),
-			Stack(StackType.inPlay, numFacingDown, numFacingUp),
-			...
-			Stack(StackType.inPlay, numFacingDown, numFacingUp)
-		],
-		draw : [
-			Stack(StackType.draw, numFacingDown.zero, numFacingUp.zero)
-		],
-		'foundation' : [
-			Stack(StackType.foundation, numFacingDown.zero, numFacingUp.zero),
-		]
+	 * @param		jQuery				$container			The jQuery extended HTML element that will contain the entire view area. Required.
+	 */
+	__construct : function($container)
+	{
+		// This, and the methods it calls internally, should only be called once per
+		// card game container element.
+		if ($container === undefined) {
+			throw new CardGameException('View `$container` param is required.', 'GameView.__construct');
+		}
+		this.__initLayout($container);
 	},
-	layout : [
-		/* using Bootstrap's CSS row and grid system; each array represents a row
-			that will be dynamically generated.
-		 * /
-		[ StackType, StackType, StackType, null, ... , StackType ]
-		[ StackType, StackType, StackType, ... , StackType ]
-		...
-	],
-	cardNumAbleToMoveFromInPlayStack : int
-	* /
-}*/
+
+	/** Private Functions **/
+
+	/**
+	 * Initializes the layout of the application view. Creates and adds the set of
+	 * buttons to start a new game and restart a current game. Creates and adds the
+	 * Modal Bootstrap DOM element used for choosing a game/variation to play.
+	 *
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @param		jQuery				$container			The jQuery extended HTML element that will contain the entire view area. Required.
+	 */
+	__initLayout : function($container)
+	{
+		this.__setContainer($container);
+		var $buttons = this.__createButtons();
+		this.__setButtons($buttons);
+		var $modal = this.__createGameChoiceModal();
+		this.__setGameChoiceModal($modal);
+	},
+
+	/**
+	 * Creates and returns a set of jQuery extended Button elements which will
+	 * give the Player the ability to:
+	 *	1. to start a new game
+	 * 	2. to restart a current game
+	 *
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @return		jQuery				$buttons			A jQuery object containing two jQuery extended Button elements. Required.
+	 */
+	__createButtons : function()
+	{
+		// Create the set of buttons...
+		var $buttons = $('<button></button>')
+			.attr(
+				'data-card-game-button', 
+				'startNewGame'
+			)
+			.text(
+				"Start New Game"
+			)
+			.add(
+				$('<button></button>')
+					.attr(
+						'data-card-game-button',
+						'restartCurrentGame'
+					)
+					.text(
+						"Restart Current Game"
+					)
+			);
+
+		// ...and return it.
+		return $buttons;
+	},
+
+	/**
+	 * Creates and returns the jQuery extended Modal Bootstrap DOM element used
+	 * for choosing a game/variation to play when the user asks to start a new game.
+	 *
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @return		jQuery				$modal			A jQuery object containing a `div` element. Required.
+	 */
+	__createGameChoiceModal : function()
+	{
+		// Create the modal and its children elements...
+		var $modal = $('<div></div>')
+			.attr('data-card-game-view-element', 'game-choice-modal');
+
+		return $modal;
+	},
+
+	/** Public Functions **/
+
+	/**
+	 * 
+	 * 
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @param		PluginView			pluginView		The variation extended PluginView object, already instantiated and initialized
+	 */
+	initPluginView : function(pluginView)
+	{
+		// Adds the instantiated PluginView to the DOM.
+		this.__setPluginCanvas(pluginView);
+	},
+
+	resetPluginView : function()
+	{
+		// Removes the current PluginView from the DOM.
+		this.__setPluginCanvas(null);
+	}
+});

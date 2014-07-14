@@ -1,7 +1,9 @@
 // Unit tests for view/plugin-view.js
 
 QUnit.test( "constructor failure tests", function( assert ) {
-	expect(0);
+	expect(1);
+
+	assert.ok(1 == 1, "ok");
 
 	/*assert.throws(
 		function() { var gv = new GameView(); },
