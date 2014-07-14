@@ -39,6 +39,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 */
 	__setCardNumAbleToMoveFromInPlayStack : function(cna)
 	{
+		var parsed = null;
 		if (typeof cna !== "number" || (parsed = parseInt(cna) === null)) {
 			throw new TypeException("number", "GameRules.__setCardNumAbleToMoveFromInPlayStack");
 		}
@@ -82,7 +83,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 */
 	__setNumDecksInGame : function(n)
 	{
-		if (typeof n !== "number" || (parsed = parseInt(cna) === null)) {
+		if (typeof n !== "number" || (parsed = parseInt(n) === null)) {
 			throw new TypeException("number", "GameRules.__setNumDecksInGame");
 		}
 		this._numDecksInGame = n;
@@ -143,6 +144,49 @@ var GameRules = Class({ implements : IModelRules }, {
 	getIncludeJokers : function()
 	{
 		return this._includeJokers;
+	},
+
+	/**
+	 * Flag indicating whether aces are highher than kings (true) or lower than twos (false).
+	 *
+	 * @private
+	 * @type		Boolean
+	 * @memberOf	GameRules
+	 * @since		
+	 * @default		false
+	 */
+	_acesHigh : null,
+	
+	/**
+	 * Sets the `_acesHigh` property to the value of `ah`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	GameRules
+	 * @since		
+	 * 
+	 * @param		Boolean			ah			The flag indicating whether Aces are high. Required.
+	 */
+	__setAcesHigh : function(ah)
+	{
+		if (typeof ah !== "boolean") {
+			throw new TypeException("boolean", "GameRules.__setAcesHigh");
+		}
+		this._acesHigh = ah;
+	},
+	
+	/**
+	 * Returns the `_acesHigh` property.
+	 * 
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		Boolean			_acesHigh		Returns the `_acesHigh` property.
+	 */
+	getAcesHigh : function()
+	{
+		return this._acesHigh;
 	},
 
 	/**
@@ -240,7 +284,13 @@ var GameRules = Class({ implements : IModelRules }, {
 	//--------------------------------------------------------------------------
 
 	/** This is an abstract class and should never be instantiated as is. **/
-});/*
+
+	__construct : function()
+	{
+		// actually create all the stacks and set to `stacks` property
+	},
+
+	/** Public Functions **/
 
 	/**
 	 * This function will perform a check of specified logic conditions that, when 
@@ -251,37 +301,6 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @since		
 	 *
 	 * @return		Boolean					Returns true when the condititions for winning the game have been met.
-	 * /
-	gameWon : function() {}
-
-{
-	// read layout file
-	
-	numDecksInGame : int,
-	includeJokers : boolean,
-	stacks : {
-		'dealer' : Stack(StackType.dealer, numFacingDown.all, numFacingUp.zero)
-		'inPlay' : [
-			Stack(StackType.inPlay, numFacingDown, numFacingUp),
-			Stack(StackType.inPlay, numFacingDown, numFacingUp),
-			...
-			Stack(StackType.inPlay, numFacingDown, numFacingUp)
-		],
-		draw : [
-			Stack(StackType.draw, numFacingDown.zero, numFacingUp.zero)
-		],
-		'foundation' : [
-			Stack(StackType.foundation, numFacingDown.zero, numFacingUp.zero),
-		]
-	},
-	layout : [
-		/* using Bootstrap's CSS row and grid system; each array represents a row
-			that will be dynamically generated.
-		 * /
-		[ StackType, StackType, StackType, null, ... , StackType ]
-		[ StackType, StackType, StackType, ... , StackType ]
-		...
-	],
-	cardNumAbleToMoveFromInPlayStack : int
-	* /
-}*/
+	 */
+	gameWon : function() { /* This is a stub! */ }
+});
