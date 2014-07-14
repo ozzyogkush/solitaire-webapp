@@ -3,7 +3,7 @@
  *
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		SuitSet
- * @name		SuitSEt
+ * @name		SuitSet
  * @version		
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */

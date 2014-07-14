@@ -98,7 +98,6 @@ var Suit = Class({
 	{
 		return this.color;
 	},
-
 	
 	//--------------------------------------------------------------------------
 	//
@@ -111,7 +110,7 @@ var Suit = Class({
 	 *
 	 * @constructor
 	 * @public
-	 * @memberOf	CardGameDebugMessage
+	 * @memberOf	Suit
 	 * @since		
 	 *
 	 * @param		String				suitName		The name of the Suit. Required.
@@ -132,12 +131,6 @@ var Suit = Class({
 		// We have a valid name and color, so set those properties.
 		this.__setSuitName(suitName);
 		this.__setColor(color);
-
-		/*// We only allow people to get the name and color properties via getters.
-		return {
-			getName : this.getName,
-			getColor : this.getColor,
-		};*/
 	}
 
 	/** Private Functions **/
