@@ -1,9 +1,15 @@
 // Unit tests for models/imodel-rules.js
 
 QUnit.test( "property tests", function( assert ) {
-	expect(6);
+	expect(8);
 
 	// Property/attribute property tests
+
+	assert.strictEqual(
+		IModelRules._variationName,
+		'string',
+		'`IModelRules._variationName` must be a "string".'
+	);
 
 	assert.strictEqual(
 		IModelRules._cardNumAbleToMoveFromInPlayStack,
@@ -15,6 +21,12 @@ QUnit.test( "property tests", function( assert ) {
 		IModelRules._numDecksInGame,
 		'number',
 		'`IModelRules._numDecksInGame` must be a "number".'
+	);
+
+	assert.strictEqual(
+		IModelRules._acesHigh,
+		'boolean',
+		'`IModelRules._acesHigh` must be a "boolean".'
 	);
 
 	assert.strictEqual(

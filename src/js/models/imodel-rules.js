@@ -50,6 +50,17 @@ var IModelRules = Interface({
 	_numDecksInGame : "number",
 
 	/**
+	 * Flag indicating whether aces are highher than kings (true) or lower than twos (false).
+	 *
+	 * @private
+	 * @type		string
+	 * @memberOf	IModelRules
+	 * @since		
+	 * @default		"boolean"
+	 */
+	_acesHigh : "boolean",
+
+	/**
 	 * Flag indicating whether the game requires Joker cards.
 	 *
 	 * @private

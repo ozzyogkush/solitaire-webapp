@@ -26,6 +26,17 @@ var IViewRules = Interface({
 	 */
 	_variationName : "string",
 
+	/**
+	 * The array of cards needed for this specific Variation.
+	 *
+	 * @public
+	 * @type		string
+	 * @memberOf	IViewRules
+	 * @since		
+	 * @default		"array"
+	 */
+	_cards : "array",
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
