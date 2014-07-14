@@ -14,6 +14,108 @@ var PluginView = Class({ implements : IViewRules }, {
 	//
 	//--------------------------------------------------------------------------
 
+	_pluginModel : null,
+	
+	/**
+	 * Sets the `_pluginModel` property to the value of `_pluginModel`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * 
+	 * @param		GameRules			pluginModel			The implemented variation GameRules _pluginModel. Required.
+	 */
+	__setModel : function(pluginModel)
+	{
+		if (! _pluginModel.hasOwnProperty('instanceOf') || ! _pluginModel.instanceOf(GameRules)) {
+			throw new TypeException("GameRules", "PluginView.__setModel");
+		}
+		this._pluginModel = pluginModel;
+	},
+	
+	/**
+	 * Returns the `_pluginModel` property.
+	 * 
+	 * @public
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @return		GameRules			_pluginModel		Returns the `_pluginModel` property.
+	 */
+	getModel : function()
+	{
+		return this._pluginModel;
+	},
+
+	_DOMElements : null,
+	
+	/**
+	 * Sets the `_DOMElements` property to the value of `dome`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	PluginView
+	 * @since		
+	 * 
+	 * @param		jQuery			dome			The set of DOM elements that make up the plugin view canvas. Required.
+	 */
+	__setDOMElements : function(dome)
+	{
+		if (typeof dome !== "object" || dome.jquery === undefined) {
+			throw new TypeException("jQuery", "PluginView.__setDOMElements");
+		}
+		this._DOMElements = dome;
+	},
+	
+	/**
+	 * Returns the `_DOMElements` property.
+	 * 
+	 * @public
+	 * @memberOf	PluginView
+	 * @since		
+	 *
+	 * @return		jQuery			_DOMElements		Returns the `_DOMElements` property.
+	 */
+	getDOMElements : function()
+	{
+		return this._DOMElements;
+	},
+
+	_cards : null,
+	
+	/**
+	 * Sets the `_cards` property to the value of `cards`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	PluginView
+	 * @since		
+	 * 
+	 * @param		jQuery			cards			The set of Cards that will be added to the DOM. Required.
+	 */
+	__setCards : function(cards)
+	{
+		if (typeof cards !== "object" || cards.jquery !== undefined) {
+			throw new TypeException("jQuery", "PluginView.__setCards");
+		}
+		this._cards = cards;
+	},
+	
+	/**
+	 * Returns the `_cards` property.
+	 * 
+	 * @public
+	 * @memberOf	PluginView
+	 * @since		
+	 *
+	 * @return		jQuery			_cards		Returns the `_cards` property.
+	 */
+	getCards : function()
+	{
+		return this._cards;
+	},
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -22,66 +124,161 @@ var PluginView = Class({ implements : IViewRules }, {
 
 	/** This is an abstract class and should never be instantiated as is. **/
 
-	__construct : function(stacks, layout)
+	__construct : function(model)
 	{
-		
+		if (model !== undefined && model !== null) {
+			//throw new CardGameException('Model cannot be null.', 'PluginView.__construct');
+			this.__initPluginView(model);
+		}
 	},
 
 	/** Private Functions **/
+
+	__initPluginView : function(model)
+	{
+		// Add the cards to their respective Stacks in the PluginView's DOM.
+		this.__setModel(model);
+
+		// Set the empty screen
+		this.__setDOMElements(this.__createLayoutFromSpecs());
+
+		// Create the cards and add them to the Model's stack.
+		this.__setCards(this.__createCards());
+	},
+
+	/**
+	 * Generate the layout of empty stacks based on the layout specified in the model.
+	 * 
+	 * @private
+	 * @memberOf	PluginView
+	 * @since		
+	 *
+	 * @return		jQuery			$domRows		Returns the created set of DOM rows.
+	 */
+	__createLayoutFromSpecs : function()
+	{
+		var layout = this.getModel().getLayout();
+
+		var $domRows = $('');
+
+		if (layout.length > 0) {
+			var stackTypes = new StackTypes();
+			for (var i = 0; i < layout.length; i++) {
+				var row = layout[i];
+				var rowGridSize = row.length + 1;
+				var $domRow = $('<div></div>').attr('data-card-game-view-element', 'canvas-row');
+				for (var j = 0; j < (rowGridSize - 1); j++) {
+					var stackType = row[j] !== null ? stackTypes[row[j]] : "none";
+					var $domGridCell = $('<div></div>')
+						.attr({
+							'data-card-game-view-element' : 'grid-row-cell',
+							'data-card-game-stack-type' : stackType
+						});
+
+					// Add this cell to the DOM row
+					$domRow.append($domGridCell);
+				}
+
+				// Add this domRow to the list to be returned
+				$domRows.add($domRow);
+			}
+		}
+
+		return $domRows;
+	},
+
+	__createCards : function()
+	{
+		var $cards = $();
+
+		for (var i = 0; i < this.getModel().getNumDecksInGame(); i++) {
+			$cards.add(this.__createDeck());
+		}
+
+		return $cards;
+	},
+
+	__createDeck : function()
+	{
+		var $deck = $();
+		var ss = new SuitSet();
+		var cns = new CardNumberSet();
+		if (this.getModel().getAcesHigh()) {
+			cns.ace.setCardValue(cns.king.getCardValue() + 1);
+		}
+
+		$.each(ss, function(suitName, suitObj) {
+			$.each(cns, function(cardNumberName, cardNumberObject) {
+				$deck.add(new Card(suitObj, cardNumberObject));
+			});
+		});
+
+		// Add Joker cards if the game calls for it
+		// @TODO - implement this later
+		if (this.getModel().getIncludeJokers()) {
+			//$deck.add(new Card(suitObj, cardNumberObject));
+			//$deck.add(new Card(suitObj, cardNumberObject));
+		}
+
+		return $deck;
+	},
 
 	/** Public Functions **/
 
 	dealerCollectAllCards : function()
 	{
 
-	}
+	},
 
 	/*shuffleStack : function(stack)
 	{
 
 	},*/
-});/*
+
+	/** Event Handlers **/
 
 	/**
-	 * This function will perform a check of specified logic conditions that, when 
-	 * evaluated to `true`, indicates that the Player has won the current game.
+	 * This method will be run when a user triggers a `mousedown` or `touchstart` event on a single Card.
 	 *
 	 * @public
 	 * @memberOf	PluginView
 	 * @since		
-	 *
-	 * @return		Boolean					Returns true when the condititions for winning the game have been met.
-	 * /
-	gameWon : function() {}
+	 */
+	mouseDownTouchStartCard : function() { /* This is a stub! */ },
 
-{
-	// read layout file
-	
-	numDecksInGame : int,
-	includeJokers : boolean,
-	stacks : {
-		'dealer' : Stack(StackType.dealer, numFacingDown.all, numFacingUp.zero)
-		'inPlay' : [
-			Stack(StackType.inPlay, numFacingDown, numFacingUp),
-			Stack(StackType.inPlay, numFacingDown, numFacingUp),
-			...
-			Stack(StackType.inPlay, numFacingDown, numFacingUp)
-		],
-		draw : [
-			Stack(StackType.draw, numFacingDown.zero, numFacingUp.zero)
-		],
-		'foundation' : [
-			Stack(StackType.foundation, numFacingDown.zero, numFacingUp.zero),
-		]
-	},
-	layout : [
-		/* using Bootstrap's CSS row and grid system; each array represents a row
-			that will be dynamically generated.
-		 * /
-		[ StackType, StackType, StackType, null, ... , StackType ]
-		[ StackType, StackType, StackType, ... , StackType ]
-		...
-	],
-	cardNumAbleToMoveFromInPlayStack : int
-	* /
-}*/
+	/**
+	 * This method will be run when a user triggers a `mouseup` or `touchend` event on a single Card.
+	 *
+	 * @public
+	 * @memberOf	PluginView
+	 * @since		
+	 */
+	mouseUpTouchEndCard : function() { /* This is a stub! */ },
+
+	/**
+	 * This method will be run when a user triggers a `mousedown` or `touchstart` event on a Stack of Cards.
+	 *
+	 * @public
+	 * @memberOf	PluginView
+	 * @since		
+	 */
+	mouseDownTouchStartStack : function() { /* This is a stub! */ },
+
+	/**
+	 * This method will be run when a user triggers a `mouseup` or `touchend` event on a Stack of Cards.
+	 *
+	 * @public
+	 * @memberOf	PluginView
+	 * @since		
+	 */
+	mouseUpTouchEndStack : function() { /* This is a stub! */ },
+
+	/**
+	 * This method will be run when a user triggers a `mousemove` or `touchmove` event on a Card or Stack of Cards.
+	 *
+	 * @public
+	 * @memberOf	PluginView
+	 * @since		
+	 */
+	mouseMoveTouchMove : function() { /* This is a stub! */ }
+});
