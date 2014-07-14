@@ -16,32 +16,32 @@ QUnit.test( "property tests", function( assert ) {
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseOrTapDownCard,
+		IViewRules.mouseDownTouchStartCard,
 		'function',
-		'`IViewRules.mouseOrTapDownCard` must be a "function".'
+		'`IViewRules.mouseDownTouchStartCard` must be a "function".'
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseOrTapUpCard,
+		IViewRules.mouseUpTouchEndCard,
 		'function',
-		'`IViewRules.mouseOrTapUpCard` must be a "function".'
+		'`IViewRules.mouseUpTouchEndCard` must be a "function".'
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseOrTapDownStack,
+		IViewRules.mouseDownTouchStartStack,
 		'function',
-		'`IViewRules.mouseOrTapDownStack` must be a "function".'
+		'`IViewRules.mouseDownTouchStartStack` must be a "function".'
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseOrTapUpStack,
+		IViewRules.mouseUpTouchEndStack,
 		'function',
-		'`IViewRules.mouseOrTapUpStack` must be a "function".'
+		'`IViewRules.mouseUpTouchEndStack` must be a "function".'
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseMoveOrDrag,
+		IViewRules.mouseMoveTouchMove,
 		'function',
-		'`IViewRules.mouseMoveOrDrag` must be a "function".'
+		'`IViewRules.mouseMoveTouchMove` must be a "function".'
 	);
 });

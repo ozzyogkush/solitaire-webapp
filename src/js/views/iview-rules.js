@@ -44,7 +44,7 @@ var IViewRules = Interface({
 	//--------------------------------------------------------------------------
 
 	/**
-	 * This method will be run when a user triggers a `mousedown` or `tapdown` event on a single Card.
+	 * This method will be run when a user triggers a `mousedown` or `touchstart` event on a single Card.
 	 *
 	 * @public
 	 * @type		string
@@ -52,10 +52,10 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseOrTapDownCard : "function",
+	mouseDownTouchStartCard : "function",
 
 	/**
-	 * This method will be run when a user triggers a `mouseup` or `tapup` event on a single Card.
+	 * This method will be run when a user triggers a `mouseup` or `touchend` event on a single Card.
 	 *
 	 * @public
 	 * @type		string
@@ -63,10 +63,10 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseOrTapUpCard : "function",
+	mouseUpTouchEndCard : "function",
 
 	/**
-	 * This method will be run when a user triggers a `mousedown` or `tapdown` event on a Stack of Cards.
+	 * This method will be run when a user triggers a `mousedown` or `touchstart` event on a Stack of Cards.
 	 *
 	 * @public
 	 * @type		string
@@ -74,10 +74,10 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseOrTapDownStack : "function",
+	mouseDownTouchStartStack : "function",
 
 	/**
-	 * This method will be run when a user triggers a `mouseup` or `tapup` event on a Stack of Cards.
+	 * This method will be run when a user triggers a `mouseup` or `touchend` event on a Stack of Cards.
 	 *
 	 * @public
 	 * @type		string
@@ -85,10 +85,10 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseOrTapUpStack : "function",
+	mouseUpTouchEndStack : "function",
 
 	/**
-	 * This method will be run when a user triggers a `mousemove` or `drag` event on a Card or Stack of Cards.
+	 * This method will be run when a user triggers a `mousemove` or `touchmove` event on a Card or Stack of Cards.
 	 *
 	 * @public
 	 * @type		string
@@ -96,5 +96,5 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseMoveOrDrag : "function"
+	mouseMoveTouchMove : "function"
 });
