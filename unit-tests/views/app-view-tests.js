@@ -202,7 +202,7 @@ QUnit.test( "`__setGameChoiceModal()` and `getGameChoiceModal()` tests", functio
 	);
 });
 
-QUnit.test( "`__setPluginCanvas()` and `getPluginCanvas()` tests", function( assert ) {
+QUnit.test( "`__setGameViewCanvas()` and `getGameViewCanvas()` tests", function( assert ) {
 	expect(5);
 
 	// Bad type
@@ -210,7 +210,7 @@ QUnit.test( "`__setPluginCanvas()` and `getPluginCanvas()` tests", function( ass
 		function() { 
 			var badCvs = "a string";
 			var good = new AppView($goodContainer.clone());
-			good.__setPluginCanvas(badCvs);
+			good.__setGameViewCanvas(badCvs);
 		},
 		function (e) {
 			return (
@@ -228,22 +228,21 @@ QUnit.test( "`__setPluginCanvas()` and `getPluginCanvas()` tests", function( ass
 	// methods) and use that pattern from now on where appropriate.
 	var goodCanvas = new GameView();
 	goodCanvas.__setDOMElements($('<div></div>').prop('id', 'test-plugin-canvas'));
-	good.__setPluginCanvas(goodCanvas);
+	good.__setGameViewCanvas(goodCanvas);
 	var $testPluginCanvasDiv = good.getGameChoiceModal().prev('div');
 	assert.strictEqual(
-		//good.getContainer().children().filter('#test-plugin-canvas').length,
 		$testPluginCanvasDiv.prop('id'),
 		'test-plugin-canvas',
 		"Expected a `div` with ID 'test-plugin-canvas' to be in the DOM before the modal element returned by `getGameChoiceModal()`."
 	);
 	assert.strictEqual(
-		good.getPluginCanvas(),
+		good.getGameViewCanvas(),
 		goodCanvas,
-		'The GameView returned from `getPluginCanvas()` does not match the one passed into `__setPluginCanvas()`.'
+		'The GameView returned from `getGameViewCanvas()` does not match the one passed into `__setGameViewCanvas()`.'
 	);
 
 	// null button set
-	good.__setPluginCanvas(null);
+	good.__setGameViewCanvas(null);
 	$pluginCanvasDOM = good
 		.getContainer()
 		.find(
@@ -256,9 +255,9 @@ QUnit.test( "`__setPluginCanvas()` and `getPluginCanvas()` tests", function( ass
 		"Expected the `$pluginCanvasDOM` object to be empty"
 	);
 	assert.strictEqual(
-		good.getPluginCanvas(),
+		good.getGameViewCanvas(),
 		null,
-		"The jQuery element returned from `getPluginCanvas()` should be null."
+		"The jQuery element returned from `getGameViewCanvas()` should be null."
 	);
 });
 
@@ -560,7 +559,7 @@ QUnit.test( "`__initLayout()` tests", function( assert ) {
 });
 
 
-// @TODO - unit tests for `__initLayout()`, `initGameView()`, `resetGameView()`, 
+// @TODO - unit tests for `initGameView()`, `resetGameView()`, 
 // and any other methods that may exist.
 
 /** Public method tests **/

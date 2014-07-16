@@ -180,10 +180,10 @@ var AppView = Class({
 	 * @since		
 	 * @default		null
 	 */
-	_pluginCanvas : null,
+	_gameViewCanvas : null,
 	
 	/**
-	 * Sets the `_pluginCanvas` property to the value of `cvs`, and adds or removes it
+	 * Sets the `_gameViewCanvas` property to the value of `cvs`, and adds or removes it
 	 * from the DOM (depending on whether this is setting it to `null` or to a valid
 	 * GameView element).
 	 * 
@@ -194,18 +194,18 @@ var AppView = Class({
 	 * 
 	 * @param		GameView		cvs			The GameView representing the main game canvas. Required.
 	 */
-	__setPluginCanvas : function(cvs)
+	__setGameViewCanvas : function(cvs)
 	{
 		// Make sure the param is null or a GameView instance
 		if (cvs !== null &&
 			(! cvs.hasOwnProperty('instanceOf') || ! cvs.instanceOf(GameView))) {
-			throw new TypeException("GameView", "AppView.__setPluginCanvas");
+			throw new TypeException("GameView", "AppView.__setGameViewCanvas");
 		}
 
-		if (this._pluginCanvas !== null) {
+		if (this._gameViewCanvas !== null) {
 			// Always remove an existing plugin canvas first
 			this.getContainer()
-				.find(this._pluginCanvas.getDOMElements())
+				.find(this._gameViewCanvas.getDOMElements())
 				.remove();
 		}
 
@@ -215,21 +215,21 @@ var AppView = Class({
 		}
 
 		// Set the object property to the supplied param either way
-		this._pluginCanvas = cvs;
+		this._gameViewCanvas = cvs;
 	},
 	
 	/**
-	 * Returns the `_pluginCanvas` property.
+	 * Returns the `_gameViewCanvas` property.
 	 * 
 	 * @public
 	 * @memberOf	AppView
 	 * @since		
 	 *
-	 * @return		GameView			_pluginCanvas		Returns the `_pluginCanvas` property.
+	 * @return		GameView			_gameViewCanvas		Returns the `_gameViewCanvas` property.
 	 */
-	getPluginCanvas : function()
+	getGameViewCanvas : function()
 	{
-		return this._pluginCanvas;
+		return this._gameViewCanvas;
 	},
 
 	//--------------------------------------------------------------------------
@@ -379,25 +379,34 @@ var AppView = Class({
 	/** Public Functions **/
 
 	/**
-	 * 
+	 * Sets the `gameView` object and adds it to the DOM.
 	 * 
 	 * @public
 	 * @memberOf	AppView
 	 * @since		
 	 *
-	 * @param		GameView			pluginView		The variation extended GameView object, already instantiated and initialized
+	 * @param		GameView			gameView		The variation extended GameView object, already instantiated and initialized
 	 */
-	initGameView : function(pluginView)
+	initGameView : function(gameView)
 	{
 		// Adds the instantiated GameView to the DOM.
-		this.__setPluginCanvas(pluginView);
+		this.__setGameViewCanvas(gameView);
 	},
 
+	/**
+	 * Sets the `gameView` object and adds it to the DOM.
+	 * 
+	 * @public
+	 * @memberOf	AppView
+	 * @since		
+	 *
+	 * @param		GameView			gameView		The variation extended GameView object, already instantiated and initialized
+	 */
 	resetGameView : function()
 	{
 		// Removes the current GameView from the DOM.
-		this.__setPluginCanvas(null);
-	},
+		this.__setGameViewCanvas(null);
+	}
 
 	/** Event Handlers **/
 
