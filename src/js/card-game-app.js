@@ -139,12 +139,13 @@ var CardGameApp = Class({
 		// for the buttons that control the overall application. Create the Modal that will
 		// give the Player the choice of available variations/plugins/games to play.
 		this.__setView(new GameView($containerElement));
-		this.getView().getButtons()
-			.filter('[data-card-game-button="startNewGame"]')
-				.on('click', this.__startNewGameBtnClickHandler)
+		this.getView()
+			.getButtons()
+				.filter('[data-card-game-button="startNewGame"]')
+					.on('click', this.__startNewGameBtnClickHandler)
 			.end()
-			.filter('[data-card-game-button="restartCurrentGame"]')
-				on('click', this.__restartCurrentGameBtnClickHandler);
+				.filter('[data-card-game-button="restartCurrentGame"]') /*jshint asi:true */
+					on('click', this.__restartCurrentGameBtnClickHandler);
 
 		// Load the specified Variation
 		this.loadedVariation = this.__loadDefaultVariation();
