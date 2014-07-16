@@ -1,7 +1,7 @@
 // Unit tests for models/imodel-rules.js
 
 QUnit.test( "property tests", function( assert ) {
-	expect(7);
+	expect(6);
 
 	assert.strictEqual(
 		IViewRules._variationName,
@@ -16,32 +16,26 @@ QUnit.test( "property tests", function( assert ) {
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseDownTouchStartCard,
+		IViewRules.mouseDownTouchStartEventHandler,
 		'function',
-		'`IViewRules.mouseDownTouchStartCard` must be a "function".'
+		'`IViewRules.mouseDownTouchStartEventHandler` must be a "function".'
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseUpTouchEndCard,
+		IViewRules.mouseUpTouchEndEventHandler,
 		'function',
-		'`IViewRules.mouseUpTouchEndCard` must be a "function".'
+		'`IViewRules.mouseUpTouchEndEventHandler` must be a "function".'
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseDownTouchStartStack,
+		IViewRules.mouseClickEventHandler,
 		'function',
-		'`IViewRules.mouseDownTouchStartStack` must be a "function".'
+		'`IViewRules.mouseClickEventHandler` must be a "function".'
 	);
 
 	assert.strictEqual(
-		IViewRules.mouseUpTouchEndStack,
+		IViewRules.mouseMoveTouchMoveEventHandler,
 		'function',
-		'`IViewRules.mouseUpTouchEndStack` must be a "function".'
-	);
-
-	assert.strictEqual(
-		IViewRules.mouseMoveTouchMove,
-		'function',
-		'`IViewRules.mouseMoveTouchMove` must be a "function".'
+		'`IViewRules.mouseMoveTouchMoveEventHandler` must be a "function".'
 	);
 });

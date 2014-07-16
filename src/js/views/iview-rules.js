@@ -44,7 +44,7 @@ var IViewRules = Interface({
 	//--------------------------------------------------------------------------
 
 	/**
-	 * This method will be run when a user triggers a `mousedown` or `touchstart` event on a single Card.
+	 * This method will be run when a user triggers a `mousedown` or `touchstart` event.
 	 *
 	 * @public
 	 * @type		string
@@ -52,10 +52,10 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseDownTouchStartCard : "function",
+	mouseDownTouchStartEventHandler : "function",
 
 	/**
-	 * This method will be run when a user triggers a `mouseup` or `touchend` event on a single Card.
+	 * This method will be run when a user triggers a `mouseup` or `touchend` event.
 	 *
 	 * @public
 	 * @type		string
@@ -63,10 +63,10 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseUpTouchEndCard : "function",
+	mouseUpTouchEndEventHandler : "function",
 
 	/**
-	 * This method will be run when a user triggers a `mousedown` or `touchstart` event on a Stack of Cards.
+	 * This method will be run when a user triggers a `click` event.
 	 *
 	 * @public
 	 * @type		string
@@ -74,10 +74,10 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseDownTouchStartStack : "function",
+	mouseClickEventHandler : "function",
 
 	/**
-	 * This method will be run when a user triggers a `mouseup` or `touchend` event on a Stack of Cards.
+	 * This method will be run when a user triggers a `mousemove` or `touchmove` event.
 	 *
 	 * @public
 	 * @type		string
@@ -85,16 +85,5 @@ var IViewRules = Interface({
 	 * @since		
 	 * @default		"function"
 	 */
-	mouseUpTouchEndStack : "function",
-
-	/**
-	 * This method will be run when a user triggers a `mousemove` or `touchmove` event on a Card or Stack of Cards.
-	 *
-	 * @public
-	 * @type		string
-	 * @memberOf	IViewRules
-	 * @since		
-	 * @default		"function"
-	 */
-	mouseMoveTouchMove : "function"
+	mouseMoveTouchMoveEventHandler : "function"
 });

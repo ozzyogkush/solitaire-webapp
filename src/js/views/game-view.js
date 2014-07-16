@@ -28,7 +28,7 @@ var GameView = Class({ implements : IViewRules }, {
 	 */
 	__setModel : function(pluginModel)
 	{
-		if (! _pluginModel.hasOwnProperty('instanceOf') || ! _pluginModel.instanceOf(GameRules)) {
+		if (! pluginModel.hasOwnProperty('instanceOf') || ! pluginModel.instanceOf(GameRules)) {
 			throw new TypeException("GameRules", "GameView.__setModel");
 		}
 		this._pluginModel = pluginModel;
@@ -51,21 +51,21 @@ var GameView = Class({ implements : IViewRules }, {
 	_DOMElements : null,
 	
 	/**
-	 * Sets the `_DOMElements` property to the value of `dome`.
+	 * Sets the `_DOMElements` property to the value of `$dome`.
 	 * 
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameView
 	 * @since		
 	 * 
-	 * @param		jQuery			dome			The set of DOM elements that make up the plugin view canvas. Required.
+	 * @param		jQuery			$dome			The set of DOM elements that make up the plugin view canvas. Required.
 	 */
-	__setDOMElements : function(dome)
+	__setDOMElements : function($dome)
 	{
-		if (typeof dome !== "object" || dome.jquery === undefined) {
+		if (typeof $dome !== "object" || $dome.jquery === undefined) {
 			throw new TypeException("jQuery", "GameView.__setDOMElements");
 		}
-		this._DOMElements = dome;
+		this._DOMElements = $dome;
 	},
 	
 	/**
@@ -85,21 +85,21 @@ var GameView = Class({ implements : IViewRules }, {
 	_cards : null,
 	
 	/**
-	 * Sets the `_cards` property to the value of `cards`.
+	 * Sets the `_cards` property to the value of `$cards`.
 	 * 
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameView
 	 * @since		
 	 * 
-	 * @param		jQuery			cards			The set of Cards that will be added to the DOM. Required.
+	 * @param		jQuery			$cards			The set of Cards that will be added to the DOM. Required.
 	 */
-	__setCards : function(cards)
+	__setCards : function($cards)
 	{
-		if (typeof cards !== "object" || cards.jquery !== undefined) {
+		if (typeof $cards !== "object" || $cards.jquery !== undefined) {
 			throw new TypeException("jQuery", "GameView.__setCards");
 		}
-		this._cards = cards;
+		this._cards = $cards;
 	},
 	
 	/**
@@ -153,12 +153,13 @@ var GameView = Class({ implements : IViewRules }, {
 	 * @memberOf	GameView
 	 * @since		
 	 *
-	 * @return		jQuery			$domRows		Returns the created set of DOM rows.
+	 * @return		jQuery			$gameViewContainer		Returns the created set of DOM elements starting with the container.
 	 */
 	__createLayoutFromSpecs : function()
 	{
 		var layout = this.getModel().getLayout();
 
+		var $gameViewContainer = $('<div></div>').attr('data-card-game-view-element', 'canvas-container');
 		var $domRows = $('');
 
 		if (layout.length > 0) {
@@ -167,8 +168,8 @@ var GameView = Class({ implements : IViewRules }, {
 				var row = layout[i];
 				var rowGridSize = row.length + 1;
 				var $domRow = $('<div></div>').attr('data-card-game-view-element', 'canvas-row');
-				for (var j = 0; j < (rowGridSize - 1); j++) {
-					var stackType = row[j] !== null ? stackTypes[row[j]] : "none";
+				for (var j = 0; j < row.length; j++) {
+					var stackType = row[j] !== null ? stackTypes[row[j].stackType] : "none";
 					var $domGridCell = $('<div></div>')
 						.attr({
 							'data-card-game-view-element' : 'grid-row-cell',
@@ -180,11 +181,11 @@ var GameView = Class({ implements : IViewRules }, {
 				}
 
 				// Add this domRow to the list to be returned
-				$domRows.add($domRow);
+				$gameViewContainer.append($domRow);
 			}
 		}
 
-		return $domRows;
+		return $gameViewContainer;
 	},
 
 	__createCards : function()
@@ -225,60 +226,41 @@ var GameView = Class({ implements : IViewRules }, {
 
 	/** Public Functions **/
 
-	dealerCollectAllCards : function()
-	{
-
-	},
-
-	/*shuffleStack : function(stack)
-	{
-
-	},*/
-
 	/** Event Handlers **/
 
 	/**
-	 * This method will be run when a user triggers a `mousedown` or `touchstart` event on a single Card.
+	 * This method will be run when a user triggers a `mousedown` or `touchstart` event.
 	 *
 	 * @public
 	 * @memberOf	GameView
 	 * @since		
 	 */
-	mouseDownTouchStartCard : function() { /* This is a stub! */ },
+	mouseDownTouchStartEventHandler : function() { /* This is a stub! */ },
 
 	/**
-	 * This method will be run when a user triggers a `mouseup` or `touchend` event on a single Card.
+	 * This method will be run when a user triggers a `mouseup` or `touchend` event.
 	 *
 	 * @public
 	 * @memberOf	GameView
 	 * @since		
 	 */
-	mouseUpTouchEndCard : function() { /* This is a stub! */ },
+	mouseUpTouchEndEventHandler : function() { /* This is a stub! */ },
 
 	/**
-	 * This method will be run when a user triggers a `mousedown` or `touchstart` event on a Stack of Cards.
+	 * This method will be run when a user triggers a `click` event.
 	 *
 	 * @public
 	 * @memberOf	GameView
 	 * @since		
 	 */
-	mouseDownTouchStartStack : function() { /* This is a stub! */ },
+	mouseClickEventHandler : function() { /* This is a stub! */ },
 
 	/**
-	 * This method will be run when a user triggers a `mouseup` or `touchend` event on a Stack of Cards.
+	 * This method will be run when a user triggers a `mousemove` or `touchmove` event.
 	 *
 	 * @public
 	 * @memberOf	GameView
 	 * @since		
 	 */
-	mouseUpTouchEndStack : function() { /* This is a stub! */ },
-
-	/**
-	 * This method will be run when a user triggers a `mousemove` or `touchmove` event on a Card or Stack of Cards.
-	 *
-	 * @public
-	 * @memberOf	GameView
-	 * @since		
-	 */
-	mouseMoveTouchMove : function() { /* This is a stub! */ }
+	mouseMoveTouchMoveEventHandler : function() { /* This is a stub! */ }
 });
