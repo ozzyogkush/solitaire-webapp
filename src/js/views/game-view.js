@@ -297,27 +297,64 @@ var GameView = Class({
 	__createButtons : function()
 	{
 		// Create the set of buttons...
-		var $buttons = $('<button></button>')
-			.attr(
-				'data-card-game-button', 
-				'startNewGame'
-			)
-			.text(
+		var $buttons = this.__createButtonAddEventHandler(
+				'startNewGame', 
 				"Start New Game"
 			)
-			.add(
-				$('<button></button>')
-					.attr(
-						'data-card-game-button',
-						'restartCurrentGame'
-					)
-					.text(
-						"Restart Current Game"
-					)
-			);
+			.add(this.__createButtonAddEventHandler(
+				'restartCurrentGame',
+				"Restart Current Game"
+			));
 
 		// ...and return it.
 		return $buttons;
+	},
+
+	/**
+	 * Generic function to create a button that the view will add to the DOM somewhere.
+	 * 
+	 * Optionally specify a `click` (or `tap`) event handler on the button.
+	 *
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @param		String				dataCardGameButton			The value of the new button's 'data-card-game-button' attribute. Required.
+	 * @param		String				buttonText					The text that the button will display. Required.
+	 * @param		Function			clickEventHandler			Reference to an object method to handle the `click` or `tap` event. Optional.
+	 *
+	 * @return		jQuery				$btn						The created jQuery extended button with the proper 'data-card-game-button' attr., text, and optionally click/tap event handler.
+	 */
+	__createButtonAddEventHandler : function(dataCardGameButton, buttonText, clickEventHandler)
+	{
+		if (dataCardGameButton === undefined) {
+			throw new CardGameException('The `dataCardGameButton` param is required.', 'GameView.__createButtonAddEventHandler');
+		}
+		if (buttonText === undefined) {
+			throw new CardGameException('The `buttonText` param is required.', 'GameView.__createButtonAddEventHandler');
+		}
+
+		if (typeof dataCardGameButton !== "string") {
+			throw new TypeException("string", "GameView.__createButtonAddEventHandler");
+		}
+		if (typeof buttonText !== "string") {
+			throw new TypeException("string", "GameView.__createButtonAddEventHandler");
+		}
+
+		var $btn = $('<button></button>')
+			.attr(
+				'data-card-game-button', 
+				dataCardGameButton
+			)
+			.text(
+				buttonText
+			);
+
+		if (clickEventHandler !== undefined && (typeof clickEventHandler === "function")) {
+			$btn.on('click', clickEventHandler);
+		}
+
+		return $btn;
 	},
 
 	/**
@@ -360,5 +397,8 @@ var GameView = Class({
 	{
 		// Removes the current PluginView from the DOM.
 		this.__setPluginCanvas(null);
-	}
+	},
+
+	/** Event Handlers **/
+
 });

@@ -138,17 +138,13 @@ var CardGameApp = Class({
 		// Set the overall view to the `$containerElement` param, and register event handlers
 		// for the buttons that control the overall application. Create the Modal that will
 		// give the Player the choice of available variations/plugins/games to play.
-		var that = this;
 		this.__setView(new GameView($containerElement));
-		this.getView().getButtons().each(function() {
-			var curBtn = $(this);
-			if (curBtn.attr('data-card-game-button') === 'startNewGame') {
-				curBtn.on('click', that.startNewGameHandler);
-			}
-			if (curBtn.attr('data-card-game-button') === 'restartCurrentGame') {
-				curBtn.on('click', that.restartCurrentGameHandler);
-			}
-		});
+		this.getView().getButtons()
+			.filter('[data-card-game-button="startNewGame"]')
+				.on('click', this.__startNewGameBtnClickHandler)
+			.end()
+			.filter('[data-card-game-button="restartCurrentGame"]')
+				on('click', this.__restartCurrentGameBtnClickHandler);
 
 		// Load the specified Variation
 		this.loadedVariation = this.__loadDefaultVariation();
@@ -245,7 +241,7 @@ var CardGameApp = Class({
 		return successOrFail;
 	},
 
-	__generateVariationModel : function()
+	__generateVariationModel : function(variationName)
 	{
 		var modelClassName = variationName + "Rules";
 		if (window[modelClassName] !== undefined) {
@@ -255,7 +251,7 @@ var CardGameApp = Class({
 		return new window[modelClassName]();
 	},
 
-	__generateVariationView : function()
+	__generateVariationView : function(variationName)
 	{
 		var viewClassName = variationName + "View";
 		if (window[viewClassName] !== undefined) {
@@ -267,12 +263,12 @@ var CardGameApp = Class({
 
 	/** Public Functions **/
 
-	startNewGameHandler : function(event)
+	__startNewGameBtnClickHandler : function(event)
 	{
 
 	},
 
-	restartCurrentGameHandler : function(event)
+	__restartCurrentGameBtnClickHandler : function(event)
 	{
 
 	},
