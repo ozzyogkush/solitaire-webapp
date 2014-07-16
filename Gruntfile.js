@@ -112,7 +112,7 @@ module.exports = function(grunt) {
           'src/js/static/*.js',
           'src/js/*.js'
         ],
-        dest: '<%= paths.devOut %>/js/solitaire-webapp.js'
+        dest: '<%= paths.devOut %>/js/card-game-app.js'
       },
       prod: {
         // Dist assets go to /bin
@@ -125,7 +125,7 @@ module.exports = function(grunt) {
           'src/js/static/*.js',
           'src/js/*.js'
         ],
-        dest: '<%= paths.prodOut %>/js/solitaire-webapp.js'
+        dest: '<%= paths.prodOut %>/js/card-game-app.js'
       }
     },
 
@@ -155,6 +155,7 @@ module.exports = function(grunt) {
           console : true, /* Make cnosole object global available */
           module : true /* Make module object global available */
         },
+        //undef : true, /* Variables must be defined before they can be used */
         camelcase : true /* Variables and object properties must be camelCased */
       },
       dev : {
