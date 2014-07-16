@@ -288,9 +288,59 @@ var GameRules = Class({ implements : IModelRules }, {
 	__construct : function()
 	{
 		// actually create all the stacks and set to `stacks` property
+		//this.__setStacks(this.__createStackModel());
 	},
 
+	__createStackModel : function()
+	{
+		var layout = this.getLayout();
+
+		var stacks = null;
+
+		if (layout.length > 0) {
+			var stackTypes = new StackTypes();
+			stacks = {};
+			stacks[stackTypes.inPlay] = [];
+			stacks[stackTypes.dealer] = [];
+			stacks[stackTypes.draw] = [];
+			stacks[stackTypes.foundation] = [];
+
+			// Create as many stacks as we need of each type based on the
+			// info in the layout...
+			for (var i = 0; i < layout.length; i++) {
+				var row = layout[i];
+				for (var j = 0; j < row.length; j++) {
+					var layoutStackInfo = row[j];
+					if (layoutStackInfo !== null) {
+						// Create the new Stack object...
+						var st = new Stack(
+							stackTypes[layoutStackInfo.stackType],
+							layoutStackInfo.fanDir,
+							layoutStackInfo.numCardsFacingDown,
+							layoutStackInfo.numCardsFacingUp
+						);
+						// ...and add it to the set of Stacks for the specific StackType.
+						stacks[row[j].stackType].push(st);
+					}
+				}
+			}
+		}
+
+		return stacks;
+	},
+	//__createStackModel : function() { /* This is a stub! */ },
+
 	/** Public Functions **/
+
+	dealerCollectAllCards : function()
+	{
+
+	},
+
+	shuffleStack : function(stack)
+	{
+
+	},
 
 	/**
 	 * This function will perform a check of specified logic conditions that, when 
