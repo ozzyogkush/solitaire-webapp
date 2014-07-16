@@ -181,7 +181,10 @@ var CardGameApp = Class({
 				var variationStr = variations[i];
 				var variationClass = window[variationStr];
 				if ($.type(variationClass) === "undefined") {
-					throw new CardGameException("Variation class '" + variationStr + "' does not exist.", callStackCurrent);
+					throw new CardGameException(
+						"Variation class '" + variationStr + "' does not exist.",
+						callStackCurrent
+					);
 				}
 				this._registeredVariations.push({ 
 					variationName : variationStr, 
@@ -220,6 +223,9 @@ var CardGameApp = Class({
 		// Actually load the specified variation model and view.
 		var successOrFail = false;
 
+		if (this.getModel() !== null && this.getView().getGameViewCanvas() !== null) {
+			this.__removeGameViewEventHandlers();
+		}
 		this.__setModel(null);
 		this.getView().resetPluginView();
 
@@ -228,15 +234,21 @@ var CardGameApp = Class({
 			this.__setModel(this.__generateVariationModel(variationName));
 
 			// Init the variation plugin's view and apply it to the main application view
-			this.getView().initPluginView(this.__generateVariationView(variationName));
+			this.getView().initGameView(this.__generateVariationView(variationName));
 
-			// Add the proper event handlers:
+			// We've successfully set the Model and View for this
+			// game, so add the proper event handlers to the correct DOM elements.
+			// Since the View has access to the Model, it can use that logic to
+			// figure out what to do with the cards and stacks when the user interacts.
+			this.__addGameViewEventHandlers();
 
-			// Both above operations succeeded without throwing an exception.
+			// All the above operations succeeded without throwing an exception.
 			successOrFail = true;
 		}
 		catch (e) {
 			this.logConsoleDebugMessage(e);
+			this.__setModel(null);
+			this.getView().resetPluginView();
 		}
 
 		return successOrFail;
@@ -262,11 +274,63 @@ var CardGameApp = Class({
 		return new window[viewClassName](this.getModel());
 	},
 
+	__removeGameViewEventHandlers : function()
+	{
+		var gameModel = this.getModel();
+		var gameViewCanvas = this.getView().getGameViewCanvas();
+		gameViewCanvas.getDOMElements()
+			.filter('[data-card-game-view-element="canvas-container"]')
+			.off('mousedown touchstart', gameViewCanvas.mouseDownTouchStartEventHandler)
+			.off('mouseup touchend', gameViewCanvas.mouseUpTouchEndEventHandler)
+			.off('mousemove touchmove', gameViewCanvas.mouseMoveTouchMoveEventHandler)
+			.off('click', gameViewCanvas.mouseClickEventHandler);
+	},
+
+	__addGameViewEventHandlers : function()
+	{
+		var gameModel = this.getModel();
+		var gameViewCanvas = this.getView().getGameViewCanvas();
+		gameViewCanvas.getDOMElements()
+			.filter('[data-card-game-view-element="canvas-container"]')
+			.on('mousedown touchstart', gameViewCanvas.mouseDownTouchStartEventHandler)
+			.on('mouseup touchend', gameViewCanvas.mouseUpTouchEndEventHandler)
+			.on('mousemove touchmove', gameViewCanvas.mouseMoveTouchMoveEventHandler)
+			.on('click', gameViewCanvas.mouseClickEventHandler);
+	},
+
 	/** Public Functions **/
+
+	/** should the below go here, or in the view? **/
+	dealerCollectAllCards : function()
+	{
+
+	},
+
+	shuffleStack : function(stack)
+	{
+
+	},
+	/** should the above go here, or in the view? **/
+
+	/** Event Handler Functions **/
 
 	__startNewGameBtnClickHandler : function(event)
 	{
+		// Show the Game Choice Modal element
+		//this.getView().getGameChoiceModal().
+	},
 
+	__startNewSelectedGameBtnClickHandler : function(event)
+	{
+		var variationStr = $(this).attr('data-card-game-variation');
+		if (variationStr === null) {
+			throw new CardGameException(
+				"Expected the game button to have a `data-card-game-variation` attribute equal to '" + variationStr + "'.",
+				'CardGameApp.__startNewSelectedGameBtnClickHandler'
+			);
+		}
+
+		return this.__loadVariation(variationStr);
 	},
 
 	__restartCurrentGameBtnClickHandler : function(event)
@@ -305,7 +369,7 @@ var CardGameApp = Class({
 				logString = debugObject;
 			}
 
-			// switch console.error(), console.log(), etc. call based on debugObject.severity
+			// @TODO: switch console.error(), console.log(), etc. call based on debugObject.severity
 			
 			// Actually log the message.
 			console.log(logString);
