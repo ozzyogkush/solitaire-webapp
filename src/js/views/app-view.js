@@ -238,8 +238,6 @@ var AppView = Class({
 	//
 	//--------------------------------------------------------------------------
 
-	/** This is an abstract class and should never be instantiated as is. **/
-
 	/**
 	 * Initialize the basic layout of the game view.
 	 *
@@ -391,6 +389,29 @@ var AppView = Class({
 	{
 		// Adds the instantiated GameView to the DOM.
 		this.__setGameViewCanvas(gameView);
+
+		this.startNewGame();
+	},
+
+	startNewGame : function()
+	{
+		// Move all the cards to the Dealer stack...
+		this.getGameViewCanvas().moveCardsToStack();
+
+		// Shuffle the Dealer stack...
+		this.getGameViewCanvas().shuffleDealerStack();
+
+		// ...and deal the cards from the Dealer Stack to correct Stacks.
+		this.getGameViewCanvas().dealCards();
+
+		// Reset the timer.
+		this.resetTimer();
+	},
+
+	restartCurrentGame : function()
+	{
+		this.undoMoves(); // undo ALL moves in current game.
+		this.resetTimer();
 	},
 
 	/**

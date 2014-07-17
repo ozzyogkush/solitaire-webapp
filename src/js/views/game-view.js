@@ -190,17 +190,17 @@ var GameView = Class({ implements : IViewRules }, {
 		// Add the cards to their respective Stacks in the GameView's DOM.
 		this.__setModel(model);
 
-		// Set the empty screen
+		// Set the screen with Stacks that do not yet have cards in them.
 		var $gameViewContainer = this.__createLayoutFromSpecs();
 		this.__setDOMElements($gameViewContainer);
 
-		// Create the cards and add them to the Model's stack.
+		// Create the cards and add them to the model.
 		$cards = this.__createCards();
 		this.__setCards($cards);
 	},
 
 	/**
-	 * Generate the layout of empty stacks based on the layout specified in the model.
+	 * Generate the layout of empty stacks based on the model.
 	 * 
 	 * @private
 	 * @memberOf	GameView
@@ -210,27 +210,33 @@ var GameView = Class({ implements : IViewRules }, {
 	 */
 	__createLayoutFromSpecs : function()
 	{
-		var layout = this.getModel().getLayout();
+		var stacks = this.getModel().getStacks();
 
 		var $gameViewContainer = $('<div></div>').attr('data-card-game-view-element', 'canvas-container');
-		var $domRows = $('');
+		
+		if (stacks.length > 0) {
+			var $domRows = $('');
 
-		if (layout.length > 0) {
-			var stackTypes = new StackTypes();
-			for (var i = 0; i < layout.length; i++) {
-				var row = layout[i];
-				var rowGridSize = row.length + 1;
+			for (var i = 0; i < stacks.length; i++) {
+				var stackRow = stacks[i];
+				var rowGridSize = stackRow.length + 1;
+
 				var $domRow = $('<div></div>').attr('data-card-game-view-element', 'canvas-row');
-				for (var j = 0; j < row.length; j++) {
-					var stackType = row[j] !== null ? stackTypes[row[j].stackType] : "none";
-					var $domGridCell = $('<div></div>')
+				for (var j = 0; j < stackRow.length; j++) {
+					var stack = stackRow[j];
+					
+					var $stackDOMElement = $('<div></div>')
 						.attr({
-							'data-card-game-view-element' : 'grid-row-cell',
-							'data-card-game-stack-type' : stackType
+							'data-card-game-view-element' : 'stack',
+							'data-card-game-view-stack' : (
+								stack === null ? 
+									"empty" : 
+									stack
+								)
 						});
 
 					// Add this cell to the DOM row
-					$domRow.append($domGridCell);
+					$domRow.append($stackDOMElement);
 				}
 
 				// Add this domRow to the list to be returned
@@ -281,7 +287,8 @@ var GameView = Class({ implements : IViewRules }, {
 
 		$.each(ss, function(suitName, suitObj) {
 			$.each(cns, function(cardNumberName, cardNumberObject) {
-				$deck.add(new Card(suitObj, cardNumberObject));
+				//$deck.add(new Card(suitObj, cardNumberObject));
+				$deck.add(this.__createCard(suitObj, cardNumberObject));
 			});
 		});
 
@@ -294,6 +301,19 @@ var GameView = Class({ implements : IViewRules }, {
 
 		return $deck;
 	},
+
+	__createCard : function(suitObj, cardNumberObject)
+	{
+		var cardImageSrcName = cardNumberObject.getCardNumberName() + "_of_" + suitObj.getSuitName() + ".png";
+		var $card = $('<img />')
+			.attr({
+				src : "../img/cards/" + cardImageSrcName,
+				'data-card-game-suit' : suitObj, 
+				'data-card-game-card-number' : cardNumberObject
+			});
+
+		return $card;
+	}
 
 	/** Public Functions **/
 

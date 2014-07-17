@@ -64,12 +64,12 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * The number of full Decks of Cards that the game will require to be played.
 	 *
 	 * @private
-	 * @type		string
-	 * @memberOf	IModelRules
+	 * @type		Integer
+	 * @memberOf	GameRules
 	 * @since		
-	 * @default		"number"
+	 * @default		null
 	 */
-	_numDecksInGame : "number",
+	_numDecksInGame : null,
 	
 	/**
 	 * Sets the `_numDecksInGame` property to the value of `n`.
@@ -108,7 +108,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 *
 	 * @private
 	 * @type		Boolean
-	 * @memberOf	IModelRules
+	 * @memberOf	GameRules
 	 * @since		
 	 * @default		null
 	 */
@@ -193,7 +193,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * The list of Stack objects that make up the play area.
 	 *
 	 * @private
-	 * @type		Object
+	 * @type		Array
 	 * @memberOf	IModelRules
 	 * @since		
 	 * @default		null
@@ -208,12 +208,12 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @memberOf	GameRules
 	 * @since		
 	 * 
-	 * @param		Object			st			The set of Stack objects making up the play area. Required.
+	 * @param		Array			st			The set of Stack objects making up the play area. Required.
 	 */
 	__setStacks : function(st)
 	{
-		if (typeof st !== "object") {
-			throw new TypeException("object", "GameRules.__setStacks");
+		if ($.type(st) !== "array") {
+			throw new TypeException("array", "GameRules.__setStacks");
 		}
 		this._stacks = st;
 	},
@@ -225,7 +225,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @memberOf	GameRules
 	 * @since		
 	 *
-	 * @return		Object			_stacks		Returns the `_stacks` property.
+	 * @return		Array			_stacks		Returns the `_stacks` property.
 	 */
 	getStacks : function()
 	{
@@ -238,7 +238,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * "empty" indicating that we want to separate cells by empty space.
 	 *
 	 * @private
-	 * @type		Object
+	 * @type		Array
 	 * @memberOf	IModelRules
 	 * @since		
 	 * @default		null
@@ -253,12 +253,12 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @memberOf	GameRules
 	 * @since		
 	 * 
-	 * @param		Object			ly			The description of the game layout based on StackTypes. Required.
+	 * @param		Array			ly			The description of the game layout based on StackTypes. Required.
 	 */
 	__setLayout : function(ly)
 	{
-		if (typeof ly !== "object") {
-			throw new TypeException("object", "GameRules.__setLayout");
+		if ($.type(ly) !== "array") {
+			throw new TypeException("array", "GameRules.__setLayout");
 		}
 		this._layout = ly;
 	},
@@ -270,7 +270,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @memberOf	GameRules
 	 * @since		
 	 *
-	 * @return		Object			_layout		Returns the `_layout` property.
+	 * @return		Array			_layout		Returns the `_layout` property.
 	 */
 	getLayout : function()
 	{
@@ -310,7 +310,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @memberOf	GameRules
 	 * @since		
 	 *
-	 * @return		Object				stacks				Ordered sets of Stack objects split up by StackType
+	 * @return		Object				stacks				Ordered sets of Stack objects in rows as defined by the layout
 	 */
 	__createStackModel : function()
 	{
@@ -321,30 +321,30 @@ var GameRules = Class({ implements : IModelRules }, {
 		if (layout.length > 0) {
 			var stackTypes = new StackTypes();
 			var fanningDirections = new FanningDirectionSet();
-			stacks = {};
-			stacks[stackTypes.inPlay] = [];
-			stacks[stackTypes.dealer] = [];
-			stacks[stackTypes.draw] = [];
-			stacks[stackTypes.foundation] = [];
+			stacks = [];
 
-			// Create as many stacks as we need of each type based on the
-			// info in the layout...
 			for (var i = 0; i < layout.length; i++) {
 				var row = layout[i];
+				var stackRow = [];
+
 				for (var j = 0; j < row.length; j++) {
 					var layoutStackInfo = row[j];
+					var st = null;
 					if (layoutStackInfo !== null) {
 						// Create the new Stack object...
-						var st = new Stack(
+						st = new Stack(
 							stackTypes[layoutStackInfo.stackType],
 							fanningDirections[layoutStackInfo.fanDir],
 							layoutStackInfo.numCardsFacingDown,
 							layoutStackInfo.numCardsFacingUp
-						);
-						// ...and add it to the set of Stacks for the specific StackType.
-						stacks[row[j].stackType].push(st);
+						);	
 					}
+
+					// ...and add it to the set of Stacks in the current row.
+					stackRow.push(st);
 				}
+
+				stacks.push(stackRow);
 			}
 		}
 
