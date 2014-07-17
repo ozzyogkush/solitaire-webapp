@@ -9,17 +9,20 @@ var localFDS = [
 ];
 
 QUnit.test( "property tests", function( assert ) {
-	expect(5);
+	expect(10);
 
 	var fds = new FanningDirectionSet();
-	var i = 0;
-	for (var fanningDirection in fds) {
+	for (var i = 0; i < localFDS.length; i++) {
+		var nameToCheck = localFDS[i].getFanningDirectionName();
+		assert.ok(
+			fds[nameToCheck] !== undefined,
+			"The `" + nameToCheck + "` FanningDirection was not found in the FanningDirectionSet!"
+		);
 		assert.propEqual(
 			localFDS[i],
-			fds[fanningDirection],
+			fds[nameToCheck],
 			'Expected a FanningDirection object with `_fanningDirectionName` equal to ' + 
-			localFDS[i].getFanningDirectionName() + '`.'
+			nameToCheck + '`.'
 		);
-		i++;
 	}
 });
