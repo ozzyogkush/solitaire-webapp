@@ -14,6 +14,16 @@ var GameView = Class({ implements : IViewRules }, {
 	//
 	//--------------------------------------------------------------------------
 
+	/**
+	 * Model object that contains the game rules, including the layout specs
+	 * and the number and type of stacks that the cards will be moved into/out of.
+	 *
+	 * @private		
+	 * @type		GameRules
+	 * @memberOf	GameView
+	 * @since		
+	 * @default		null
+	 */
 	_pluginModel : null,
 	
 	/**
@@ -48,6 +58,16 @@ var GameView = Class({ implements : IViewRules }, {
 		return this._pluginModel;
 	},
 
+	/**
+	 * jQuery object that contains the elements that are added to the DOM, which represent
+	 * the visual state of the game, and with which the user directly interacts to play the game.
+	 *
+	 * @private		
+	 * @type		jQuery
+	 * @memberOf	GameView
+	 * @since		
+	 * @default		null
+	 */
 	_DOMElements : null,
 	
 	/**
@@ -82,6 +102,16 @@ var GameView = Class({ implements : IViewRules }, {
 		return this._DOMElements;
 	},
 
+	/**
+	 * jQuery object that contains the Card elements that are added to the DOM, and with 
+	 * which the user directly interacts to play the game.
+	 *
+	 * @private		
+	 * @type		jQuery
+	 * @memberOf	GameView
+	 * @since		
+	 * @default		null
+	 */
 	_cards : null,
 	
 	/**
@@ -124,6 +154,17 @@ var GameView = Class({ implements : IViewRules }, {
 
 	/** This is an abstract class and should never be instantiated as is. **/
 
+	/**
+	 * Construct the GameView object and initialize the game view's canvas area
+	 * to display the elements of the game.
+	 * 
+	 * @constructor
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @param		GameRules			model			The model rules that define how the game runs. Required.
+	 */
 	__construct : function(model)
 	{
 		if (model !== undefined && model !== null) {
@@ -134,16 +175,28 @@ var GameView = Class({ implements : IViewRules }, {
 
 	/** Private Functions **/
 
+	/**
+	 * Set the model rules that define how the game runs, and initialize the game 
+	 * view's canvas area to display the elements of the game.
+	 * 
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @param		GameRules			model			The model rules that define how the game runs. Required.
+	 */
 	__initGameView : function(model)
 	{
 		// Add the cards to their respective Stacks in the GameView's DOM.
 		this.__setModel(model);
 
 		// Set the empty screen
-		this.__setDOMElements(this.__createLayoutFromSpecs());
+		var $gameViewContainer = this.__createLayoutFromSpecs();
+		this.__setDOMElements($gameViewContainer);
 
 		// Create the cards and add them to the Model's stack.
-		this.__setCards(this.__createCards());
+		$cards = this.__createCards();
+		this.__setCards($cards);
 	},
 
 	/**
@@ -188,6 +241,15 @@ var GameView = Class({ implements : IViewRules }, {
 		return $gameViewContainer;
 	},
 
+	/**
+	 * Generate the number of Decks of Card objects that the game rules specify and return it.
+	 * 
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @return		jQuery			$cards			Returns the created set of Card elements.
+	 */
 	__createCards : function()
 	{
 		var $cards = $();
@@ -199,6 +261,15 @@ var GameView = Class({ implements : IViewRules }, {
 		return $cards;
 	},
 
+	/**
+	 * Generate a deck of Card objects and return it.
+	 * 
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @return		jQuery			$deck			Returns the created set of Card elements.
+	 */
 	__createDeck : function()
 	{
 		var $deck = $();
