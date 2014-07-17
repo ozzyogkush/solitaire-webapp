@@ -18,45 +18,101 @@ var StackTypes = Class({
 	 * The "Dealer" type of Stack. Cards can be added to the top or bottom of the Stack.
 	 *
 	 * @private
-	 * @type		String
+	 * @type		StackType
 	 * @memberOf	StackTypes
 	 * @since		
-	 * @default		"dealer"
+	 * @default		null
 	 */
-	dealer : "dealer",
+	dealer : null,
+
+	/**
+	 * Returns the `dealer` property.
+	 * 
+	 * @public
+	 * @memberOf	StackTypes
+	 * @since		
+	 *
+	 * @return		StackType		this.dealer		The `dealer` StackType object.
+	 */
+	getDealer : function()
+	{
+		return this.dealer;
+	},
 
 	/**
 	 * The "Draw" type of Stack - the currently drawn set of cards in the rotation.
 	 *
 	 * @private
-	 * @type		String
+	 * @type		StackType
 	 * @memberOf	StackTypes
 	 * @since		
-	 * @default		"dealer"
+	 * @default		null
 	 */
-	draw : "draw",
+	draw : null,
 
 	/**
-	 * The "In PLay" type of Stack - meaning what the Player is actively holding or manipulating.
-	 *
-	 * @private
-	 * @type		String
+	 * Returns the `draw` property.
+	 * 
+	 * @public
 	 * @memberOf	StackTypes
 	 * @since		
-	 * @default		"inPlay"
+	 *
+	 * @return		StackType		this.draw		The `draw` StackType object.
 	 */
-	inPlay : "inPlay",
+	getDraw : function()
+	{
+		return this.draw;
+	},
+
+	/**
+	 * The "In Play" type of Stack - meaning what the Player is actively holding or manipulating.
+	 *
+	 * @private
+	 * @type		StackType
+	 * @memberOf	StackTypes
+	 * @since		
+	 * @default		null
+	 */
+	inPlay : null,
+
+	/**
+	 * Returns the `inPlay` property.
+	 * 
+	 * @public
+	 * @memberOf	StackTypes
+	 * @since		
+	 *
+	 * @return		StackType		this.inPlay		The `inPlay` StackType object.
+	 */
+	getInPlay : function()
+	{
+		return this.inPlay;
+	},
 
 	/**
 	 * The "Foundation" type of Stack - to which the Player moves cards to win the game.
 	 *
 	 * @private
-	 * @type		String
+	 * @type		StackType
 	 * @memberOf	StackTypes
 	 * @since		
-	 * @default		"foundation"
+	 * @default		null
 	 */
-	foundation : "foundation",
+	foundation : null,
+
+	/**
+	 * Returns the `foundation` property.
+	 * 
+	 * @public
+	 * @memberOf	StackTypes
+	 * @since		
+	 *
+	 * @return		StackType		this.foundation		The `foundation` StackType object.
+	 */
+	getFoundation : function()
+	{
+		return this.foundation;
+	},
 
 	//--------------------------------------------------------------------------
 	//
@@ -76,12 +132,17 @@ var StackTypes = Class({
 	 */
 	__construct : function()
 	{
+		this.dealer = new StackType("dealer");
+		this.draw = new StackType("draw");
+		this.inPlay = new StackType("inPlay");
+		this.foundation = new StackType("foundation");
+
 		// Return the static object.
 		return {
-			dealer : this.dealer,
-			draw : this.draw,
-			inPlay : this.inPlay,
-			foundation : this.foundation
+			dealer : this.getDealer(),
+			draw : this.getDraw(),
+			inPlay : this.getInPlay(),
+			foundation : this.getFoundation()
 		};
 	}
 
