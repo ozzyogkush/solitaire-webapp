@@ -78,9 +78,9 @@ var IModelRules = Interface({
 	 * @type		string
 	 * @memberOf	IModelRules
 	 * @since		
-	 * @default		"object"
+	 * @default		"array"
 	 */
-	_stacks : "object",
+	_stacks : "array",
 
 	/**
 	 * Describes the visual layout of the Stacks on the game board. A 2D array of arrays containing
@@ -91,9 +91,9 @@ var IModelRules = Interface({
 	 * @type		string
 	 * @memberOf	IModelRules
 	 * @since		
-	 * @default		"object"
+	 * @default		"array"
 	 */
-	_layout : "object",
+	_layout : "array",
 
 	//--------------------------------------------------------------------------
 	//

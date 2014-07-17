@@ -37,14 +37,14 @@ QUnit.test( "property tests", function( assert ) {
 
 	assert.strictEqual(
 		IModelRules._stacks,
-		'object',
-		'`IModelRules._stacks` must be an "object".'
+		'array',
+		'`IModelRules._stacks` must be an "array".'
 	);
 
 	assert.strictEqual(
 		IModelRules._layout,
-		'object',
-		'`IModelRules._layout` must be an "object".'
+		'array',
+		'`IModelRules._layout` must be an "array".'
 	);
 
 	// Function property tests
