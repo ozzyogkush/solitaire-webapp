@@ -96,19 +96,38 @@ module.exports = function(grunt) {
     },
 
     /* Concatanate all source JS files into a single application */
+    /* Interface definitions must come before any Class that uses them */
     concat : {
       options : {
-        separator : ';'
+        separator : ';\r\n'
       },
       dev: {
         // Dev assets go to /src
-        src: 'src/js/**/*.js',
-        dest: '<%= paths.devOut %>/js/solitaire-webapp.js'
+        src: [ 
+          'src/js/exceptions/*.js', 
+          'src/js/models/imodel-rules.js',
+          'src/js/models/*.js', 
+          'src/js/views/iview-rules.js',
+          'src/js/views/*.js', 
+          'src/js/static/*.js',
+          'src/js/plugins/*.js',
+          'src/js/*.js'
+        ],
+        dest: '<%= paths.devOut %>/js/card-game-app.js'
       },
       prod: {
         // Dist assets go to /bin
-        src: 'src/js/**/*.js',
-        dest: '<%= paths.prodOut %>/js/solitaire-webapp.js'
+        src: [ 
+          'src/js/exceptions/*.js', 
+          'src/js/models/imodel-rules.js',
+          'src/js/models/*.js', 
+          'src/js/views/iview-rules.js',
+          'src/js/views/*.js', 
+          'src/js/static/*.js',
+          'src/js/plugins/*.js',
+          'src/js/*.js'
+        ],
+        dest: '<%= paths.prodOut %>/js/card-game-app.js'
       }
     },
 
@@ -138,6 +157,7 @@ module.exports = function(grunt) {
           console : true, /* Make cnosole object global available */
           module : true /* Make module object global available */
         },
+        //undef : true, /* Variables must be defined before they can be used */
         camelcase : true /* Variables and object properties must be camelCased */
       },
       dev : {

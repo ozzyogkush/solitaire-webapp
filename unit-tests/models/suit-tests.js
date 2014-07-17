@@ -56,11 +56,3 @@ QUnit.test( "constructor tests expected failures", function( assert ) {
 		"Expected that `color` param must be a Color has passed!"
 	);
 });
-/*
-QUnit.test( "constructor tests expected success", function( assert ) {
-	expect();
-});
-
-QUnit.test( "property accessor method tests", function( assert ) {
-	expect();
-});*/
