@@ -285,12 +285,33 @@ var GameRules = Class({ implements : IModelRules }, {
 
 	/** This is an abstract class and should never be instantiated as is. **/
 
+	/**
+	 * Initialize the object and create the stacks based on the model defined
+	 * by the extended child class.
+	 *
+	 * @constructor
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 */
 	__construct : function()
 	{
-		// actually create all the stacks and set to `stacks` property
-		//this.__setStacks(this.__createStackModel());
+		if (this.getLayout() !== null) {
+			// actually create all the stacks and set to `stacks` property
+			this.__setStacks(this.__createStackModel());
+		}
 	},
 
+	/**
+	 * Generates an object containing sets of Stacks. It will contain any number of each StackType
+	 * as defined in the `_layout` property. Returns the generated object.
+	 *
+	 * @private
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		Object				stacks				Ordered sets of Stack objects split up by StackType
+	 */
 	__createStackModel : function()
 	{
 		var layout = this.getLayout();
@@ -299,6 +320,7 @@ var GameRules = Class({ implements : IModelRules }, {
 
 		if (layout.length > 0) {
 			var stackTypes = new StackTypes();
+			var fanningDirections = new FanningDirectionSet();
 			stacks = {};
 			stacks[stackTypes.inPlay] = [];
 			stacks[stackTypes.dealer] = [];
@@ -315,7 +337,7 @@ var GameRules = Class({ implements : IModelRules }, {
 						// Create the new Stack object...
 						var st = new Stack(
 							stackTypes[layoutStackInfo.stackType],
-							layoutStackInfo.fanDir,
+							fanningDirections[layoutStackInfo.fanDir],
 							layoutStackInfo.numCardsFacingDown,
 							layoutStackInfo.numCardsFacingUp
 						);
@@ -328,19 +350,8 @@ var GameRules = Class({ implements : IModelRules }, {
 
 		return stacks;
 	},
-	//__createStackModel : function() { /* This is a stub! */ },
 
 	/** Public Functions **/
-
-	dealerCollectAllCards : function()
-	{
-
-	},
-
-	shuffleStack : function(stack)
-	{
-
-	},
 
 	/**
 	 * This function will perform a check of specified logic conditions that, when 
