@@ -1,41 +1,5 @@
 var CardGameApp = Class({
 
-	_model : null,
-	
-	/**
-	 * Sets the `_model` property to the value of `model`.
-	 * 
-	 * @private
-	 * @throws		TypeException
-	 * @memberOf	CardGameApp
-	 * @since		
-	 * 
-	 * @param		GameRules			model			The implemented variation GameRules model. Required.
-	 */
-	__setModel : function(model)
-	{
-		if (model !== null &&
-			(! model.hasOwnProperty('instanceOf') || ! model.instanceOf(GameRules))) {
-			throw new TypeException("GameRules", "CardGameApp.__setModel");
-		}
-
-		this._model = model;
-	},
-	
-	/**
-	 * Returns the `_model` property.
-	 * 
-	 * @public
-	 * @memberOf	CardGameApp
-	 * @since		
-	 *
-	 * @return		GameRules			_model		Returns the `_model` property.
-	 */
-	getModel : function()
-	{
-		return this._model;
-	},
-
 	_view : null,
 	
 	/**
@@ -135,10 +99,20 @@ var CardGameApp = Class({
 			return this;
 		}
 
+		this.__initApplication($containerElement);
+
+		// Load the specified Variation
+		this.loadedVariation = this.__loadDefaultVariation();
+	},
+
+	/** Private Functions **/
+
+	__initApplication : function($containerElement)
+	{
 		// Set the overall view to the `$containerElement` param, and register event handlers
 		// for the buttons that control the overall application. Create the Modal that will
 		// give the Player the choice of available variations/plugins/games to play.
-		this.__setView(new GameView($containerElement));
+		this.__setView(new AppView($containerElement));
 		this.getView()
 			.getButtons()
 				.filter('[data-card-game-button="startNewGame"]')
@@ -146,30 +120,7 @@ var CardGameApp = Class({
 			.end()
 				.filter('[data-card-game-button="restartCurrentGame"]') /*jshint asi:true */
 					on('click', this.__restartCurrentGameBtnClickHandler);
-
-		// Load the specified Variation
-		this.loadedVariation = this.__loadDefaultVariation();
-
-		if (this.loadedVariation) {
-			// 
-		}
-
-		//this.loadedVariation.get
-
-		/*
-		// Step : 
-
-		// Step : 
-
-		// Step : 
-
-		// Step : 
-
-		// Step : 
-		*/
 	},
-
-	/** Private Functions **/
 
 	__registerVariations : function(variations)
 	{
@@ -203,7 +154,7 @@ var CardGameApp = Class({
 
 	__loadDefaultVariation : function()
 	{
-		var domSpecified = this.view.getContainer().attr('data-card-game');
+		var domSpecified = this.getView().getContainer().attr('data-card-game');
 		var defaultVariationToLoadStr = this._registeredVariations[0].variationName;
 
 		if (domSpecified !== null) {
@@ -223,18 +174,17 @@ var CardGameApp = Class({
 		// Actually load the specified variation model and view.
 		var successOrFail = false;
 
-		if (this.getModel() !== null && this.getView().getGameViewCanvas() !== null) {
+		if (this.getView().getGameViewCanvas() !== null) {
 			this.__removeGameViewEventHandlers();
 		}
-		this.__setModel(null);
 		this.getView().resetPluginView();
 
 		try {
 			// Generate the model/rules specific to the variation plugin
-			this.__setModel(this.__generateVariationModel(variationName));
+			var model = this.__generateVariationModel(variationName);
 
 			// Init the variation plugin's view and apply it to the main application view
-			this.getView().initGameView(this.__generateVariationView(variationName));
+			this.getView().initGameView(this.__generateVariationView(variationName, model));
 
 			// We've successfully set the Model and View for this
 			// game, so add the proper event handlers to the correct DOM elements.
@@ -247,12 +197,20 @@ var CardGameApp = Class({
 		}
 		catch (e) {
 			this.logConsoleDebugMessage(e);
-			this.__setModel(null);
 			this.getView().resetPluginView();
 		}
 
 		return successOrFail;
 	},
+
+	/*__generateVariation : function(variationName)
+	{
+		if (window[variationName] !== undefined) {
+			throw new TypeException(variationName, "CardGameApp.__generateVariation");
+		}
+
+		return new window[variationName]();
+	},*/
 
 	__generateVariationModel : function(variationName)
 	{
@@ -264,38 +222,36 @@ var CardGameApp = Class({
 		return new window[modelClassName]();
 	},
 
-	__generateVariationView : function(variationName)
+	__generateVariationView : function(variationName, model)
 	{
 		var viewClassName = variationName + "View";
 		if (window[viewClassName] !== undefined) {
 			throw new TypeException(viewClassName, "CardGameApp.__generateVariationView");
 		}
 
-		return new window[viewClassName](this.getModel());
+		return new window[viewClassName](model);
 	},
 
 	__removeGameViewEventHandlers : function()
 	{
-		var gameModel = this.getModel();
 		var gameViewCanvas = this.getView().getGameViewCanvas();
 		gameViewCanvas.getDOMElements()
 			.filter('[data-card-game-view-element="canvas-container"]')
-			.off('mousedown touchstart', gameViewCanvas.mouseDownTouchStartEventHandler)
-			.off('mouseup touchend', gameViewCanvas.mouseUpTouchEndEventHandler)
-			.off('mousemove touchmove', gameViewCanvas.mouseMoveTouchMoveEventHandler)
-			.off('click', gameViewCanvas.mouseClickEventHandler);
+				.off('mousedown touchstart', gameViewCanvas.mouseDownTouchStartEventHandler)
+				.off('mouseup touchend', gameViewCanvas.mouseUpTouchEndEventHandler)
+				.off('mousemove touchmove', gameViewCanvas.mouseMoveTouchMoveEventHandler)
+				.off('click', gameViewCanvas.mouseClickEventHandler);
 	},
 
 	__addGameViewEventHandlers : function()
 	{
-		var gameModel = this.getModel();
 		var gameViewCanvas = this.getView().getGameViewCanvas();
 		gameViewCanvas.getDOMElements()
 			.filter('[data-card-game-view-element="canvas-container"]')
-			.on('mousedown touchstart', gameViewCanvas.mouseDownTouchStartEventHandler)
-			.on('mouseup touchend', gameViewCanvas.mouseUpTouchEndEventHandler)
-			.on('mousemove touchmove', gameViewCanvas.mouseMoveTouchMoveEventHandler)
-			.on('click', gameViewCanvas.mouseClickEventHandler);
+				.on('mousedown touchstart', gameViewCanvas.mouseDownTouchStartEventHandler)
+				.on('mouseup touchend', gameViewCanvas.mouseUpTouchEndEventHandler)
+				.on('mousemove touchmove', gameViewCanvas.mouseMoveTouchMoveEventHandler)
+				.on('click', gameViewCanvas.mouseClickEventHandler);
 	},
 
 	/** Public Functions **/
@@ -306,9 +262,9 @@ var CardGameApp = Class({
 
 	},
 
-	shuffleStack : function(stack)
+	shuffleCards : function()
 	{
-
+		
 	},
 	/** should the above go here, or in the view? **/
 

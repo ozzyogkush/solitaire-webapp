@@ -1,35 +1,27 @@
 // Unit tests for static/stack-types.js
 
-var dealer = "dealer";
-var draw = "draw";
-var inPlay = "inPlay";
-var foundation = "foundation";
+var localSTS = [
+    new StackType("dealer"),
+    new StackType("draw"),
+    new StackType("inPlay"),
+    new StackType("foundation")
+];
 
 QUnit.test( "property tests", function( assert ) {
-	expect(4);
+	expect(8);
 
-	var st = new StackTypes();
-	assert.strictEqual(
-		dealer,
-		st.dealer,
-		'Expected the "dealer" StackType to equal "dealer".'
-	);
-
-	assert.strictEqual(
-		draw,
-		st.draw,
-		'Expected the "draw" StackType to equal "draw".'
-	);
-
-	assert.strictEqual(
-		inPlay,
-		st.inPlay,
-		'Expected the "inPlay" StackType to equal "inPlay".'
-	);
-
-	assert.strictEqual(
-		foundation,
-		st.foundation,
-		'Expected the "foundation" StackType to equal "foundation".'
-	);
+	var sts = new StackTypes();
+	for (var i = 0; i < localSTS.length; i++) {
+		var nameToCheck = localSTS[i].getStackTypeName();
+		assert.ok(
+			sts[nameToCheck] !== undefined,
+			"The `" + nameToCheck + "` StackType was not found in the StackTypes set!"
+		);
+		assert.propEqual(
+			localSTS[i],
+			sts[nameToCheck],
+			'Expected a StackType object with `_stackTypeName` equal to ' + 
+			nameToCheck + '`.'
+		);
+	}
 });
