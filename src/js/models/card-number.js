@@ -24,10 +24,10 @@ var CardNumber = Class({
 	 * @since		
 	 * @default		null
 	 */
-	cardValue : null,
+	_cardValue : null,
 
 	/**
-	 * Sets the `cardValue` property to the value of `cv`.
+	 * Sets the `_cardValue` property to the value of `cv`.
 	 * 
 	 * @private
 	 * @throws		TypeException
@@ -39,23 +39,23 @@ var CardNumber = Class({
 	{
 		var parsed = null;
 		if (typeof cv !== "number" || (parsed = parseInt(cv) === null)) {
-			throw new TypeException("number", "CardNumber.__setCardValue");
+			throw new TypeException("Integer", "CardNumber.__setCardValue");
 		}
-		this.cardValue = cv;
+		this._cardValue = cv;
 	},
 
 	/**
-	 * Returns the `cardValue` property.
+	 * Returns the `_cardValue` property.
 	 * 
 	 * @public
 	 * @memberOf	CardNumber
 	 * @since		
 	 *
-	 * @return		Integer			cardValue			Returns the `cardValue` property.
+	 * @return		Integer			_cardValue			Returns the `_cardValue` property.
 	 */
 	getCardValue : function()
 	{
-		return this.cardValue;
+		return this._cardValue;
 	},
 
 	/**
@@ -67,10 +67,10 @@ var CardNumber = Class({
 	 * @since		
 	 * @default		null
 	 */
-	cardNumberName : null,
+	_cardNumberName : null,
 
 	/**
-	 * Sets the `cardNumberName` property to the value of `na`.
+	 * Sets the `_cardNumberName` property to the value of `na`.
 	 * 
 	 * @private
 	 * @throws		TypeException
@@ -83,21 +83,21 @@ var CardNumber = Class({
 		if (typeof na !== "string") {
 			throw new TypeException("string", 'CardNumber.__setCardNumberName');
 		}
-		this.cardNumberName = na;
+		this._cardNumberName = na;
 	},
 
 	/**
-	 * Returns the `cardNumberName` property.
+	 * Returns the `_cardNumberName` property.
 	 * 
 	 * @public
 	 * @memberOf	CardNumber
 	 * @since		
 	 *
-	 * @return		String			cardNumberName			Returns the `cardNumberName` property.
+	 * @return		String			_cardNumberName			Returns the `_cardNumberName` property.
 	 */
 	getCardNumberName : function()
 	{
-		return this.cardNumberName;
+		return this._cardNumberName;
 	},
 	
 	//--------------------------------------------------------------------------
