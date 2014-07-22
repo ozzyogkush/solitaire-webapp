@@ -1,6 +1,5 @@
 /**
- * Interface for implmenting specific events in a game that are required for
- * the user to be able to play the game.
+ * Interface for implementing the Stack model for the layout of a card game.
  *
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		IModelRules
@@ -14,29 +13,6 @@ var IModelRules = Interface({
 	//  Variables and get/set functions
 	//
 	//--------------------------------------------------------------------------
-
-	/**
-	 * This name of the Variation.
-	 *
-	 * @public
-	 * @type		string
-	 * @memberOf	IModelRules
-	 * @since		
-	 * @default		"string"
-	 */
-	_variationName : "string",
-
-	/**
-	 * Contains the number of cards a player is able currently allowed to move
-	 * from an "In Play" stack to another "In Play" Stack (with cards or empty).
-	 *
-	 * @private
-	 * @type		string
-	 * @memberOf	IModelRules
-	 * @since		
-	 * @default		"number"
-	 */
-	_cardNumAbleToMoveFromInPlayStack : "number",
 
 	/**
 	 * The number of full Decks of Cards that the game will require to be played.
@@ -80,7 +56,7 @@ var IModelRules = Interface({
 	 * @since		
 	 * @default		"array"
 	 */
-	_stacks : "array",
+	_stackkModel : "array",
 
 	/**
 	 * Describes the visual layout of the Stacks on the game board. A 2D array of arrays containing
@@ -100,16 +76,4 @@ var IModelRules = Interface({
 	//  Methods
 	//
 	//--------------------------------------------------------------------------
-
-	/**
-	 * This function will perform a check of specified logic conditions that, when 
-	 * evaluated to `true`, indicates that the Player has won the current game.
-	 *
-	 * @private
-	 * @type		string
-	 * @memberOf	IModelRules
-	 * @since		
-	 * @default		"function"
-	 */
-	gameWon : "function"
 });

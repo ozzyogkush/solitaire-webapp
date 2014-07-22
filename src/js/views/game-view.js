@@ -261,7 +261,7 @@ var GameView = Class({
 			throw new CardGameException('The `numDecks` param is required.', 'GameView.createCards');
 		}
 		var parsed = null;
-		if (typeof numDecks !== "number" || (parsed = parseInt(numDecks) === null)) {
+		if (typeof numDecks !== "number" || ((parsed = parseInt(numDecks)) === null)) {
 			throw new TypeException("Integer", "GameView.createCards");
 		}
 
