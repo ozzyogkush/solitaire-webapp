@@ -259,53 +259,39 @@ var CardGameApp = Class({
 	{
 		var callStackCurrent = "CardGameApp.__construct";
 
-		try {
-			// Check for required parameters
-			if ($.type($containerElement) === "undefined") {
-				throw new CardGameException("Container element is required.", callStackCurrent);
-			}
-			else if (
-				$.type($containerElement) !== "object" ||
-			 	$.type($containerElement.jquery) === "undefined"
-			) {
-				throw new TypeException("jQuery", callStackCurrent);
-			}
-			else if ($containerElement.length === 0) {
-				throw new CardGameException("Specified element could not be found.", callStackCurrent);
-			}
-			// `$containerElement` is valid.
-
-			if ($.type(games) !== "array") {
-				throw new TypeException("Array", callStackCurrent);
-			}
-			else if (games.length === 0) {
-				throw new CardGameException("Set of games cannot be empty.", callStackCurrent);
-			}
-
-			// `games` is valid.
+		// Check for required parameters
+		if ($.type($containerElement) === "undefined") {
+			throw new CardGameException("Container element is required.", callStackCurrent);
 		}
-		catch (e) {
-			// Set debug to true so the user can see the problem.
-			this.__setDebug(true);
-			this.logConsoleDebugMessage(e);
-			return this;
+		else if (
+			$.type($containerElement) !== "object" ||
+		 	$.type($containerElement.jquery) === "undefined"
+		) {
+			throw new TypeException("jQuery", callStackCurrent);
 		}
+		else if ($containerElement.length === 0) {
+			throw new CardGameException("Specified element could not be found.", callStackCurrent);
+		}
+		// `$containerElement` is valid.
+		
+		if ($.type(games) === "undefined") {
+			throw new CardGameException("List of games is required.", callStackCurrent);
+		}
+		else if ($.type(games) !== "array") {
+			throw new TypeException("Array", callStackCurrent);
+		}
+		else if (games.length === 0) {
+			throw new CardGameException("List of games cannot be empty.", callStackCurrent);
+		}
+		// `games` is valid.
 
 		// Proceed with checking and setting the optional `debug` property.
 		if ($.type(debug) !== "undefined") {
 			this.__setDebug(debug);
 		}
 
-		try {
-			// First, make sure we have at least one game available, and register them.
-			this.__registerGames(games);
-		}
-		catch (e) {
-			// If it reaches this point, it means that no Games could be registered,
-			// so there's nothing more to do.
-			this.logConsoleDebugMessage(e);
-			return this;
-		}
+		// First, make sure we have at least one game available, and register them.
+		this.__registerGames(games);
 
 		// Initialize the application view.
 		this.__initApplication($containerElement);
@@ -372,7 +358,8 @@ var CardGameApp = Class({
 				// The current game we're checking has all the right classes, so register it now.
 				registeredGames.push({ 
 					gameName : gameStr, 
-					gameClass : gameClass 
+					gameRulesClass : gameRulesClass,
+					gameViewClass : gameViewClass
 				});
 			}
 			catch (e) {
@@ -422,8 +409,8 @@ var CardGameApp = Class({
 					.filter('[data-card-game-button="startNewGame"]')
 						.on('click', this.__startNewGameBtnClickHandler)
 				.end()
-					.filter('[data-card-game-button="restartCurrentGame"]') /*jshint asi:true */ // no idea why this particular line needs it...
-						on('click', this.__restartCurrentGameBtnClickHandler);
+					.filter('[data-card-game-button="restartCurrentGame"]')
+						.on('click', this.__restartCurrentGameBtnClickHandler);
 	},
 
 	/**
@@ -439,11 +426,11 @@ var CardGameApp = Class({
 	 */
 	__loadDefaultGame : function()
 	{
-		var domSpecified = this.getView().getContainer().attr('data-card-game');
+		var domSpecified = this.getAppView().getContainer().attr('data-card-game');
 		var registeredGames = this.getRegisteredGames();
 		var defaultGameToLoadStr = registeredGames[0].gameName;
 
-		if (domSpecified !== null) {
+		if (domSpecified !== undefined) {
 			for (var i = 0; i < registeredGames.length; i++) {
 				if (registeredGames[i].gameName === domSpecified) {
 					defaultGameToLoadStr = domSpecified;
@@ -474,7 +461,7 @@ var CardGameApp = Class({
 		/*if (this.getAppView().getContainer() !== null) {
 			this.__removeGameViewEventHandlers();
 		}*/
-		this.getAppView().resetAppView();
+		//this.getAppView().resetAppView();
 
 		try {
 			// Generate the GameController...
@@ -494,7 +481,7 @@ var CardGameApp = Class({
 		}
 		catch (e) {
 			this.logConsoleDebugMessage(e);
-			this.getAppView().resetAppView();
+			//this.getAppView().resetAppView();
 		}
 
 		return gameNameLoaded;
