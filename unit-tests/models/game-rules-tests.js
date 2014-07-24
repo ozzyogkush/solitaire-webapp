@@ -211,3 +211,31 @@ QUnit.test( "`__createStackModel()` tests", function( assert ) {
 });
 
 /** Public method tests **/
+QUnit.test( "`getDealerStack()` tests", function( assert ) {
+	expect(2);
+
+	var good = new GameRules();
+	good.__setLayout(goodLayout);
+	good.__setStackModel(good.__createStackModel());
+	var dealerStack = good.getDealerStack();
+	assert.strictEqual(
+		dealerStack,
+		null,
+		'Expected the returned `dealerStack` to be `null` since none could be found.'
+	);
+
+	var stackModel = good.getStackModel();
+	stackModel[0][4] = new Stack(
+		st.dealer,
+		fd.none,
+		52,
+		0
+	);
+	good.__setStackModel(stackModel);
+	dealerStack = good.getDealerStack();
+	assert.strictEqual(
+		dealerStack,
+		stackModel[0][4],
+		'Expected the returned `dealerStack` to be equal to the Stack element stored in `stackModel[0][4]`.'
+	);
+});

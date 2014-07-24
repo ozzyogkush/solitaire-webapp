@@ -307,8 +307,43 @@ var GameRules = Class({ implements : IModelRules }, {
 		}
 
 		return stacks;
-	}
+	},
 
 	/** Public Functions **/
+
+	/**
+	 * Find the Stack object in the `_stackModel` arrays which corresponds
+	 * to the Stack that the Dealer uses to Deal cards.
+	 *
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		Stack			dealerStack			The Stack element with StackType equal to 'dealer'. Returns null when no Dealer Stack is available.
+	 */
+	getDealerStack : function()
+	{
+		var dealerStack = null;
+		var stackTypes = new StackTypes();
+		var stacks = this.getStackModel();
+
+		if (stacks !== null && stacks.length > 0) {
+			stackRowsLoop: for (var i = 0; i < stacks.length; i++) {
+				var stackRow = stacks[i];
+				stacksInRowLoop: for (var j = 0; j < stackRow.length; j++) {
+					var stack = stackRow[j];
+					if (
+						stack !== null &&
+						stack.getStackType().getStackTypeName() === stackTypes.dealer.getStackTypeName()
+					) {
+						dealerStack = stack;
+						break stackRowsLoop;
+					}
+				}
+			}
+		}
+
+		return dealerStack;
+	}
 
 });
