@@ -259,48 +259,56 @@ var CardGameApp = Class({
 	{
 		var callStackCurrent = "CardGameApp.__construct";
 
-		// Check for required parameters
-		if ($.type($containerElement) === "undefined") {
-			throw new CardGameException("Container element is required.", callStackCurrent);
-		}
-		else if (
-			$.type($containerElement) !== "object" ||
-		 	$.type($containerElement.jquery) === "undefined"
-		) {
-			throw new TypeException("jQuery", callStackCurrent);
-		}
-		else if ($containerElement.length === 0) {
-			throw new CardGameException("Specified element could not be found.", callStackCurrent);
-		}
-		// `$containerElement` is valid.
-		
-		if ($.type(games) === "undefined") {
-			throw new CardGameException("List of games is required.", callStackCurrent);
-		}
-		else if ($.type(games) !== "array") {
-			throw new TypeException("Array", callStackCurrent);
-		}
-		else if (games.length === 0) {
-			throw new CardGameException("List of games cannot be empty.", callStackCurrent);
-		}
-		// `games` is valid.
+		try {
+			// Check for required parameters
+			if ($.type($containerElement) === "undefined") {
+				throw new CardGameException("Container element is required.", callStackCurrent);
+			}
+			else if (
+				$.type($containerElement) !== "object" ||
+			 	$.type($containerElement.jquery) === "undefined"
+			) {
+				throw new TypeException("jQuery", callStackCurrent);
+			}
+			else if ($containerElement.length === 0) {
+				throw new CardGameException("Specified element could not be found.", callStackCurrent);
+			}
+			// `$containerElement` is valid.
+			
+			if ($.type(games) === "undefined") {
+				throw new CardGameException("List of games is required.", callStackCurrent);
+			}
+			else if ($.type(games) !== "array") {
+				throw new TypeException("Array", callStackCurrent);
+			}
+			else if (games.length === 0) {
+				throw new CardGameException("List of games cannot be empty.", callStackCurrent);
+			}
+			// `games` is valid.
 
-		// Proceed with checking and setting the optional `debug` property.
-		if ($.type(debug) !== "undefined") {
-			this.__setDebug(debug);
+			// Proceed with checking and setting the optional `debug` property.
+			if ($.type(debug) !== "undefined") {
+				this.__setDebug(debug);
+			}
+
+			// First, make sure we have at least one game available, and register them.
+			this.__registerGames(games);
+
+			// Initialize the application view.
+			this.__initApplication($containerElement);
+
+			// Set the application view's event handlers.
+			this.__setApplicationEvents();
+
+			// Load the default Game's controller, rules, and view.
+			this.__setLoadedGame(this.__loadDefaultGame());
 		}
-
-		// First, make sure we have at least one game available, and register them.
-		this.__registerGames(games);
-
-		// Initialize the application view.
-		this.__initApplication($containerElement);
-
-		// Set the application view's event handlers.
-		this.__setApplicationEvents();
-
-		// Load the default Game's controller, rules, and view.
-		this.__setLoadedGame(this.__loadDefaultGame());
+		catch (e) {
+			// Set debug to true so the user can see the problem.
+			this.__setDebug(true);
+			this.logConsoleDebugMessage(e);
+			return this;
+        }
 
 		// Log the success in the console.
 		this.logConsoleDebugMessage(
@@ -407,10 +415,12 @@ var CardGameApp = Class({
 			.getAppView()
 				.getButtons()
 					.filter('[data-card-game-button="startNewGame"]')
-						.on('click', this.__startNewGameBtnClickHandler)
+						.on('click',
+							$.proxy(this.__startNewGameBtnClickHandler, this))
 				.end()
 					.filter('[data-card-game-button="restartCurrentGame"]')
-						.on('click', this.__restartCurrentGameBtnClickHandler);
+						.on('click', 
+							$.proxy(this.__restartCurrentGameBtnClickHandler, this));
 	},
 
 	/**
@@ -518,9 +528,13 @@ var CardGameApp = Class({
 	 * @param		CardGameDebugMessage			debugObject			A `CardGameDebugMessage` instance, or a subclass
 	 */
 	logConsoleDebugMessage : function(debugObject) {
-		if (this.debug && console !== undefined) {
+		if (this.getDebug() === true && console !== undefined) {
 			var logString = "";
-			if ($.type(debugObject) === "object" &&
+			if (debugObject.hasOwnProperty('instanceOf') && 
+				debugObject.instanceOf(CardGameDebugMessage)) {
+				logString = debugObject;
+			}
+			else if ($.type(debugObject) === "object" &&
 				debugObject.toConsole !== undefined &&
 				$.type(debugObject.toConsole) === "function") {
 				// Handles CardGameDebugMessage, CardGameException, 
