@@ -38,7 +38,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	__setNumDecksInGame : function(n)
 	{
 		var parsed = null;
-		if (typeof n !== "number" || ((parsed = parseInt(n)) === null)) {
+		if (typeof n !== "number" || isNaN(parsed = parseInt(n))) {
 			throw new TypeException("Integer", "GameRules.__setNumDecksInGame");
 		}
 		this._numDecksInGame = parsed;

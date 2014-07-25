@@ -124,7 +124,7 @@ var Stack = Class({
 	__setNumCardsFacingDown : function(ncfd)
 	{
 		var parsed = null;
-		if (typeof ncfd !== "number" || ((parsed = parseInt(ncfd)) === null)) {
+		if (typeof ncfd !== "number" || isNaN(parsed = parseInt(ncfd))) {
 			throw new TypeException("Integer", "Stack.__setNumCardsFacingDown");
 		}
 		this._numCardsFacingDown = parsed;
@@ -168,7 +168,7 @@ var Stack = Class({
 	__setNumCardsFacingUp : function(ncfu)
 	{
 		var parsed = null;
-		if (typeof ncfu !== "number" || ((parsed = parseInt(ncfu)) === null)) {
+		if (typeof ncfu !== "number" || isNaN(parsed = parseInt(ncfu))) {
 			throw new TypeException("Integer", "Stack.__setNumCardsFacingUp");
 		}
 		this._numCardsFacingUp = parsed;

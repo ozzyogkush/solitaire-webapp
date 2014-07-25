@@ -190,7 +190,10 @@ var GameView = Class({
 	 */
 	__createCard : function(deckNum, suitObj, cardNumberObject)
 	{
-		var cardImageSrcName = cardNumberObject.getCardNumberName() + "_of_" + suitObj.getSuitName() + ".png";
+		var cardImageSrcName = cardNumberObject.getCardNumberName().toLowerCase() + 
+			"_of_" + 
+			suitObj.getSuitName().toLowerCase() + 
+			".png";
 		var $card = $('<img />')
 			.attr({
 				src : "../img/cards/" + cardImageSrcName,
@@ -261,7 +264,7 @@ var GameView = Class({
 			throw new CardGameException('The `numDecks` param is required.', 'GameView.createCards');
 		}
 		var parsed = null;
-		if (typeof numDecks !== "number" || ((parsed = parseInt(numDecks)) === null)) {
+		if (typeof numDecks !== "number" || isNaN(parsed = parseInt(numDecks))) {
 			throw new TypeException("Integer", "GameView.createCards");
 		}
 

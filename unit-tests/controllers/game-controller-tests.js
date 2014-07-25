@@ -249,6 +249,107 @@ QUnit.test( "`__loadGameView()` tests", function( assert ) {
 	);
 });
 
+QUnit.test( "`__shuffleCardArray()` tests", function( assert ) {
+	//expect(104);
+
+	var good = new GameController(goodGameName);
+
+	// Setup our base array
+	var unsortedArr = [];
+	for (var i = 1; i <= 20; i++) {
+	    unsortedArr.push(i);
+	}
+
+	var numDifferent = 0;
+	var shuffledCards = good.__shuffleCardArray(unsortedArr);
+	assert.strictEqual(
+		shuffledCards.length,
+		unsortedArr.length,
+		'Expected the sorted and unsorted arrays to have the same length'
+	);
+	for (var j = 0; j < unsortedArr.length; j++) {
+		if (shuffledCards[j] === unsortedArr[j]) {
+			numDifferent++;
+		}
+	}
+	assert.ok(
+		numDifferent > 0,
+		'Expected the order of the shuffled array to be different from the unsorted array'
+	);
+
+	// Shuffle 5 times.
+	numDifferent = 0;
+	shuffledCards = good.__shuffleCardArray(unsortedArr, 5);
+	assert.strictEqual(
+		shuffledCards.length,
+		unsortedArr.length,
+		'Expected the sorted and unsorted arrays to have the same length'
+	);
+	for (var k = 0; k < unsortedArr.length; k++) {
+		if (shuffledCards[k] === unsortedArr[k]) {
+			numDifferent++;
+		}
+	}
+	assert.ok(
+		numDifferent > 0,
+		'Expected the order of the shuffled array to be different from the unsorted array'
+	);
+});
+
+QUnit.test( "`__shuffleCards()` tests", function( assert ) {
+	expect(0);
+	//expect(104);
+
+	/*var good = new GameController(goodGameName);
+	var $unsortedCards = good.getCards();
+	var unsortedCards = $unsortedCards.toArray();
+
+	var numDifferent = 0;
+
+	good.getCards().each(function(index, item) {
+		if ($(item).attr('src') !== $unsortedCards.eq(index).attr('src')) {
+			numDifferent++;
+		}
+	});
+
+	assert.equal(
+		numDifferent,
+		0,
+		'Expected the order of the unrandomized set of cards to be the same as the original set of cards'
+	);
+
+	// shuffle the cards and check again.
+	numDifferent = 0;
+	good.__shuffleCards();
+
+	good.getCards().each(function(index, item) {
+		if ($(item).attr('src') !== $unsortedCards.eq(index).attr('src')) {
+			numDifferent++;
+		}
+	});
+
+	assert.ok(
+		numDifferent > 0,
+		'Expected the order of the randomized set of cards to be different from the original set of cards'
+	);
+
+	// shuffle the cards and check again.
+	numDifferent = 0;
+	var numTimesToShuffle = 3;//Math.ceil(Math.random() * 5);
+	good.__shuffleCards(numTimesToShuffle);
+
+	good.getCards().each(function(index, item) {
+		if ($(item).attr('src') !== $unsortedCards.eq(index).attr('src')) {
+			numDifferent++;
+		}
+	});
+
+	assert.ok(
+		numDifferent > 0,
+		'Expected the order of the randomized set of cards to be different from the original set of cards'
+	);*/
+});
+
 /** Public method tests ** /
 QUnit.test( "`()` tests", function( assert ) {
 	expect();

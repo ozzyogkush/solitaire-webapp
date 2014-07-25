@@ -280,9 +280,81 @@ var GameController = Class({
 		}
 	},
 
-	__shuffleCards : function()
+	/**
+	 * Helper function to sort an array the way a human would shuffle
+	 * a deck of cards: split it in half, and alternate adding a small
+	 * random number of cards from the left deck then from the right deck
+	 * to the shuffled set.
+	 *
+	 * Recursive function that can shuffle an array any number of times in order
+	 * to get a more reasonable distribution.
+	 *
+	 * This should be relatively fast since we're not resizing arrays constantly.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 */
+	__shuffleCardArray : function(cardArr, numTimes)
 	{
+		cardArr.reverse();
+		var numCards = cardArr.length;
+		var middle = Math.floor(numCards/2);
+		var shuffledCardsArr = [];
+		shuffledCardsArr.length = numCards;
 
+		var cardLeftStart = 0;
+		var cardRightStart = middle;
+		var merged = false;
+		var i = 0;
+		while (! merged) {
+			// Choose the lower number between the number of cards
+			// remaining from the left pile, and a random # between 1 and 4,
+			// to add from the left pile first.
+			var cardsLeftRemaining = middle - cardLeftStart;
+			var randFromLeft = Math.min(
+				Math.ceil(Math.random() * 4),
+				cardsLeftRemaining
+			);
+			for (var j = 0; j < randFromLeft; j++) {
+				shuffledCardsArr[i++] = cardArr[cardLeftStart++];
+			}
+			
+			// Choose the lower number between the number of cards
+			// remaining from the right pile, and a random # between 1 and 4,
+			// to add from the right pile.
+			var cardsRightRemaining = numCards - cardRightStart;
+			var randFromRight = Math.min(
+				Math.ceil(Math.random() * 4),
+				cardsRightRemaining
+			);
+			for (var k = 0; k < randFromRight; k++) {
+				shuffledCardsArr[i++] = cardArr[cardRightStart++];
+			}
+
+			// The left and right hand splits of the cards have been merged
+			// when there are no more cards left to shuffle.
+			merged = (cardLeftStart == middle && cardRightStart == numCards);
+		}
+
+		var parsedNumTimes = null;
+		if (numTimes !== undefined && 
+			! isNaN(parsedNumTimes = parseInt(numTimes)) && 
+			parsedNumTimes > 0) {
+			return this.__shuffleCardArray(shuffledCardsArr, parsedNumTimes - 1);
+		}
+		
+		return shuffledCardsArr;
+	},
+
+	__shuffleCards : function(numTimes)
+	{
+		// Shuffle the cards...
+		var cardsArr = this.getCards().toArray();
+		var shuffledCardsArr = this.__shuffleCardArray(cardsArr, numTimes);
+
+		var $shuffledCards = $(shuffledCardsArr);
+		this.__setCards($shuffledCards);
 	},
 
 	__storeCopyOfCards : function()
