@@ -90,8 +90,9 @@ var AppView = Class({
 		if (this._buttons !== null) {
 			// Always remove an existing set of Buttons first
 			this.getContainer()
-				.find('div[data-card-game-view-element="button-container"]')
-				.remove();
+				.find('div')
+				.filter('[data-card-game-view-element="button-container"]')
+					.remove();
 		}
 
 		if ($btns !== null) {
@@ -122,6 +123,16 @@ var AppView = Class({
 		return this._buttons;
 	},
 
+	/**
+	 * jQuery extended HTML element which acts as a Twitter Bootstrap Modal.
+	 * Used to let the user choose from a list of registered Games to load.
+	 *
+	 * @private		
+	 * @type		jQuery
+	 * @memberOf	AppView
+	 * @since		
+	 * @default		null
+	 */
 	_gameChoiceModal : null,
 	
 	/**
@@ -129,7 +140,7 @@ var AppView = Class({
 	 * 
 	 * @private
 	 * @throws		TypeException
-	 * @memberOf	
+	 * @memberOf	AppView
 	 * @since		
 	 * 
 	 * @param		jQuery			$gcm			The Modal element giving the Player a choice of games to load. Required.
@@ -144,11 +155,19 @@ var AppView = Class({
 		if (this._gameChoiceModal !== null) {
 			// Always remove an existing game choice modal first
 			this.getContainer()
-				.find('div[data-card-game-view-element="game-choice-modal"]')
-				.remove();
+				.find('div')
+					.filter('[data-card-game-view-element="game-choice-modal"]')
+					.remove();
 		}
 
 		if ($gcm !== null) {
+			// If the supplied element doesn't already have the correct value
+			// for the `data-card-game-view-element` attribute, set it.
+			if ($gcm.attr('data-card-game-view-element') === null ||
+				$gcm.attr('data-card-game-view-element') !== 'game-choice-modal') {
+				$gcm.attr('data-card-game-view-element', 'game-choice-modal');
+			}
+			
 			// Add the modal element to the DOM.
 			this.getContainer().append($gcm);
 		}
@@ -161,7 +180,7 @@ var AppView = Class({
 	 * Returns the `_gameChoiceModal` property.
 	 * 
 	 * @public
-	 * @memberOf	
+	 * @memberOf	AppView
 	 * @since		
 	 *
 	 * @return		jQuery			_gameChoiceModal		Returns the `_gameChoiceModal` property.
@@ -171,67 +190,6 @@ var AppView = Class({
 		return this._gameChoiceModal;
 	},
 
-	/**
-	 * GameView that represents the actual game play area.
-	 *
-	 * @private		
-	 * @type		GameView
-	 * @memberOf	AppView
-	 * @since		
-	 * @default		null
-	 */
-	_gameViewCanvas : null,
-	
-	/**
-	 * Sets the `_gameViewCanvas` property to the value of `cvs`, and adds or removes it
-	 * from the DOM (depending on whether this is setting it to `null` or to a valid
-	 * GameView element).
-	 * 
-	 * @private
-	 * @throws		TypeException
-	 * @memberOf	AppView
-	 * @since		
-	 * 
-	 * @param		GameView		cvs			The GameView representing the main game canvas. Required.
-	 */
-	__setGameViewCanvas : function(cvs)
-	{
-		// Make sure the param is null or a GameView instance
-		if (cvs !== null &&
-			(! cvs.hasOwnProperty('instanceOf') || ! cvs.instanceOf(GameView))) {
-			throw new TypeException("GameView", "AppView.__setGameViewCanvas");
-		}
-
-		if (this._gameViewCanvas !== null) {
-			// Always remove an existing plugin canvas first
-			this.getContainer()
-				.find(this._gameViewCanvas.getDOMElements())
-				.remove();
-		}
-
-		// Add the new plugin canvas if it isn't null
-		if (cvs !== null) {
-			this.getGameChoiceModal().before(cvs.getDOMElements());
-		}
-
-		// Set the object property to the supplied param either way
-		this._gameViewCanvas = cvs;
-	},
-	
-	/**
-	 * Returns the `_gameViewCanvas` property.
-	 * 
-	 * @public
-	 * @memberOf	AppView
-	 * @since		
-	 *
-	 * @return		GameView			_gameViewCanvas		Returns the `_gameViewCanvas` property.
-	 */
-	getGameViewCanvas : function()
-	{
-		return this._gameViewCanvas;
-	},
-
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -239,7 +197,9 @@ var AppView = Class({
 	//--------------------------------------------------------------------------
 
 	/**
-	 * Initialize the basic layout of the game view.
+	 * Initializes the layout of the application view. Creates and adds the set of
+	 * buttons to start a new game and restart a current game. Creates and adds the
+	 * Modal Bootstrap DOM element used for choosing a game/variation to play.
 	 *
 	 * @constructor
 	 * @public
@@ -255,30 +215,22 @@ var AppView = Class({
 		if ($container === undefined) {
 			throw new CardGameException('View `$container` param is required.', 'AppView.__construct');
 		}
-		this.__initLayout($container);
+
+		// Set the app container DOM elements...
+		this.__setContainer($container);
+
+		// Create the set of buttons...
+		var $buttons = this.__createButtons();
+		// ...and add them to the DOM...
+		this.__setButtons($buttons);
+
+		// ...create the game choice Modal...
+		var $modal = this.__createGameChoiceModal();
+		// ...and add it to the DOM.
+		this.__setGameChoiceModal($modal);
 	},
 
 	/** Private Functions **/
-
-	/**
-	 * Initializes the layout of the application view. Creates and adds the set of
-	 * buttons to start a new game and restart a current game. Creates and adds the
-	 * Modal Bootstrap DOM element used for choosing a game/variation to play.
-	 *
-	 * @private
-	 * @memberOf	AppView
-	 * @since		
-	 *
-	 * @param		jQuery				$container			The jQuery extended HTML element that will contain the entire view area. Required.
-	 */
-	__initLayout : function($container)
-	{
-		this.__setContainer($container);
-		var $buttons = this.__createButtons();
-		this.__setButtons($buttons);
-		var $modal = this.__createGameChoiceModal();
-		this.__setGameChoiceModal($modal);
-	},
 
 	/**
 	 * Creates and returns a set of jQuery extended Button elements which will
@@ -377,41 +329,41 @@ var AppView = Class({
 	/** Public Functions **/
 
 	/**
-	 * Sets the `gameView` object and adds it to the DOM.
+	 * Sets the `$gameContainer` object and adds it to the DOM.
 	 * 
 	 * @public
 	 * @memberOf	AppView
 	 * @since		
 	 *
-	 * @param		GameView			gameView		The variation extended GameView object, already instantiated and initialized
+	 * @param		jQuery			$gameContainer		The DOM element that contains all the elements of the actual Game being played. Required.
 	 */
-	initGameView : function(gameView)
+	initGameView : function($gameContainer)
 	{
-		// Adds the instantiated GameView to the DOM.
-		this.__setGameViewCanvas(gameView);
+		if ($gameContainer === undefined) {
+			throw new CardGameException('The `$gameContainer` param is required.', 'AppView.initGameView');
+		}
+		else if	(typeof $gameContainer !== "object" || $gameContainer.jquery === undefined) {
+			throw new TypeException("jQuery", "AppView.initGameView");
+		}
 
-		this.startNewGame();
-	},
+		// If the supplied element doesn't already have the correct value
+		// for the `data-card-game-view-element` attribute, set it.
+		if ($gameContainer.attr('data-card-game-view-element') === null ||
+			$gameContainer.attr('data-card-game-view-element') !== 'canvas-container') {
+			$gameContainer.attr('data-card-game-view-element', 'canvas-container');
+		}
 
-	startNewGame : function()
-	{
-		// Move all the cards to the Dealer stack...
-		this.getGameViewCanvas().moveCardsToStack();
+		// Always remove an existing game canvas first, if it exists.
+		var $currentGameContainer = this
+			.getContainer()
+			.find('div')
+				.filter('[data-card-game-view-element="canvas-container"]');
+		if ($currentGameContainer.length > 0) {
+            $currentGameContainer.remove();
+        }
 
-		// Shuffle the Dealer stack...
-		this.getGameViewCanvas().shuffleDealerStack();
-
-		// ...and deal the cards from the Dealer Stack to correct Stacks.
-		this.getGameViewCanvas().dealCards();
-
-		// Reset the timer.
-		this.resetTimer();
-	},
-
-	restartCurrentGame : function()
-	{
-		this.undoMoves(); // undo ALL moves in current game.
-		this.resetTimer();
+        // Add the supplied game container to the DOM before the Game Choice Modal.
+        this.getGameChoiceModal().before($gameContainer);
 	},
 
 	/**
@@ -421,7 +373,7 @@ var AppView = Class({
 	 * @memberOf	AppView
 	 * @since		
 	 *
-	 * @param		GameView			gameView		The variation extended GameView object, already instantiated and initialized
+	 * @param		
 	 */
 	resetGameView : function()
 	{

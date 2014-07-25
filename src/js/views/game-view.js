@@ -1,5 +1,5 @@
 /**
- * Abstract base class for implmenting specific game variations' canvas DOM and manipulation.
+ * Base class for implementing specific games' views.
  *
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameView
@@ -7,56 +7,12 @@
  * @version		
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
-var GameView = Class({ implements : IViewRules }, {
+var GameView = Class({
 	//--------------------------------------------------------------------------
 	//
 	//  Variables and get/set functions
 	//
 	//--------------------------------------------------------------------------
-
-	/**
-	 * Model object that contains the game rules, including the layout specs
-	 * and the number and type of stacks that the cards will be moved into/out of.
-	 *
-	 * @private		
-	 * @type		GameRules
-	 * @memberOf	GameView
-	 * @since		
-	 * @default		null
-	 */
-	_pluginModel : null,
-	
-	/**
-	 * Sets the `_pluginModel` property to the value of `_pluginModel`.
-	 * 
-	 * @private
-	 * @throws		TypeException
-	 * @memberOf	CardGameApp
-	 * @since		
-	 * 
-	 * @param		GameRules			pluginModel			The implemented variation GameRules _pluginModel. Required.
-	 */
-	__setModel : function(pluginModel)
-	{
-		if (! pluginModel.hasOwnProperty('instanceOf') || ! pluginModel.instanceOf(GameRules)) {
-			throw new TypeException("GameRules", "GameView.__setModel");
-		}
-		this._pluginModel = pluginModel;
-	},
-	
-	/**
-	 * Returns the `_pluginModel` property.
-	 * 
-	 * @public
-	 * @memberOf	CardGameApp
-	 * @since		
-	 *
-	 * @return		GameRules			_pluginModel		Returns the `_pluginModel` property.
-	 */
-	getModel : function()
-	{
-		return this._pluginModel;
-	},
 
 	/**
 	 * jQuery object that contains the elements that are added to the DOM, which represent
@@ -68,82 +24,38 @@ var GameView = Class({ implements : IViewRules }, {
 	 * @since		
 	 * @default		null
 	 */
-	_DOMElements : null,
+	_gameContainer : null,
 	
 	/**
-	 * Sets the `_DOMElements` property to the value of `$dome`.
+	 * Sets the `_gameContainer` property to the value of `$gc`.
 	 * 
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameView
 	 * @since		
 	 * 
-	 * @param		jQuery			$dome			The set of DOM elements that make up the plugin view canvas. Required.
+	 * @param		jQuery			$gc			The set of DOM elements that make up the plugin view canvas. Required.
 	 */
-	__setDOMElements : function($dome)
+	__setGameContainer : function($gc)
 	{
-		if (typeof $dome !== "object" || $dome.jquery === undefined) {
-			throw new TypeException("jQuery", "GameView.__setDOMElements");
+		if (typeof $gc !== "object" || $gc.jquery === undefined) {
+			throw new TypeException("jQuery", "GameView.__setGameContainer");
 		}
-		this._DOMElements = $dome;
+		this._gameContainer = $gc;
 	},
 	
 	/**
-	 * Returns the `_DOMElements` property.
+	 * Returns the `_gameContainer` property.
 	 * 
 	 * @public
 	 * @memberOf	GameView
 	 * @since		
 	 *
-	 * @return		jQuery			_DOMElements		Returns the `_DOMElements` property.
+	 * @return		jQuery			_gameContainer		Returns the `_gameContainer` property.
 	 */
-	getDOMElements : function()
+	getGameContainer : function()
 	{
-		return this._DOMElements;
-	},
-
-	/**
-	 * jQuery object that contains the Card elements that are added to the DOM, and with 
-	 * which the user directly interacts to play the game.
-	 *
-	 * @private		
-	 * @type		jQuery
-	 * @memberOf	GameView
-	 * @since		
-	 * @default		null
-	 */
-	_cards : null,
-	
-	/**
-	 * Sets the `_cards` property to the value of `$cards`.
-	 * 
-	 * @private
-	 * @throws		TypeException
-	 * @memberOf	GameView
-	 * @since		
-	 * 
-	 * @param		jQuery			$cards			The set of Cards that will be added to the DOM. Required.
-	 */
-	__setCards : function($cards)
-	{
-		if (typeof $cards !== "object" || $cards.jquery !== undefined) {
-			throw new TypeException("jQuery", "GameView.__setCards");
-		}
-		this._cards = $cards;
-	},
-	
-	/**
-	 * Returns the `_cards` property.
-	 * 
-	 * @public
-	 * @memberOf	GameView
-	 * @since		
-	 *
-	 * @return		jQuery			_cards		Returns the `_cards` property.
-	 */
-	getCards : function()
-	{
-		return this._cards;
+		return this._gameContainer;
 	},
 
 	//--------------------------------------------------------------------------
@@ -163,108 +75,136 @@ var GameView = Class({ implements : IViewRules }, {
 	 * @memberOf	GameView
 	 * @since		
 	 *
-	 * @param		GameRules			model			The model rules that define how the game runs. Required.
+	 * @param		Array			stackModel			The set of Stacks that define the layout. Required.
 	 */
-	__construct : function(model)
+	__construct : function(stackModel)
 	{
-		if (model !== undefined && model !== null) {
-			//throw new CardGameException('Model cannot be null.', 'GameView.__construct');
-			this.__initGameView(model);
+		if (stackModel === undefined) {
+			throw new CardGameException('The `stackModel` array param is required.', 'GameView.__construct');
 		}
+		if ($.type(stackModel) !== "array") {
+			throw new TypeException('Array', 'GameView.__construct');
+		}
+		if (stackModel.length < 1) {
+			throw new CardGameException('Expected `stackModel` param to have at least one row of stacks.', 'GameView.__construct');	
+		}
+
+		// Set the screen with Stacks that do not yet have cards in them.
+		var $gameViewContainer = this.__createLayoutFromSpecs(stackModel);
+		this.__setGameContainer($gameViewContainer);
 	},
 
 	/** Private Functions **/
 
 	/**
-	 * Set the model rules that define how the game runs, and initialize the game 
-	 * view's canvas area to display the elements of the game.
+	 * Generate the layout of empty stacks based on the model. Assumes that the
+	 * `stackModel` is an array that has at least one row of Stacks.
 	 * 
 	 * @private
 	 * @memberOf	GameView
 	 * @since		
-	 *
-	 * @param		GameRules			model			The model rules that define how the game runs. Required.
-	 */
-	__initGameView : function(model)
-	{
-		// Add the cards to their respective Stacks in the GameView's DOM.
-		this.__setModel(model);
-
-		// Set the screen with Stacks that do not yet have cards in them.
-		var $gameViewContainer = this.__createLayoutFromSpecs();
-		this.__setDOMElements($gameViewContainer);
-
-		// Create the cards and add them to the model.
-		$cards = this.__createCards();
-		this.__setCards($cards);
-	},
-
-	/**
-	 * Generate the layout of empty stacks based on the model.
 	 * 
-	 * @private
-	 * @memberOf	GameView
-	 * @since		
+	 * @param		Array			stackModel				The set of Stacks that define the layout. Required.
 	 *
 	 * @return		jQuery			$gameViewContainer		Returns the created set of DOM elements starting with the container.
 	 */
-	__createLayoutFromSpecs : function()
+	__createLayoutFromSpecs : function(stackModel)
 	{
-		var stacks = this.getModel().getStacks();
-
 		var $gameViewContainer = $('<div></div>').attr('data-card-game-view-element', 'canvas-container');
 		
-		if (stacks.length > 0) {
-			var $domRows = $('');
+		var $domRows = $('');
 
-			for (var i = 0; i < stacks.length; i++) {
-				var stackRow = stacks[i];
-				var rowGridSize = stackRow.length + 1;
+		for (var i = 0; i < stackModel.length; i++) {
+			var stackRow = stackModel[i];
+			var rowGridSize = stackRow.length + 1;
 
-				var $domRow = $('<div></div>').attr('data-card-game-view-element', 'canvas-row');
-				for (var j = 0; j < stackRow.length; j++) {
-					var stack = stackRow[j];
-					
-					var $stackDOMElement = $('<div></div>')
-						.attr({
-							'data-card-game-view-element' : 'stack',
-							'data-card-game-view-stack' : (
-								stack === null ? 
-									"empty" : 
-									stack
-								)
-						});
+			var $domRow = $('<div></div>').attr('data-card-game-view-element', 'canvas-row');
+			for (var j = 0; j < stackRow.length; j++) {
+				var stack = stackRow[j];
+				
+				var $stackDOMElement = $('<div></div>')
+					.attr({
+						'data-card-game-view-element' : 'stack',
+						'data-card-game-view-stack' : (
+							stack === null ? 
+								"empty" : 
+								stack
+							)
+					});
 
-					// Add this cell to the DOM row
-					$domRow.append($stackDOMElement);
-				}
-
-				// Add this domRow to the list to be returned
-				$gameViewContainer.append($domRow);
+				// Add this cell to the DOM row
+				$domRow.append($stackDOMElement);
 			}
+
+			// Add this domRow to the list to be returned
+			$gameViewContainer.append($domRow);
 		}
 
 		return $gameViewContainer;
 	},
 
 	/**
-	 * Generate the number of Decks of Card objects that the game rules specify and return it.
+	 * Checks whether a jQuery element is a valid Card image. Assumes the `$card` param
+	 * is a valid jQuery object.
+	 *
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		jQuery			$card			The DOM element to check. Required.
+	 *
+	 * @return		Boolean			$tbr			True if the element is a valid Card image, false otherwise.
+	 */
+	__isCard : function($card)
+	{
+		$tbr = true;
+
+		var isJquery = (typeof $card === "object" && $card.jquery !== undefined);
+
+		if (! isJquery ||
+			$card.prop('tagName').toLowerCase() !== "img" ||
+			$card.attr('data-card-face-showing') === undefined ||
+			$card.attr('data-card-front-source') === undefined ||
+			$card.attr('data-card-back-source') === undefined ||
+			$card.attr('data-card-deck-num') === undefined ||
+			$card.data('suit') === undefined ||
+			$card.data('card-number') === undefined) {
+			$tbr = false;
+		}
+
+		return $tbr;
+	},
+
+	/**
+	 * Generate a single Card jQuery element and returns it.
 	 * 
 	 * @private
 	 * @memberOf	GameView
 	 * @since		
 	 *
-	 * @return		jQuery			$cards			Returns the created set of Card elements.
+	 * @param		Integer			deckNum					The current deck number for this deck of cards. Required.
+	 * @param		Suit			suitObj					The current deck number for this deck of cards. Required.
+	 * @param		CardNumber		cardNumberObject		The current deck number for this deck of cards. Required.
+	 *
+	 * @return		jQuery			$card					Returns the created Card element.
 	 */
-	__createCards : function()
+	__createCard : function(deckNum, suitObj, cardNumberObject)
 	{
-		var $cards = $();
+		var cardImageSrcName = cardNumberObject.getCardNumberName() + "_of_" + suitObj.getSuitName() + ".png";
+		var $card = $('<img />')
+			.attr({
+				src : "../img/cards/" + cardImageSrcName,
+				'data-card-face-showing' : 'front',
+				'data-card-front-source' : "../img/cards/" + cardImageSrcName,
+				'data-card-back-source' : "../img/cards/card_back.png",
+				'data-card-deck-num' : deckNum
+			})
+			.data({
+				'suit' : suitObj,
+				'card-number' : cardNumberObject
+			});
 
-		for (var i = 0; i < this.getModel().getNumDecksInGame(); i++) {
-			$cards.add(this.__createDeck());
-		}
-
-		return $cards;
+		return $card;
 	},
 
 	/**
@@ -273,85 +213,117 @@ var GameView = Class({ implements : IViewRules }, {
 	 * @private
 	 * @memberOf	GameView
 	 * @since		
+	 * @TODO		implement Jokers
+	 *
+	 * @param		Integer			deckNum			The current deck number for this deck of cards. Required.
 	 *
 	 * @return		jQuery			$deck			Returns the created set of Card elements.
 	 */
-	__createDeck : function()
+	__createDeck : function(deckNum, acesHigh, includeJokers)
 	{
 		var $deck = $();
 		var ss = new SuitSet();
 		var cns = new CardNumberSet();
-		if (this.getModel().getAcesHigh()) {
-			cns.ace.setCardValue(cns.king.getCardValue() + 1);
+
+		if (acesHigh) {
+			cns.ace.__setCardValue(cns.king.getCardValue() + 1);
 		}
+
+		// the jQuery `each()` method reassigns the `this` var, so set a local reference to it here.
+		var that = this;
 
 		$.each(ss, function(suitName, suitObj) {
 			$.each(cns, function(cardNumberName, cardNumberObject) {
-				//$deck.add(new Card(suitObj, cardNumberObject));
-				$deck.add(this.__createCard(suitObj, cardNumberObject));
+				$deck = $deck.add(that.__createCard(deckNum, suitObj, cardNumberObject));
 			});
 		});
-
-		// Add Joker cards if the game calls for it
-		// @TODO - implement this later
-		if (this.getModel().getIncludeJokers()) {
-			//$deck.add(new Card(suitObj, cardNumberObject));
-			//$deck.add(new Card(suitObj, cardNumberObject));
-		}
 
 		return $deck;
 	},
 
-	__createCard : function(suitObj, cardNumberObject)
+	/** Public Functions **/
+
+	/**
+	 * Generate the number of Decks of Card objects that the game rules specify and return it.
+	 * 
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @param		Integer			numDecks		The number of decks of cards to generate.
+	 *
+	 * @return		jQuery			$cards			Returns the created set of Card elements.
+	 */
+	createCards : function(numDecks, acesHigh, includeJokers)
 	{
-		var cardImageSrcName = cardNumberObject.getCardNumberName() + "_of_" + suitObj.getSuitName() + ".png";
-		var $card = $('<img />')
-			.attr({
-				src : "../img/cards/" + cardImageSrcName,
-				'data-card-game-suit' : suitObj, 
-				'data-card-game-card-number' : cardNumberObject
-			});
+		// Check for valid params...
+		if (numDecks === undefined) {
+			throw new CardGameException('The `numDecks` param is required.', 'GameView.createCards');
+		}
+		var parsed = null;
+		if (typeof numDecks !== "number" || ((parsed = parseInt(numDecks)) === null)) {
+			throw new TypeException("Integer", "GameView.createCards");
+		}
+
+		if (acesHigh === undefined) {
+			throw new CardGameException('The `acesHigh` param is required.', 'GameView.createCards');
+		}
+		if (typeof acesHigh !== "boolean") {
+			throw new TypeException("Boolean", "GameView.createCards");
+		}
+
+		if (includeJokers === undefined) {
+			throw new CardGameException('The `includeJokers` param is required.', 'GameView.createCards');
+		}
+		if (typeof includeJokers !== "boolean") {
+			throw new TypeException("Boolean", "GameView.createCards");
+		}
+
+		// ...got valid params, so lets go!
+		var $cards = $();
+
+		for (var i = 0; i < numDecks; i++) {
+			$cards = $cards.add(this.__createDeck(numDecks, acesHigh, includeJokers));
+		}
+
+		return $cards;
+	},
+
+	/**
+	 * Flip a Card in the DOM. If the front is currently showing, show the back,
+	 * or vice-versa.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		jQuery			$card			The Card DOM element to visually flip. Required.
+	 */
+	flipCard : function($card)
+	{
+		if ($card === undefined) {
+			throw new CardGameException('The `$card` param is required.', 'GameView.flipCard');
+		}
+		if (! this.__isCard($card)) {
+			throw new CardGameException('The `$card` param is not a valid Card.', 'GameView.flipCard');
+		}
+
+		// @TODO: make this a cool animation
+		if ($card.attr('data-card-face-showing') === "front") {
+			$card.attr({
+				'src' : $card.attr('data-card-back-source'),
+				'data-card-face-showing' : "back"
+			}); 
+		}
+		else if ($card.attr('data-card-face-showing') === "back") {
+			$card.attr({
+				'src' : $card.attr('data-card-front-source'),
+				'data-card-face-showing' : "front"
+			}); 
+		}
 
 		return $card;
 	}
 
-	/** Public Functions **/
-
 	/** Event Handlers **/
-
-	/**
-	 * This method will be run when a user triggers a `mousedown` or `touchstart` event.
-	 *
-	 * @public
-	 * @memberOf	GameView
-	 * @since		
-	 */
-	mouseDownTouchStartEventHandler : function() { /* This is a stub! */ },
-
-	/**
-	 * This method will be run when a user triggers a `mouseup` or `touchend` event.
-	 *
-	 * @public
-	 * @memberOf	GameView
-	 * @since		
-	 */
-	mouseUpTouchEndEventHandler : function() { /* This is a stub! */ },
-
-	/**
-	 * This method will be run when a user triggers a `click` event.
-	 *
-	 * @public
-	 * @memberOf	GameView
-	 * @since		
-	 */
-	mouseClickEventHandler : function() { /* This is a stub! */ },
-
-	/**
-	 * This method will be run when a user triggers a `mousemove` or `touchmove` event.
-	 *
-	 * @public
-	 * @memberOf	GameView
-	 * @since		
-	 */
-	mouseMoveTouchMoveEventHandler : function() { /* This is a stub! */ }
 });

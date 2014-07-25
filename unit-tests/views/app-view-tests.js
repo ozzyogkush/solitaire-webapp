@@ -17,7 +17,7 @@ QUnit.test( "constructor failure tests", function( assert ) {
 				e.getCallingMethod() === 'AppView.__construct'
 			);
 		},
-		"Expected that `$container` param is required has passed!"
+		"Expected that `$container` param is required was not thrown!"
 	);
 
 	assert.throws(
@@ -28,17 +28,86 @@ QUnit.test( "constructor failure tests", function( assert ) {
 				e.getType() === "jQuery"
 			);
 		},
-		"Expected that `$container` param must be a jQuery object has passed!"
+		"Expected that `$container` param must be a jQuery object was not thrown!"
 	);
 });
 
 QUnit.test( "constructor successful tests", function( assert ) {
-	expect(1);
+	expect(13);
 
-	var good = new AppView($goodContainer.clone());
+	var $theContainer = $goodContainer.clone();
+	var good = new AppView($theContainer);
 	assert.ok(
 		good.instanceOf(AppView) === true,
 		"Expected that the instantiated object is a `AppView` class."
+	);
+
+	assert.strictEqual(
+		good.getContainer(),
+		$theContainer,
+		'The app view retrieved by `getContainer()` does not match the object passed into the constructor.'
+	);
+
+	// Check that the various elements were set.
+	var $goodButtons = good.getButtons();
+	assert.ok(
+		$goodButtons.jquery !== undefined,
+		"The `$goodButtons` object is not a jQuery object."
+	);
+	assert.strictEqual(
+		$goodButtons.length,
+		2,
+		"The `$goodButtons` jQuery object should have 2 button elements."
+	);
+	assert.strictEqual(
+		$goodButtons.eq(0).attr('data-card-game-button'),
+		"startNewGame",
+		"The first element in the `$goodButtons` object should have a 'data-card-game-button' attribute equal to 'startNewGame'."
+	);
+	assert.strictEqual(
+		$goodButtons.eq(1).attr('data-card-game-button'),
+		"restartCurrentGame",
+		"The second element in the `$goodButtons` object should have a 'data-card-game-button' attribute equal to 'restartCurrentGame'."
+	);
+
+	var $buttonContainer = good.getContainer().children().eq(0);
+
+	assert.strictEqual(
+		$buttonContainer.length,
+		1,
+		"Expected the `$buttonContainer` object to contain a single `div` element"
+	);
+	assert.strictEqual(
+		$buttonContainer.attr('data-card-game-view-element'),
+		"button-container",
+		"The first element in the `$buttons` object should have a 'data-card-game-view-element' attribute equal to 'button-container'."
+	);
+	assert.strictEqual(
+		$buttonContainer.children().get(0),
+		$goodButtons.get(0),
+		"The first child of `$buttonContainer` should be the first one in the set returned from `getButtons()`."
+	);
+	assert.strictEqual(
+		$buttonContainer.children().get(1),
+		$goodButtons.get(1),
+		"The second child of `$buttonContainer` should be the second one in the set returned from `getButtons()`."
+	);
+
+	var $modal = good.getContainer().children().last();
+	assert.strictEqual(
+		$modal.length,
+		1,
+		"Expected the `getContainer().children()`s last element to be a single `div` element"
+	);
+	assert.strictEqual(
+		$modal.attr('data-card-game-view-element'),
+		'game-choice-modal',
+		"The `$modal` object should have an 'data-card-game-view-element' attribute equal to `game-choice-modal`."
+	);
+	assert.equal(
+		good.getGameChoiceModal().get(0),
+		$modal.get(0),
+		"The jQuery element returned from `getGameChoiceModal()` does not match the one that's in the DOM."
 	);
 });
 
@@ -57,7 +126,7 @@ QUnit.test( "`__setContainer()` and `getContainer()` tests", function( assert ) 
 				e.getType() === "jQuery"
 			);
 		},
-		"Expected that `$container` param must be a jQuery object has passed!"
+		"Expected that `$container` param must be a jQuery object was not thrown!"
 	);
 
 	var $gcClone = $goodContainer.clone();
@@ -85,7 +154,7 @@ QUnit.test( "`__setButtons()` and `getButtons()` tests", function( assert ) {
 				e.getType() === "jQuery"
 			);
 		},
-		"Expected that `$btns` param must be a jQuery object has passed!"
+		"Expected that `$btns` param must be a jQuery object was not thrown!"
 	);
 
 	// Correct type
@@ -143,7 +212,7 @@ QUnit.test( "`__setButtons()` and `getButtons()` tests", function( assert ) {
 });
 
 QUnit.test( "`__setGameChoiceModal()` and `getGameChoiceModal()` tests", function( assert ) {
-	expect(6);
+	expect(8);
 
 	// Bad type
 	assert.throws(
@@ -158,7 +227,7 @@ QUnit.test( "`__setGameChoiceModal()` and `getGameChoiceModal()` tests", functio
 				e.getType() === "jQuery"
 			);
 		},
-		"Expected that `$gcm` param must be a jQuery object has passed!"
+		"Expected that `$gcm` param must be a jQuery object was not thrown!"
 	);
 
 	// Correct type
@@ -171,6 +240,15 @@ QUnit.test( "`__setGameChoiceModal()` and `getGameChoiceModal()` tests", functio
 		$modal.length,
 		1,
 		"Expected the `getContainer().children()`s last element to be a single `div` element"
+	);
+	assert.ok(
+		$modal.attr('data-card-game-view-element') !== null,
+		'Expected the game choice modal `div` to have a `data-card-game-view-element` attribute.'
+	);
+	assert.strictEqual(
+		$modal.attr('data-card-game-view-element'),
+		"game-choice-modal",
+		'Expected the `data-card-game-view-element` attribute in the modal `div` to equal "game-choice-modal".'
 	);
 	assert.ok(
 		$modal.prop('id') === 'testmodal',
@@ -199,65 +277,6 @@ QUnit.test( "`__setGameChoiceModal()` and `getGameChoiceModal()` tests", functio
 		good.getGameChoiceModal(),
 		null,
 		"The jQuery element returned from `getGameChoiceModal()` should be null."
-	);
-});
-
-QUnit.test( "`__setGameViewCanvas()` and `getGameViewCanvas()` tests", function( assert ) {
-	expect(5);
-
-	// Bad type
-	assert.throws(
-		function() { 
-			var badCvs = "a string";
-			var good = new AppView($goodContainer.clone());
-			good.__setGameViewCanvas(badCvs);
-		},
-		function (e) {
-			return (
-				e.instanceOf(TypeException) === true &&
-				e.getType() === "GameView"
-			);
-		},
-		"Expected that `cvs` param must be a GameView object has passed!"
-	);
-
-	// Correct type
-	var good = new AppView($goodContainer.clone());
-	// @TODO - abstract GameView class should not be able to be instantiated; 
-	// instead, mock an implemented subclass here (which implements 'missing' 
-	// methods) and use that pattern from now on where appropriate.
-	var goodCanvas = new GameView();
-	goodCanvas.__setDOMElements($('<div></div>').prop('id', 'test-plugin-canvas'));
-	good.__setGameViewCanvas(goodCanvas);
-	var $testPluginCanvasDiv = good.getGameChoiceModal().prev('div');
-	assert.strictEqual(
-		$testPluginCanvasDiv.prop('id'),
-		'test-plugin-canvas',
-		"Expected a `div` with ID 'test-plugin-canvas' to be in the DOM before the modal element returned by `getGameChoiceModal()`."
-	);
-	assert.strictEqual(
-		good.getGameViewCanvas(),
-		goodCanvas,
-		'The GameView returned from `getGameViewCanvas()` does not match the one passed into `__setGameViewCanvas()`.'
-	);
-
-	// null button set
-	good.__setGameViewCanvas(null);
-	$pluginCanvasDOM = good
-		.getContainer()
-		.find(
-			goodCanvas.getDOMElements()
-		);
-
-	assert.strictEqual(
-		$pluginCanvasDOM.length,
-		0,
-		"Expected the `$pluginCanvasDOM` object to be empty"
-	);
-	assert.strictEqual(
-		good.getGameViewCanvas(),
-		null,
-		"The jQuery element returned from `getGameViewCanvas()` should be null."
 	);
 });
 
@@ -471,114 +490,49 @@ QUnit.test( "__createGameChoiceModal() tests", function( assert ) {
 	// the $modal DOM.
 });
 
-QUnit.test( "`__initLayout()` tests", function( assert ) {
-	expect(12);
+/** Public method tests **/
+QUnit.test( "`initGameView()` tests", function( assert ) {
+	expect(4);
+
+	var good = new AppView($goodContainer.clone());
 
 	assert.throws(
-		function() { 
-			var good = new AppView($goodContainer.clone());
-			good.__initLayout(badContainer);
+		function() { good.initGameView(); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'The `$gameContainer` param is required.' &&
+				e.getCallingMethod() === 'AppView.initGameView'
+			);
 		},
+		"Expected that `$gameContainer` param is required was not thrown!"
+	);
+
+	// Bad type
+	var badGameContainer = "badContainer";
+	assert.throws(
+		function() { good.initGameView(badGameContainer); },
 		function (e) {
 			return (
 				e.instanceOf(TypeException) === true &&
 				e.getType() === "jQuery"
 			);
 		},
-		"Expected that `$container` param must be a jQuery object has passed!"
+		"Expected that `$gameContainer` param must be a jQuery object was not thrown!"
 	);
 
-	var good = new AppView($goodContainer.clone());
-	// Get state to where it should be
-	good.__setButtons(null);
-	good.__setGameChoiceModal(null);
-	good.__container = null;
+	// Correct type
+	var $goodGameContainer = $('<div></div>');
+	good.initGameView($goodGameContainer);
+	var $divBeforeModal = good.getGameChoiceModal().prev('div');
 
-	// Run the method to be tested with the correct container element
-	good.__initLayout($goodContainer.clone());
-	var $goodButtons = good.getButtons();
 	assert.ok(
-		$goodButtons.jquery !== undefined,
-		"The `$goodButtons` object is not a jQuery object."
+		$divBeforeModal.attr('data-card-game-view-element') !== null,
+		'Expected the `div` before the game choice modal to have a `data-card-game-view-element` attribute.'
 	);
 	assert.strictEqual(
-		$goodButtons.length,
-		2,
-		"The `$goodButtons` jQuery object should have 2 button elements."
-	);
-	assert.strictEqual(
-		$goodButtons.eq(0).attr('data-card-game-button'),
-		"startNewGame",
-		"The first element in the `$goodButtons` object should have a 'data-card-game-button' attribute equal to 'startNewGame'."
-	);
-	assert.strictEqual(
-		$goodButtons.eq(1).attr('data-card-game-button'),
-		"restartCurrentGame",
-		"The second element in the `$goodButtons` object should have a 'data-card-game-button' attribute equal to 'restartCurrentGame'."
-	);
-
-	var $buttonContainer = good.getContainer().children().eq(0);
-
-	assert.strictEqual(
-		$buttonContainer.length,
-		1,
-		"Expected the `$buttonContainer` object to contain a single `div` element"
-	);
-	assert.strictEqual(
-		$buttonContainer.attr('data-card-game-view-element'),
-		"button-container",
-		"The first element in the `$buttons` object should have a 'data-card-game-view-element' attribute equal to 'button-container'."
-	);
-	assert.strictEqual(
-		$buttonContainer.children().get(0),
-		$goodButtons.get(0),
-		"The first child of `$buttonContainer` should be the first one in the set returned from `getButtons()`."
-	);
-	assert.strictEqual(
-		$buttonContainer.children().get(1),
-		$goodButtons.get(1),
-		"The second child of `$buttonContainer` should be the second one in the set returned from `getButtons()`."
-	);
-
-	var $modal = good.getContainer().children().last();
-	assert.strictEqual(
-		$modal.length,
-		1,
-		"Expected the `getContainer().children()`s last element to be a single `div` element"
-	);
-	assert.strictEqual(
-		$modal.attr('data-card-game-view-element'),
-		'game-choice-modal',
-		"The `$modal` object should have an 'data-card-game-view-element' attribute equal to `game-choice-modal`."
-	);
-	assert.equal(
-		good.getGameChoiceModal().get(0),
-		$modal.get(0),
-		"The jQuery element returned from `getGameChoiceModal()` does not match the one that's in the DOM."
+		$divBeforeModal.attr('data-card-game-view-element'),
+		"canvas-container",
+		'Expected the `data-card-game-view-element` attribute in the `div` before the game choice modal to equal "canvas-container".'
 	);
 });
-
-
-// @TODO - unit tests for `initGameView()`, `resetGameView()`, 
-// and any other methods that may exist.
-
-/** Public method tests **/
-
-/*QUnit.test( "private method tests", function( assert ) {
-	expect(1);
-	assert.strictEqual(
-		goodContainer,
-		good.getContainer(),
-		"The $container stored in `good` does not equal the one passed in the constructor."
-	);
-
-	assert.ok(
-		good.getButtons() !== null,
-		"`getButtons()` returned null; expected to return a jQuery set of Buttons"
-	);
-
-	assert.ok(
-		good.getContainer().find(good.getButtons()).length === 2,
-		"Expected to find"
-	);
-});*/

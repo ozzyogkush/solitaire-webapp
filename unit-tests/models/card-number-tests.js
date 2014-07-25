@@ -37,7 +37,7 @@ QUnit.test( "constructor tests expected failures", function( assert ) {
 		function (e) {
 			return (
 				e.instanceOf(TypeException) === true &&
-				e.getType() === "number"
+				e.getType() === "Integer"
 			);
 		},
 		"Expected that `cardValue` param must be an Integer was not thrown!"
@@ -60,13 +60,13 @@ QUnit.test( "constructor tests expected successes", function( assert ) {
 
 	var good = new CardNumber(goodCardValue, goodCardNumberName);
 	assert.strictEqual(
-		goodCardValue,
 		good.getCardValue(),
+		goodCardValue,
 		"The returned value of `getCardValue()` doesn't equal the value supplied in the constructor, `" + goodCardValue + "`."
 	);
 	assert.strictEqual(
-		goodCardNumberName,
 		good.getCardNumberName(),
+		goodCardNumberName,
 		"The returned value of `getCardNumberName()` doesn't equal the value supplied in the constructor, '" + goodCardNumberName + "'."
 	);
 });
@@ -83,7 +83,7 @@ QUnit.test( "`__setCardValue()` and `getCardValue()` tests", function( assert ) 
 		function (e) {
 			return (
 				e.instanceOf(TypeException) === true &&
-				e.getType() === "number"
+				e.getType() === "Integer"
 			);
 		},
 		"Expected that `cardValue` param must be an Integer was not thrown!"
@@ -106,14 +106,14 @@ QUnit.test( "`__setCardValue()` and `getCardValue()` tests", function( assert ) 
 	good.cardNumberName = null;
 	good.__setCardValue(goodCardValue);
 	assert.strictEqual(
-		goodCardValue,
 		good.getCardValue(),
+		goodCardValue,
 		"The returned value of `getCardValue()` doesn't equal the supplied param, `" + goodCardValue + "`."
 	);
 	good.__setCardNumberName(goodCardNumberName);
 	assert.strictEqual(
-		goodCardNumberName,
 		good.getCardNumberName(),
+		goodCardNumberName,
 		"The returned value of `getCardNumberName()` doesn't equal the supplied param, '" + goodCardNumberName + "'."
 	);
 });

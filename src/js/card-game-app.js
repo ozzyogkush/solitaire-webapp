@@ -1,44 +1,240 @@
+/**
+ * A Card game backbone application. Allows you to start a new game, or restart a current game.
+ *
+ * By implementing your own sub-classes of GameView and GameRules, you can create your own
+ * game and let this system handle most of the work for you.
+ *
+ * @copyright	Copyright (c) 2014, Derek Rosenzweig
+ * @class		CardGameApp
+ * @name		CardGameApp
+ * @version		
+ * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
+ */
 var CardGameApp = Class({
+	//--------------------------------------------------------------------------
+	//
+	//  Variables and get/set functions
+	//
+	//--------------------------------------------------------------------------
 
-	_view : null,
+	/**
+	 * Application view element for handling the overall DOM construction and interaction.
+	 *
+	 * @private		
+	 * @type		AppView
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * @default		null
+	 */
+	_appView : null,
 	
 	/**
-	 * Sets the `_view` property to the value of `view`.
+	 * Sets the `_appView` property to the value of `appView`.
 	 * 
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	CardGameApp
 	 * @since		
 	 * 
-	 * @param		GameView			view			The application GameView. Required.
+	 * @param		AppView			appView			The overall application view. Required.
 	 */
-	__setView : function(view)
+	__setAppView : function(appView)
 	{
-		if (view !== null &&
-			(! view.hasOwnProperty('instanceOf') || ! view.instanceOf(GameView))) {
-			throw new TypeException("PluginView", "CardGameApp.__setView");
+		if (appView !== null &&
+			(! appView.hasOwnProperty('instanceOf') || ! appView.instanceOf(AppView))) {
+			throw new TypeException("AppView", "CardGameApp.__setAppView");
 		}
 		
-		this._view = view;
+		this._appView = appView;
 	},
 	
 	/**
-	 * Returns the `_view` property.
+	 * Returns the `_appView` property.
 	 * 
 	 * @public
 	 * @memberOf	CardGameApp
 	 * @since		
 	 *
-	 * @return		GameView			_view		Returns the `_view` property.
+	 * @return		AppView			_appView		Returns the `_appView` property.
 	 */
-	getView : function()
+	getAppView : function()
 	{
-		return this._view;
+		return this._appView;
 	},
 
-	_registeredVariations : [],
-	loadedVariation : false,
-	debug : false,
+	/**
+	 * The game controller responsible for handling the loaded game's logic and view loading.
+	 *
+	 * @private		
+	 * @type		GameController
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * @default		null
+	 */
+	_gameController : null,
+	
+	/**
+	 * Sets the `_gameController` property to the value of `GameController`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * 
+	 * @param		GameController			gameController			The game controller. Required.
+	 */
+	__setGameController : function(gameController)
+	{
+		if (gameController !== null &&
+			(! gameController.hasOwnProperty('instanceOf') || ! gameController.instanceOf(GameController))) {
+			throw new TypeException("GameController", "CardGameApp.__setGameController");
+		}
+		
+		this._gameController = gameController;
+	},
+	
+	/**
+	 * Returns the `_gameController` property.
+	 * 
+	 * @public
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @return		GameController			_gameController		Returns the `_gameController` property.
+	 */
+	getGameController : function()
+	{
+		return this._gameController;
+	},
+
+	/**
+	 * The set of games that this app has registered as implemented and play-able.
+	 *
+	 * @private		
+	 * @type		Array
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * @default		null
+	 */
+	_registeredGames : null,
+	
+	/**
+	 * Sets the `_registeredGames` property to the value of `rg`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * 
+	 * @param		Array			rg			The set of games to register in the app. Required.
+	 */
+	__setRegisteredGames : function(rg)
+	{
+		if ($.type(rg) !== "array") {
+			throw new TypeException("Array", "CardGameApp.__setRegisteredGames");
+		}
+		this._registeredGames = rg;
+	},
+	
+	/**
+	 * Returns the `_registeredGames` property.
+	 * 
+	 * @public
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @return		Array			_registeredGames		Returns the `_registeredGames` property.
+	 */
+	getRegisteredGames : function()
+	{
+		return this._registeredGames;
+	},
+
+	/**
+	 * The name of the current game being played.
+	 *
+	 * @private		
+	 * @type		String
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * @default		null
+	 */
+	_loadedGame : null,
+
+	/**
+	 * Sets the `_loadedGame` property to the value of `lgName`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * 
+	 * @param		String			lgName			The name of the game. Required.
+	 */
+	__setLoadedGame : function(lgName)
+	{
+		if ($.type(lgName) !== "string") {
+			throw new TypeException("String", "CardGameApp.__setLoadedGame");
+		}
+		this._loadedGame = lgName;
+	},
+
+	/**
+	 * Returns the `_loadedGame` property.
+	 * 
+	 * @public
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @return		String			_loadedGame		Returns the `_loadedGame` property.
+	 */
+	getLoadedGame : function()
+	{
+		return this._loadedGame;
+	},
+
+	/**
+	 * Flag indicating whether to log debug messages and exceptions.
+	 *
+	 * @private		
+	 * @type		Boolean
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * @default		false
+	 */
+	_debug : false,
+
+	/**
+	 * Sets the `_debug` property to the value of `debug`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * 
+	 * @param		Boolean			debug			Flag indicating whether to allow debug or not. Required.
+	 */
+	__setDebug : function(debug)
+	{
+		if ($.type(debug) !== "boolean") {
+			throw new TypeException("Boolean", "CardGameApp.__setDebug");
+		}
+		this._debug = debug;
+	},
+
+	/**
+	 * Returns the `_debug` property.
+	 * 
+	 * @public
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @return		Boolean			_debug		Returns the `_debug` property.
+	 */
+	getDebug : function()
+	{
+		return this._debug;
+	},
 
 	//--------------------------------------------------------------------------
 	//
@@ -46,14 +242,27 @@ var CardGameApp = Class({
 	//
 	//--------------------------------------------------------------------------
 
-	__construct : function($containerElement, variations, debug)
+	/**
+	 * Initialize the backbone app. Registers available games, then loads up the overall backbone view
+	 * before beginning the specified default game.
+	 *
+	 * @constructor
+	 * @public
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @param		jQuery			$containerElement				The jQuery extended DOM element that will contain the entire application and game views. Required.
+	 * @param		Array			games							The set of names of games which the user will be able to play. Required.
+	 * @param		Boolean			debug							Flag to turn on debugging for development or testing. Optional.
+	 */
+	__construct : function($containerElement, games, debug)
 	{
 		var callStackCurrent = "CardGameApp.__construct";
 
 		try {
 			// Check for required parameters
 			if ($.type($containerElement) === "undefined") {
-				throw new CardGameException("No container element specified.", callStackCurrent);
+				throw new CardGameException("Container element is required.", callStackCurrent);
 			}
 			else if (
 				$.type($containerElement) !== "object" ||
@@ -65,81 +274,100 @@ var CardGameApp = Class({
 				throw new CardGameException("Specified element could not be found.", callStackCurrent);
 			}
 			// `$containerElement` is valid.
-
-			if ($.type(variations) !== "array") {
-				throw new TypeException("array", callStackCurrent);
+			
+			if ($.type(games) === "undefined") {
+				throw new CardGameException("List of games is required.", callStackCurrent);
 			}
-			else if (variations.length === 0) {
-				throw new CardGameException("Empty set of variations is not allowed.", callStackCurrent);
+			else if ($.type(games) !== "array") {
+				throw new TypeException("Array", callStackCurrent);
+			}
+			else if (games.length === 0) {
+				throw new CardGameException("List of games cannot be empty.", callStackCurrent);
+			}
+			// `games` is valid.
+
+			// Proceed with checking and setting the optional `debug` property.
+			if ($.type(debug) !== "undefined") {
+				this.__setDebug(debug);
 			}
 
-			// `variations` is valid.
+			// First, make sure we have at least one game available, and register them.
+			this.__registerGames(games);
+
+			// Initialize the application view.
+			this.__initApplication($containerElement);
+
+			// Set the application view's event handlers.
+			this.__setApplicationEvents();
+
+			// Load the default Game's controller, rules, and view.
+			this.__setLoadedGame(this.__loadDefaultGame());
 		}
 		catch (e) {
 			// Set debug to true so the user can see the problem.
-			this.debug = true;
+			this.__setDebug(true);
 			this.logConsoleDebugMessage(e);
 			return this;
-		}
+        }
 
-		// Proceed with checking and setting the optional `debug` property.
-		if ($.type(debug) !== "undefined" && 
-			$.type(debug) === "boolean") {
-			this.debug = debug;
-		}
-
-		// Step 1: register all Variation plugins
-		try {
-			this.__registerVariations(variations);
-		}
-		catch (e) {
-			// If it reaches this point, it means that no Variations could be registered,
-			// so there's nothing more to do.
-			this.logConsoleDebugMessage(e);
-			return this;
-		}
-
-		this.__initApplication($containerElement);
-
-		// Load the specified Variation
-		this.loadedVariation = this.__loadDefaultVariation();
+		// Log the success in the console.
+		this.logConsoleDebugMessage(
+			new CardGameDebugMessage(
+				"Successfully loaded the game " + this.getLoadedGame(),
+				callStackCurrent
+			)
+		);
 	},
 
 	/** Private Functions **/
 
-	__initApplication : function($containerElement)
+	/**
+	 * Make sure that for every game to be registered, that a sub-class of both the
+	 * GameRules and GameView classes exist such that 'Game' is replaced by the name
+	 * of the game to be registered. Sets the list of registered games when successful,
+	 * throws a CardGameException when it fails.
+	 * 
+	 * @private
+	 * @throws		CardGameException
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * 
+	 * @param		Array			games				The set of names of games to register as available. Required.
+	 */
+	__registerGames : function(games)
 	{
-		// Set the overall view to the `$containerElement` param, and register event handlers
-		// for the buttons that control the overall application. Create the Modal that will
-		// give the Player the choice of available variations/plugins/games to play.
-		this.__setView(new AppView($containerElement));
-		this.getView()
-			.getButtons()
-				.filter('[data-card-game-button="startNewGame"]')
-					.on('click', this.__startNewGameBtnClickHandler)
-			.end()
-				.filter('[data-card-game-button="restartCurrentGame"]') /*jshint asi:true */
-					on('click', this.__restartCurrentGameBtnClickHandler);
-	},
-
-	__registerVariations : function(variations)
-	{
-		var callStackCurrent = "CardGameApp.__registerVariations";
+		var callStackCurrent = "CardGameApp.__registerGames";
 		var i = 0;
-		this._registeredVariations = [];
-		for (i = 0; i < variations.length; i++) {
+		var registeredGames = [];
+		for (i = 0; i < games.length; i++) {
 			try {
-				var variationStr = variations[i];
-				var variationClass = window[variationStr];
-				if ($.type(variationClass) === "undefined") {
+				var gameStr = games[i];
+				var gameRulesClassStr = gameStr + 'Rules';
+				var gameRulesClass = window[gameRulesClassStr];
+				var gameViewClassStr = gameStr + 'View';
+				var gameViewClass = window[gameViewClassStr];
+
+				// Check that the Rules class exists.
+				if ($.type(gameRulesClass) === "undefined") {
 					throw new CardGameException(
-						"Variation class '" + variationStr + "' does not exist.",
+						"Game class '" + gameRulesClassStr + "' does not exist.",
 						callStackCurrent
 					);
 				}
-				this._registeredVariations.push({ 
-					variationName : variationStr, 
-					variationClass : variationClass 
+
+				// Check that the View class exists.
+				if ($.type(gameViewClass) === "undefined") {
+					throw new CardGameException(
+						"Game class '" + gameViewClassStr + "' does not exist.",
+						callStackCurrent
+					);
+				}
+
+				// The current game we're checking has all the right classes, so register it now.
+				registeredGames.push({ 
+					gameName : gameStr, 
+					gameRulesClass : gameRulesClass,
+					gameViewClass : gameViewClass
 				});
 			}
 			catch (e) {
@@ -147,152 +375,142 @@ var CardGameApp = Class({
 			}
 		}
 
-		if (this._registeredVariations.length === 0) {
-			throw new CardGameException("None of the specified Variation classes exist.", callStackCurrent);
+		if (registeredGames.length === 0) {
+			// None of the games' classes exist, or are finished enough, to be registered.
+			throw new CardGameException("None of the specified Games exist.", callStackCurrent);
 		}
+
+		// We have at least one game available, so register it/them.
+		this.__setRegisteredGames(registeredGames);
 	},
 
-	__loadDefaultVariation : function()
+	/**
+	 * Generates the AppView for the backbone, and sets the local reference.
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * 
+	 * @param		jQuery			$containerElement		The jQuery extended DOM element that will contain the entire application and game views. Required.
+	 */
+	__initApplication : function($containerElement)
 	{
-		var domSpecified = this.getView().getContainer().attr('data-card-game');
-		var defaultVariationToLoadStr = this._registeredVariations[0].variationName;
+		// Set the overall view to the `$containerElement` param
+		var appView = new AppView($containerElement);
+		this.__setAppView(appView);
+	},
 
-		if (domSpecified !== null) {
-			for (var i = 0; i < this._registeredVariations.length; i++) {
-				if (this._registeredVariations[i].variationName === domSpecified) {
-					defaultVariationToLoadStr = domSpecified;
+	/**
+	 * Register the event handlers for DOM elements in the AppView.
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 */
+	__setApplicationEvents : function()
+	{
+		// Register event handlers for the buttons that control the overall application.
+		// Create the Modal that will give the Player the choice of available games to play.
+		this
+			.getAppView()
+				.getButtons()
+					.filter('[data-card-game-button="startNewGame"]')
+						.on('click',
+							$.proxy(this.__startNewGameBtnClickHandler, this))
+				.end()
+					.filter('[data-card-game-button="restartCurrentGame"]')
+						.on('click', 
+							$.proxy(this.__restartCurrentGameBtnClickHandler, this));
+	},
+
+	/**
+	 * If the `data-card-game` is specified in the main AppView container, and exists
+	 * in the list of registered games, load it by default. Otherwise, load the first
+	 * game in the list of registered games.
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @return		String						The name of the game that is successfully loaded by `__loadGame()`.
+	 */
+	__loadDefaultGame : function()
+	{
+		var domSpecified = this.getAppView().getContainer().attr('data-card-game');
+		var registeredGames = this.getRegisteredGames();
+		var defaultGameToLoadStr = registeredGames[0].gameName;
+
+		if (domSpecified !== undefined) {
+			for (var i = 0; i < registeredGames.length; i++) {
+				if (registeredGames[i].gameName === domSpecified) {
+					defaultGameToLoadStr = domSpecified;
 					break;
 				}
 			}
 		}
 
-		return this.loadVariation(defaultVariationToLoadStr);
+		return this.__loadGame(defaultGameToLoadStr);
 	},
 
-	__loadVariation : function(variationName)
+	/**
+	 * Generates the GameController with the specified game name, adds the game's
+	 * view to the application's view, and begins the new game.
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @param		String			gameName				The name of the game to load. Required.
+	 *
+	 * @return		String			gameNameLoaded			The name of the game that successfully loaded. Null when there's a problem.
+	 */
+	__loadGame : function(gameName)
 	{
-		// Actually load the specified variation model and view.
-		var successOrFail = false;
+		var gameNameLoaded = null;
 
-		if (this.getView().getGameViewCanvas() !== null) {
+		/*if (this.getAppView().getContainer() !== null) {
 			this.__removeGameViewEventHandlers();
-		}
-		this.getView().resetPluginView();
+		}*/
+		//this.getAppView().resetAppView();
 
 		try {
-			// Generate the model/rules specific to the variation plugin
-			var model = this.__generateVariationModel(variationName);
+			// Generate the GameController...
+			var gameController = new GameController(gameName);
 
-			// Init the variation plugin's view and apply it to the main application view
-			this.getView().initGameView(this.__generateVariationView(variationName, model));
+			// ...set the generated GameController...
+			this.__setGameController(gameController);
 
-			// We've successfully set the Model and View for this
-			// game, so add the proper event handlers to the correct DOM elements.
-			// Since the View has access to the Model, it can use that logic to
-			// figure out what to do with the cards and stacks when the user interacts.
-			this.__addGameViewEventHandlers();
+			// ...and add the sub-classed GameView object DOM elements to the Application view
+			this.__addGameViewToAppView();
+
+			// Begin the game!
+			this.getGameController().beginGamePlay();
 
 			// All the above operations succeeded without throwing an exception.
-			successOrFail = true;
+			gameNameLoaded = gameName;
 		}
 		catch (e) {
 			this.logConsoleDebugMessage(e);
-			this.getView().resetPluginView();
+			//this.getAppView().resetAppView();
 		}
 
-		return successOrFail;
+		return gameNameLoaded;
 	},
 
-	/*__generateVariation : function(variationName)
+	/**
+	 * Adds the game's view DOM container to the application's view DOM element.
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 */
+	__addGameViewToAppView : function()
 	{
-		if (window[variationName] !== undefined) {
-			throw new TypeException(variationName, "CardGameApp.__generateVariation");
-		}
-
-		return new window[variationName]();
-	},*/
-
-	__generateVariationModel : function(variationName)
-	{
-		var modelClassName = variationName + "Rules";
-		if (window[modelClassName] !== undefined) {
-			throw new TypeException(modelClassName, "CardGameApp.__generateVariationModel");
-		}
-
-		return new window[modelClassName]();
-	},
-
-	__generateVariationView : function(variationName, model)
-	{
-		var viewClassName = variationName + "View";
-		if (window[viewClassName] !== undefined) {
-			throw new TypeException(viewClassName, "CardGameApp.__generateVariationView");
-		}
-
-		return new window[viewClassName](model);
-	},
-
-	__removeGameViewEventHandlers : function()
-	{
-		var gameViewCanvas = this.getView().getGameViewCanvas();
-		gameViewCanvas.getDOMElements()
-			.filter('[data-card-game-view-element="canvas-container"]')
-				.off('mousedown touchstart', gameViewCanvas.mouseDownTouchStartEventHandler)
-				.off('mouseup touchend', gameViewCanvas.mouseUpTouchEndEventHandler)
-				.off('mousemove touchmove', gameViewCanvas.mouseMoveTouchMoveEventHandler)
-				.off('click', gameViewCanvas.mouseClickEventHandler);
-	},
-
-	__addGameViewEventHandlers : function()
-	{
-		var gameViewCanvas = this.getView().getGameViewCanvas();
-		gameViewCanvas.getDOMElements()
-			.filter('[data-card-game-view-element="canvas-container"]')
-				.on('mousedown touchstart', gameViewCanvas.mouseDownTouchStartEventHandler)
-				.on('mouseup touchend', gameViewCanvas.mouseUpTouchEndEventHandler)
-				.on('mousemove touchmove', gameViewCanvas.mouseMoveTouchMoveEventHandler)
-				.on('click', gameViewCanvas.mouseClickEventHandler);
+		var $gameContainer = this.getGameController().getGameView().getGameContainer();
+		this.getAppView().initGameView($gameContainer);
 	},
 
 	/** Public Functions **/
-
-	/** should the below go here, or in the view? **/
-	dealerCollectAllCards : function()
-	{
-
-	},
-
-	shuffleCards : function()
-	{
-		
-	},
-	/** should the above go here, or in the view? **/
-
-	/** Event Handler Functions **/
-
-	__startNewGameBtnClickHandler : function(event)
-	{
-		// Show the Game Choice Modal element
-		//this.getView().getGameChoiceModal().
-	},
-
-	__startNewSelectedGameBtnClickHandler : function(event)
-	{
-		var variationStr = $(this).attr('data-card-game-variation');
-		if (variationStr === null) {
-			throw new CardGameException(
-				"Expected the game button to have a `data-card-game-variation` attribute equal to '" + variationStr + "'.",
-				'CardGameApp.__startNewSelectedGameBtnClickHandler'
-			);
-		}
-
-		return this.__loadVariation(variationStr);
-	},
-
-	__restartCurrentGameBtnClickHandler : function(event)
-	{
-
-	},
 
 	/**
 	 * If debug is enabled and the console object exists, attempt to log
@@ -310,9 +528,13 @@ var CardGameApp = Class({
 	 * @param		CardGameDebugMessage			debugObject			A `CardGameDebugMessage` instance, or a subclass
 	 */
 	logConsoleDebugMessage : function(debugObject) {
-		if (this.debug && console !== undefined) {
+		if (this.getDebug() === true && console !== undefined) {
 			var logString = "";
-			if ($.type(debugObject) === "object" &&
+			if (debugObject.hasOwnProperty('instanceOf') && 
+				debugObject.instanceOf(CardGameDebugMessage)) {
+				logString = debugObject;
+			}
+			else if ($.type(debugObject) === "object" &&
 				debugObject.toConsole !== undefined &&
 				$.type(debugObject.toConsole) === "function") {
 				// Handles CardGameDebugMessage, CardGameException, 
@@ -330,5 +552,60 @@ var CardGameApp = Class({
 			// Actually log the message.
 			console.log(logString);
 		}
+	},
+
+	/** Event Handler Functions **/
+
+	/**
+	 * 
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 */
+	__startNewGameBtnClickHandler : function(event)
+	{
+		// Show the Game Choice Modal element
+		this.getAppView().showGameChoiceModal();
+	},
+
+	/**
+	 * 
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 */
+	__startNewSelectedGameBtnClickHandler : function(event)
+	{
+		var gameStr = $(this).attr('data-card-game-game');
+		if (gameStr === null) {
+			throw new CardGameException(
+				"Expected the game button to have a `data-card-game-game` attribute equal to '" + gameStr + "'.",
+				'CardGameApp.__startNewSelectedGameBtnClickHandler'
+			);
+		}
+
+		// @TODO: check registeredGames for the specified game, throw exception when its not found
+
+		// Load the selected game.
+		var success = this.__loadGame(gameStr);
+
+		// Reset the game choice modal in the AppView
+		this.getAppView().resetGameChoiceModal();
+
+		return success;
+	},
+
+	/**
+	 * 
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 */
+	__restartCurrentGameBtnClickHandler : function(event)
+	{
+
 	}
 });

@@ -111,6 +111,7 @@ module.exports = function(grunt) {
           'src/js/views/*.js', 
           'src/js/static/*.js',
           'src/js/plugins/*.js',
+          'src/js/controllers/*.js',
           'src/js/*.js'
         ],
         dest: '<%= paths.devOut %>/js/card-game-app.js'
@@ -125,6 +126,7 @@ module.exports = function(grunt) {
           'src/js/views/*.js', 
           'src/js/static/*.js',
           'src/js/plugins/*.js',
+          'src/js/controllers/*.js',
           'src/js/*.js'
         ],
         dest: '<%= paths.prodOut %>/js/card-game-app.js'

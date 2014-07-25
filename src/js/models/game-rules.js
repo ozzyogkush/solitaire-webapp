@@ -1,6 +1,5 @@
 /**
- * Abstract base class for implmenting specific game variations' rules required for
- * the user to be able to play the specific variation.
+ * Abstract base class for implementing the Stack model for the layout of a card game.
  *
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameRules
@@ -14,51 +13,6 @@ var GameRules = Class({ implements : IModelRules }, {
 	//  Variables and get/set functions
 	//
 	//--------------------------------------------------------------------------
-
-	/**
-	 * Contains the number of cards a player is able currently allowed to move
-	 * from an "In Play" stack to another "In Play" Stack (with cards or empty).
-	 *
-	 * @private		
-	 * @type		Integer
-	 * @memberOf	GameRules
-	 * @since		
-	 * @default		null
-	 */
-	_cardNumAbleToMoveFromInPlayStack : null,
-
-	/**
-	 * Sets the `_cardNumAbleToMoveFromInPlayStack` property to the parsed integer value of `cna`.
-	 * 
-	 * @private
-	 * @throws		TypeException
-	 * @memberOf	GameRules
-	 * @since		
-	 * 
-	 * @param		Integer			cna			The number of cards now allowed to be moved from an in play stack. Required.
-	 */
-	__setCardNumAbleToMoveFromInPlayStack : function(cna)
-	{
-		var parsed = null;
-		if (typeof cna !== "number" || (parsed = parseInt(cna) === null)) {
-			throw new TypeException("number", "GameRules.__setCardNumAbleToMoveFromInPlayStack");
-		}
-		this._cardNumAbleToMoveFromInPlayStack = parsed;
-	},
-
-	/**
-	 * Returns the `_cardNumAbleToMoveFromInPlayStack` property.
-	 * 
-	 * @public
-	 * @memberOf	GameRules
-	 * @since		
-	 *
-	 * @return		String			_cardNumAbleToMoveFromInPlayStack		Returns the name string.
-	 */
-	getCardNumAbleToMoveFromInPlayStack : function()
-	{
-		return this._cardNumAbleToMoveFromInPlayStack;
-	},
 
 	/**
 	 * The number of full Decks of Cards that the game will require to be played.
@@ -83,10 +37,11 @@ var GameRules = Class({ implements : IModelRules }, {
 	 */
 	__setNumDecksInGame : function(n)
 	{
-		if (typeof n !== "number" || (parsed = parseInt(n) === null)) {
-			throw new TypeException("number", "GameRules.__setNumDecksInGame");
+		var parsed = null;
+		if (typeof n !== "number" || ((parsed = parseInt(n)) === null)) {
+			throw new TypeException("Integer", "GameRules.__setNumDecksInGame");
 		}
-		this._numDecksInGame = n;
+		this._numDecksInGame = parsed;
 	},
 	
 	/**
@@ -127,7 +82,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	__setIncludeJokers : function(ij)
 	{
 		if (typeof ij !== "boolean") {
-			throw new TypeException("boolean", "GameRules.__setIncludeJokers");
+			throw new TypeException("Boolean", "GameRules.__setIncludeJokers");
 		}
 		this._includeJokers = ij;
 	},
@@ -170,7 +125,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	__setAcesHigh : function(ah)
 	{
 		if (typeof ah !== "boolean") {
-			throw new TypeException("boolean", "GameRules.__setAcesHigh");
+			throw new TypeException("Boolean", "GameRules.__setAcesHigh");
 		}
 		this._acesHigh = ah;
 	},
@@ -194,11 +149,11 @@ var GameRules = Class({ implements : IModelRules }, {
 	 *
 	 * @private
 	 * @type		Array
-	 * @memberOf	IModelRules
+	 * @memberOf	GameRules
 	 * @since		
 	 * @default		null
 	 */
-	_stacks : null,
+	_stackModel : null,
 	
 	/**
 	 * Sets the `_stacks` property to the value of `st`.
@@ -210,26 +165,26 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * 
 	 * @param		Array			st			The set of Stack objects making up the play area. Required.
 	 */
-	__setStacks : function(st)
+	__setStackModel : function(st)
 	{
 		if ($.type(st) !== "array") {
-			throw new TypeException("array", "GameRules.__setStacks");
+			throw new TypeException("Array", "GameRules.__setStackModel");
 		}
-		this._stacks = st;
+		this._stackModel = st;
 	},
 	
 	/**
-	 * Returns the `_stacks` property.
+	 * Returns the `_stackModel` property.
 	 * 
 	 * @public
 	 * @memberOf	GameRules
 	 * @since		
 	 *
-	 * @return		Array			_stacks		Returns the `_stacks` property.
+	 * @return		Array			_stackModel			Returns the `_stackModel` property.
 	 */
-	getStacks : function()
+	getStackModel : function()
 	{
-		return this._stacks;
+		return this._stackModel;
 	},
 
 	/**
@@ -239,7 +194,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 *
 	 * @private
 	 * @type		Array
-	 * @memberOf	IModelRules
+	 * @memberOf	GameRules
 	 * @since		
 	 * @default		null
 	 */
@@ -258,7 +213,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	__setLayout : function(ly)
 	{
 		if ($.type(ly) !== "array") {
-			throw new TypeException("array", "GameRules.__setLayout");
+			throw new TypeException("Array", "GameRules.__setLayout");
 		}
 		this._layout = ly;
 	},
@@ -287,7 +242,8 @@ var GameRules = Class({ implements : IModelRules }, {
 
 	/**
 	 * Initialize the object and create the stacks based on the model defined
-	 * by the extended child class.
+	 * by the extended child class. This constructor should run AFTER the sub-class
+	 * constructor generates and sets its layout
 	 *
 	 * @constructor
 	 * @public
@@ -298,9 +254,11 @@ var GameRules = Class({ implements : IModelRules }, {
 	{
 		if (this.getLayout() !== null) {
 			// actually create all the stacks and set to `stacks` property
-			this.__setStacks(this.__createStackModel());
+			this.__setStackModel(this.__createStackModel());
 		}
 	},
+
+	/** Private Functions **/
 
 	/**
 	 * Generates an object containing sets of Stacks. It will contain any number of each StackType
@@ -310,7 +268,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @memberOf	GameRules
 	 * @since		
 	 *
-	 * @return		Object				stacks				Ordered sets of Stack objects in rows as defined by the layout
+	 * @return		Array				stacks				Ordered sets of Stack objects in rows as defined by the layout
 	 */
 	__createStackModel : function()
 	{
@@ -318,7 +276,7 @@ var GameRules = Class({ implements : IModelRules }, {
 
 		var stacks = null;
 
-		if (layout.length > 0) {
+		if (layout !== null && layout.length > 0) {
 			var stackTypes = new StackTypes();
 			var fanningDirections = new FanningDirectionSet();
 			stacks = [];
@@ -334,7 +292,7 @@ var GameRules = Class({ implements : IModelRules }, {
 						// Create the new Stack object...
 						st = new Stack(
 							stackTypes[layoutStackInfo.stackType],
-							fanningDirections[layoutStackInfo.fanDir],
+							fanningDirections[layoutStackInfo.fanningDirection],
 							layoutStackInfo.numCardsFacingDown,
 							layoutStackInfo.numCardsFacingUp
 						);	
@@ -354,14 +312,38 @@ var GameRules = Class({ implements : IModelRules }, {
 	/** Public Functions **/
 
 	/**
-	 * This function will perform a check of specified logic conditions that, when 
-	 * evaluated to `true`, indicates that the Player has won the current game.
+	 * Find the Stack object in the `_stackModel` arrays which corresponds
+	 * to the Stack that the Dealer uses to Deal cards.
 	 *
 	 * @public
 	 * @memberOf	GameRules
 	 * @since		
 	 *
-	 * @return		Boolean					Returns true when the condititions for winning the game have been met.
+	 * @return		Stack			dealerStack			The Stack element with StackType equal to 'dealer'. Returns null when no Dealer Stack is available.
 	 */
-	gameWon : function() { /* This is a stub! */ }
+	getDealerStack : function()
+	{
+		var dealerStack = null;
+		var stackTypes = new StackTypes();
+		var stacks = this.getStackModel();
+
+		if (stacks !== null && stacks.length > 0) {
+			stackRowsLoop: for (var i = 0; i < stacks.length; i++) {
+				var stackRow = stacks[i];
+				stacksInRowLoop: for (var j = 0; j < stackRow.length; j++) {
+					var stack = stackRow[j];
+					if (
+						stack !== null &&
+						stack.getStackType().getStackTypeName() === stackTypes.dealer.getStackTypeName()
+					) {
+						dealerStack = stack;
+						break stackRowsLoop;
+					}
+				}
+			}
+		}
+
+		return dealerStack;
+	}
+
 });
