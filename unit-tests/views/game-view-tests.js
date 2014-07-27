@@ -451,6 +451,100 @@ QUnit.test( "`flipCard()` tests", function( assert ) {
 
 });
 
+QUnit.test( "`showCardBack()` tests", function( assert ) {
+	expect(4);
+
+	var ss = new SuitSet();
+	var cns = new CardNumberSet();
+	var spades = ss.spades;
+	var ace = cns.ace;
+
+	var good = new GameView(goodStackModel);
+	var $card = good.__createCard(1, spades, ace);
+	// Failure attempts
+	assert.throws(
+		function() { $card = good.showCardBack(); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'The `$card` param is required.' &&
+				e.getCallingMethod() === 'GameView.showCardBack'
+			);
+		},
+		"Expected that `$card` param is required was not thrown!"
+	);
+	assert.throws(
+		function() { $card = good.showCardBack("notACard"); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'The `$card` param is not a valid Card.' &&
+				e.getCallingMethod() === 'GameView.showCardBack'
+			);
+		},
+		"Expected that `card` param is a valid Card was not thrown!"
+	);
+
+	// Success attempts
+	$card = good.showCardBack($card);
+	assert.strictEqual(
+		$card.attr('data-card-face-showing'),
+		'back',
+		'Expected the `data-card-face-showing` attribute of the Card to equal "back".'
+	);
+	assert.ok(
+		$card.attr('src').match($card.attr('data-card-back-source')) !== null,
+		'Expected the `src` attribute of the Card to equal the value of the `data-card-back-source` attribute.'
+	);
+});
+
+QUnit.test( "`showCardFront()` tests", function( assert ) {
+	expect(4);
+
+	var ss = new SuitSet();
+	var cns = new CardNumberSet();
+	var spades = ss.spades;
+	var ace = cns.ace;
+
+	var good = new GameView(goodStackModel);
+	var $card = good.__createCard(1, spades, ace);
+	// Failure attempts
+	assert.throws(
+		function() { $card = good.showCardFront(); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'The `$card` param is required.' &&
+				e.getCallingMethod() === 'GameView.showCardFront'
+			);
+		},
+		"Expected that `$card` param is required was not thrown!"
+	);
+	assert.throws(
+		function() { $card = good.showCardFront("notACard"); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'The `$card` param is not a valid Card.' &&
+				e.getCallingMethod() === 'GameView.showCardFront'
+			);
+		},
+		"Expected that `card` param is a valid Card was not thrown!"
+	);
+
+	// Success attempts
+	$card = good.showCardFront($card);
+	assert.strictEqual(
+		$card.attr('data-card-face-showing'),
+		'front',
+		'Expected the `data-card-face-showing` attribute of the Card to equal "front".'
+	);
+	assert.ok(
+		$card.attr('src').match($card.attr('data-card-front-source')) !== null,
+		'Expected the `src` attribute of the Card to equal the value of the `data-card-front-source` attribute.'
+	);
+});
+
 QUnit.test("`getStackView()` tests", function( assert ) {
 	expect(2);
 

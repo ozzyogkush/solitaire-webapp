@@ -151,11 +151,11 @@ var GameView = Class({
 	 * 
 	 * @param		jQuery			$card			The DOM element to check. Required.
 	 *
-	 * @return		Boolean			$tbr			True if the element is a valid Card image, false otherwise.
+	 * @return		Boolean			tbr				True if the element is a valid Card image, false otherwise.
 	 */
 	__isCard : function($card)
 	{
-		$tbr = true;
+		var tbr = true;
 
 		var isJquery = (typeof $card === "object" && $card.jquery !== undefined);
 
@@ -169,10 +169,10 @@ var GameView = Class({
 			$card.attr('data-card-deck-num') === undefined ||
 			$card.data('suit') === undefined ||
 			$card.data('card-number') === undefined) {
-			$tbr = false;
+			tbr = false;
 		}
 
-		return $tbr;
+		return tbr;
 	},
 
 	/**
@@ -308,23 +308,69 @@ var GameView = Class({
 		if ($card === undefined) {
 			throw new CardGameException('The `$card` param is required.', 'GameView.flipCard');
 		}
-		if (! this.__isCard($card)) {
+		else if (! this.__isCard($card)) {
 			throw new CardGameException('The `$card` param is not a valid Card.', 'GameView.flipCard');
 		}
 
 		// @TODO: make this a cool animation
 		if ($card.attr('data-card-face-showing') === "front") {
-			$card.attr({
-				'src' : $card.attr('data-card-back-source'),
-				'data-card-face-showing' : "back"
-			}); 
+			$card = this.showCardBack($card);
 		}
 		else if ($card.attr('data-card-face-showing') === "back") {
-			$card.attr({
-				'src' : $card.attr('data-card-front-source'),
-				'data-card-face-showing' : "front"
-			}); 
+			$card = this.showCardFront($card);
 		}
+
+		return $card;
+	},
+
+	/**
+	 * Specifically show the back of a Card in the DOM.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		jQuery			$card			The Card DOM element of which to show the back. Required.
+	 */
+	showCardBack : function($card)
+	{
+		if ($card === undefined) {
+			throw new CardGameException('The `$card` param is required.', 'GameView.showCardBack');
+		}
+		else if (! this.__isCard($card)) {
+			throw new CardGameException('The `$card` param is not a valid Card.', 'GameView.showCardBack');
+		}
+
+		$card.attr({
+			'src' : $card.attr('data-card-back-source'),
+			'data-card-face-showing' : "back"
+		});
+
+		return $card;
+	},
+
+	/**
+	 * Specifically show the front of a Card in the DOM
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		jQuery			$card			The Card DOM element of which to show the front. Required.
+	 */
+	showCardFront : function($card)
+	{
+		if ($card === undefined) {
+			throw new CardGameException('The `$card` param is required.', 'GameView.showCardFront');
+		}
+		else if (! this.__isCard($card)) {
+			throw new CardGameException('The `$card` param is not a valid Card.', 'GameView.showCardFront');
+		}
+
+		$card.attr({
+			'src' : $card.attr('data-card-front-source'),
+			'data-card-face-showing' : "front"
+		});
 
 		return $card;
 	},
@@ -368,6 +414,9 @@ var GameView = Class({
 	 * Empty the DOM element representing a Stack element in the View. If the
 	 * Stack is null or isn't an instance of the Stack class, do nothing.
 	 *
+	 * In either case, the elements removed should keep their data in case
+	 * they get re-added to the DOM later.
+	 *
 	 * @public
 	 * @memberOf	GameView
 	 * @since		
@@ -380,7 +429,7 @@ var GameView = Class({
 			stack.hasOwnProperty('instanceOf') &&
 			stack.instanceOf(Stack) === true) {
 			var $stackDOMElement = this.getStackView(stack);
-			$stackDOMElement.empty();
+			$stackDOMElement.children().detach();
 		}
 	}
 
