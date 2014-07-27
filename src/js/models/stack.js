@@ -188,49 +188,6 @@ var Stack = Class({
 		return this._numCardsFacingUp;
 	},
 
-	/**
-	 * Reference to the DOM element that represents this Stack in the view.
-	 *
-	 * @private		
-	 * @type		jQuery
-	 * @memberOf	Stack
-	 * @since		
-	 * @default		null
-	 */
-	_viewElement : null,
-
-	/**
-	 * Sets the `_viewElement` property to the value of `$ve`.
-	 * 
-	 * @public
-	 * @throws		TypeException
-	 * @memberOf	Stack
-	 * @since		
-	 * 
-	 * @param		jQuery			$ve			Reference to the DOM element that represents this Stack in the view. Required.
-	 */
-	setViewElement : function($ve)
-	{
-		if (typeof $ve !== "object" || $ve.jquery === undefined) {
-			throw new TypeException("jQuery", "Stack.setViewElement");
-		}
-		this._viewElement = $ve;
-	},
-
-	/**
-	 * Returns the `_viewElement` property.
-	 * 
-	 * @public
-	 * @memberOf	Stack
-	 * @since		
-	 *
-	 * @return		jQuery			_viewElement		Returns the `_viewElement` property.
-	 */
-	getViewElement : function()
-	{
-		return this._viewElement;
-	},
-
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
