@@ -424,7 +424,7 @@ var GameController = Class({
 	 */
 	__storeCopyOfCards : function()
 	{
-		this.__setCardsResetCopy(this.getCards().clone());
+		this.__setCardsResetCopy(this.getCards().clone(true, false));
 	},
 
 	/**
@@ -448,7 +448,20 @@ var GameController = Class({
 
 		// Next, add all the cards to the specified stack.
 		var $stackDOMElement = this.getGameView().getStackView(stack);
-		this.getCards().appendTo($stackDOMElement);
+		var that = this;
+		this.getCards().each(function(index, card) {
+			var $card = $(card);
+			var cardIndexOne = index + 1;
+			if (cardIndexOne <= stack.getNumCardsFacingDown()) {
+				// Make sure the first cards up to stack.getNumCardsFacingDown() are face down
+				$card = that.getGameView().showCardBack($card);
+			}
+			else {
+				// and the rest are face up.
+				$card = that.getGameView().showCardFront($card);
+			}
+		})
+		.appendTo($stackDOMElement);
 	},
 
 	__dealCards : function()
