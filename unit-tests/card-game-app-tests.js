@@ -41,12 +41,22 @@ var TestRules = Class({ extends : GameRules }, {
 	_includeJokers : false,
 	_acesHigh : false,
 	_layout : [
-		[ {
-			stackType : st.inPlay.getStackTypeName(),
-			fanningDirection : fd.up,
-			numCardsFacingDown : 5,
-			numCardsFacingUp : 2
-		}, null, null ]
+		[ 
+			{
+				stackType : st.dealer.getStackTypeName(),
+				fanningDirection : fd.none,
+				numCardsFacingDown : 104,
+				numCardsFacingUp : 0
+			},
+			{
+				stackType : st.inPlay.getStackTypeName(),
+				fanningDirection : fd.up,
+				numCardsFacingDown : 5,
+				numCardsFacingUp : 2
+			},
+			null,
+			null
+		]
 	],
 	__construct : function() { this.super('__construct'); } 
 });
