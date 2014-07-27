@@ -344,6 +344,30 @@ var GameRules = Class({ implements : IModelRules }, {
 		}
 
 		return dealerStack;
+	},
+
+	
+	/**
+	 * Takes in a context and a method definition (or anonymous function)
+	 * and runs it for all the Stack objects in the generated Stack model
+	 * object. Safest way to ensure it hits all the Stacks.
+	 *
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @param		Object			context				The object/function which will become the value of `this` in the called method's scope.
+	 * @param		Function		methodToRun			The method to run on each Stack object in the model.
+	 */
+	runForEachStackObject : function(context, methodToRun)
+	{
+		var allStacks = this.getStackModel();
+		for (var i = 0, smlen = allStacks.length; i < smlen; i++) {
+			for (var j = 0, rowlen = allStacks[i].length; j < rowlen; j++) {
+				var curStack = allStacks[i][j];
+				methodToRun.call(context, curStack);
+			}
+		}
 	}
 
 });
