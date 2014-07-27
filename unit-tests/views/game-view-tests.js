@@ -1,6 +1,25 @@
 // Unit tests for views/game-view.js
 
-var goodStackModel = [[ "a", "b", null, "d"], [ "a", "b", "c", "d", "e", "f"]];
+var st = new StackTypes();
+var fd = new FanningDirectionSet();
+
+var goodStackModel = [
+	[
+		new Stack(
+			st.dealer,
+			fd.none,
+			104,
+			0
+		),
+		null,
+		new Stack(
+			st.inPlay,
+			fd.down,
+			0,
+			1
+		)
+	]
+];
 var badStackModel = false;
 var badStackModel2 = [];
 
@@ -9,6 +28,7 @@ var $badContainer = "a string";
 var $goodCard = $('<img />')
 	.attr({
 		src : "path/file",
+		'data-card-game-view-element' : 'card',
 		'data-card-face-showing' : 'front',
 		'data-card-front-source' : "path/file",
 		'data-card-back-source' : "path/file",
@@ -107,7 +127,7 @@ QUnit.test( "`__setGameContainer()` and `getGameContainer()` tests", function( a
 /** Private method tests **/
 QUnit.test( "`__createLayoutFromSpecs()` tests", function( assert ) {
 	// This method assumes that the input is valid (a non-empty array or arrays of Stack objects).
-	expect(6);
+	expect(5);
 
 	var good = new GameView(goodStackModel);
 	var $gameViewContainer = good.__createLayoutFromSpecs(goodStackModel);
@@ -133,14 +153,10 @@ QUnit.test( "`__createLayoutFromSpecs()` tests", function( assert ) {
 		'Expected the first row of the top-level `div` to have ' + goodStackModel[0].length + ' rows.'
 	);
 	assert.strictEqual(
-		$rows.eq(0).children('div[data-card-game-view-element="stack"]').eq(2).attr('data-card-game-view-stack'),
+		$rows.eq(0).children('div[data-card-game-view-element="stack"]').eq(1)
+			.data('stack'),
 		"empty",
-		'Expected the third element in the first row of the top-level `div` to have a `data-card-game-view-stack` attribute of "empty".'
-	);
-	assert.strictEqual(
-		$rows.eq(1).children('div[data-card-game-view-element="stack"]').length,
-		goodStackModel[1].length,
-		'Expected the second row of the top-level `div` to have ' + goodStackModel[1].length + ' rows.'
+		'Expected the third element in the first row of the top-level `div` to have a `stack` data value of "empty".'
 	);
 });
 
@@ -159,7 +175,7 @@ QUnit.test( "`__isCard()` tests", function( assert ) {
 });
 
 QUnit.test( "`__createCard()` tests", function( assert ) {
-	expect(7);
+	expect(8);
 
 	var ss = new SuitSet();
 	var cns = new CardNumberSet();
@@ -177,6 +193,11 @@ QUnit.test( "`__createCard()` tests", function( assert ) {
 	assert.ok(
 		$card.prop('src').match(expectedSrc) !== null,
 		'Expected the `src` property to equate to "' + expectedSrc + "'."
+	);
+	assert.strictEqual(
+		$card.attr('data-card-game-view-element'),
+		'card',
+		'Expected the `data-card-game-view-element` attribute to equate to "card".'
 	);
 	assert.ok(
 		$card.attr('data-card-front-source').match(expectedSrc) !== null,
@@ -428,4 +449,43 @@ QUnit.test( "`flipCard()` tests", function( assert ) {
 		'Expected the `src` attribute of the Card to equal the value of the `data-card-front-source` attribute.'
 	);
 
+});
+
+QUnit.test("`getStackView()` tests", function( assert ) {
+	expect(2);
+
+	var good = new GameView(goodStackModel);
+	var $goodStackView = good.getStackView(goodStackModel[0][0]);
+	assert.strictEqual(
+		$goodStackView.length,
+		1,
+		'Expected only one element in the `$goodStackView` jQuery object'
+	);
+	assert.strictEqual(
+		$goodStackView.data('stack'),
+		goodStackModel[0][0],
+		'Expected the `stack` data in the `$goodStackView` jQuery object to be the one passed into `getStackView()`.'
+	);
+});
+
+QUnit.test("`emptyStackView()` tests", function( assert ) {
+	//expect(2);
+
+	var good = new GameView(goodStackModel);
+	good.getGameContainer()
+		.find('div[data-card-game-view-element="stack"]')
+		.append($('<div></div>').text('A bunch of text'));
+
+	assert.strictEqual(
+		good.getStackView(goodStackModel[0][0]).children('div').eq(0).text(),
+		'A bunch of text',
+		'Expected the first Stacks View object to have a div with some text'
+	);
+
+	good.emptyStackView(goodStackModel[0][0]);
+	assert.strictEqual(
+		good.getStackView(goodStackModel[0][0]).children().length,
+		0,
+		'Expected all the children of the first Stacks View object to be deleted'
+	);
 });

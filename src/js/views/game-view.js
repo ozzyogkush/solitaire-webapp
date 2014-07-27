@@ -124,12 +124,10 @@ var GameView = Class({
 				
 				var $stackDOMElement = $('<div></div>')
 					.attr({
-						'data-card-game-view-element' : 'stack',
-						'data-card-game-view-stack' : (
-							stack === null ? 
-								"empty" : 
-								stack
-							)
+						'data-card-game-view-element' : 'stack'
+					})
+					.data({
+						'stack' : (stack !== null ? stack : "empty")
 					});
 
 				// Add this cell to the DOM row
@@ -163,6 +161,8 @@ var GameView = Class({
 
 		if (! isJquery ||
 			$card.prop('tagName').toLowerCase() !== "img" ||
+			$card.attr('data-card-game-view-element') === undefined ||
+			$card.attr('data-card-game-view-element') !== "card" ||
 			$card.attr('data-card-face-showing') === undefined ||
 			$card.attr('data-card-front-source') === undefined ||
 			$card.attr('data-card-back-source') === undefined ||
@@ -197,6 +197,7 @@ var GameView = Class({
 		var $card = $('<img />')
 			.attr({
 				src : "../img/cards/" + cardImageSrcName,
+				'data-card-game-view-element' : 'card',
 				'data-card-face-showing' : 'front',
 				'data-card-front-source' : "../img/cards/" + cardImageSrcName,
 				'data-card-back-source' : "../img/cards/card_back.png",
@@ -326,6 +327,61 @@ var GameView = Class({
 		}
 
 		return $card;
+	},
+
+	/**
+	 * Retrieve the DOM element representing a Stack element in the View.
+	 *
+	 * @throws		CardGameException				If the DOM element for the supplied Stack can't be found
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Stack			stack			The Stack whose DOM element we want to find. Required.
+	 *
+	 * @return		jQuery			$matchedView	The jQuery extended DOM element that represents the supplied Stack element in the View.
+	 */
+	getStackView : function(stack)
+	{
+		var $allStackDOMElements = this.getGameContainer()
+			.find('div')
+				.filter('[data-card-game-view-element="stack"]');
+		var $matchedView = $allStackDOMElements
+			.filter(function() {
+				return (
+					$(this).data('stack') !== null &&
+					$(this).data('stack') === stack
+				);
+			});
+
+		if ($matchedView.length === 0) {
+			throw new CardGameException(
+				'No Stack View could be found for the supplied Stack object', 
+				'GameView.getStackView'
+			);
+		}
+
+		return $matchedView;
+	},
+
+	/**
+	 * Empty the DOM element representing a Stack element in the View. If the
+	 * Stack is null or isn't an instance of the Stack class, do nothing.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Stack			stack			The Stack whose DOM element we want to empty. Required.
+	 */
+	emptyStackView : function(stack)
+	{
+		if (stack !== null && 
+			stack.hasOwnProperty('instanceOf') &&
+			stack.instanceOf(Stack) === true) {
+			var $stackDOMElement = this.getStackView(stack);
+			$stackDOMElement.empty();
+		}
 	}
 
 	/** Event Handlers **/
