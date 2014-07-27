@@ -32,6 +32,12 @@ var TestRules = Class({ extends : GameRules }, {
 			fanningDirection : fd.up,
 			numCardsFacingDown : 5,
 			numCardsFacingUp : 2
+		},
+		{
+			stackType : st.dealer.getStackTypeName(),
+			fanningDirection : fd.none,
+			numCardsFacingDown : 104,
+			numCardsFacingUp : 0
 		} ]
 	],
 	__construct : function() { this.super('__construct'); } 
@@ -181,7 +187,7 @@ QUnit.test( "`__setCards()` and `getCards()` tests", function( assert ) {
 				e.getType() === 'jQuery'
 			);
 		},
-		"Expected that `gameName` param is a jQuery object was not thrown!"
+		"Expected that `$cards` param is a jQuery object was not thrown!"
 	);
 
 	good.__setCards(goodCards);
@@ -191,6 +197,32 @@ QUnit.test( "`__setCards()` and `getCards()` tests", function( assert ) {
 		'The jQuery object returned from `getCards()` (' + 
 			good.getCards() + 
 			') does not match the one passed into `__setCards()` (' + 
+			goodCards + ').'
+	);
+});
+
+QUnit.test( "`__setCardsResetCopy()` and `getCardsResetCopy()` tests", function( assert ) {
+	expect(2);
+
+	var good = new GameController(goodGameName);
+	assert.throws(
+		function() { good.__setCardsResetCopy(badCards); },
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === 'jQuery'
+			);
+		},
+		"Expected that `$cardsCopy` param is a jQuery object was not thrown!"
+	);
+
+	good.__setCardsResetCopy(goodCards);
+	assert.strictEqual(
+		good.getCardsResetCopy(),
+		goodCards,
+		'The jQuery object returned from `getCardsResetCopy()` (' + 
+			good.getCardsResetCopy() + 
+			') does not match the one passed into `__setCardsResetCopy()` (' + 
 			goodCards + ').'
 	);
 });
@@ -250,7 +282,7 @@ QUnit.test( "`__loadGameView()` tests", function( assert ) {
 });
 
 QUnit.test( "`__shuffleCardArray()` tests", function( assert ) {
-	//expect(104);
+	expect(4);
 
 	var good = new GameController(goodGameName);
 
@@ -260,6 +292,7 @@ QUnit.test( "`__shuffleCardArray()` tests", function( assert ) {
 	    unsortedArr.push(i);
 	}
 
+	// Shuffle the cards once.
 	var numDifferent = 0;
 	var shuffledCards = good.__shuffleCardArray(unsortedArr);
 	assert.strictEqual(
@@ -279,6 +312,7 @@ QUnit.test( "`__shuffleCardArray()` tests", function( assert ) {
 
 	// Shuffle 5 times.
 	numDifferent = 0;
+	unsortedArr.reverse(); // the __shuffleCardArray() method reverses the original
 	shuffledCards = good.__shuffleCardArray(unsortedArr, 5);
 	assert.strictEqual(
 		shuffledCards.length,
@@ -291,20 +325,42 @@ QUnit.test( "`__shuffleCardArray()` tests", function( assert ) {
 		}
 	}
 	assert.ok(
-		numDifferent > 0,
+		numDifferent < shuffledCards.length,
 		'Expected the order of the shuffled array to be different from the unsorted array'
 	);
 });
 
 QUnit.test( "`__shuffleCards()` tests", function( assert ) {
-	expect(0);
-	//expect(104);
+	expect(3);
 
-	/*var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName);
 	var $unsortedCards = good.getCards();
 	var unsortedCards = $unsortedCards.toArray();
 
+	assert.strictEqual(
+		unsortedCards.length,
+		104,
+		'EXpected there to be 104 cards in the unsortedCards array'
+	);
+
+	// shuffle the cards and check.
 	var numDifferent = 0;
+	good.__shuffleCards();
+	// The `_cards` element returned from `getCards()` should have been modified.
+	good.getCards().each(function(index, item) {
+		if ($(item).attr('src') !== $unsortedCards.eq(index).attr('src')) {
+			numDifferent++;
+		}
+	});
+
+	assert.ok(
+		numDifferent > 0,
+		'Expected the order of the randomized set of cards to be different from the original set of cards'
+	);
+
+	// shuffle the cards 3 times and check again.
+	numDifferent = 0;
+	good.__shuffleCards(3);
 
 	good.getCards().each(function(index, item) {
 		if ($(item).attr('src') !== $unsortedCards.eq(index).attr('src')) {
@@ -312,42 +368,84 @@ QUnit.test( "`__shuffleCards()` tests", function( assert ) {
 		}
 	});
 
-	assert.equal(
+	assert.ok(
+		numDifferent > 0,
+		'Expected the order of the randomized set of cards to be different from the original set of cards'
+	);
+});
+
+QUnit.test( "`__storeCopyOfCards()` tests", function( assert ) {
+	expect(1);
+
+	var good = new GameController(goodGameName);
+	good._cardsResetCopy = null;
+
+	good.__storeCopyOfCards();
+	var numDifferent = 0;
+	good.getCardsResetCopy().each(function(index, item) {
+		if ($(item).attr('src') !== good.getCards().eq(index).attr('src')) {
+			numDifferent++;
+		}
+	});
+	assert.strictEqual(
 		numDifferent,
 		0,
-		'Expected the order of the unrandomized set of cards to be the same as the original set of cards'
+		'Expected the copy of the cards to be the same as the original'
+	);
+});
+
+QUnit.test( "`__stackCollectAllCards()` tests", function( assert ) {
+	expect(6);
+
+	var good = new GameController(goodGameName);
+
+	// gotta begin gameplay to ensure cards are dealt
+	good.beginGamePlay();
+	var numCards = good.getCards().length;
+
+	var dealerStack = good.getGameRules().getDealerStack();
+	var $dealerStackView = good.getGameView().getStackView(dealerStack);
+	assert.strictEqual(
+		$dealerStackView.length,
+		1,
+		'Expected only one element in the `$dealerStackView` jQuery object'
+	);
+	assert.strictEqual(
+		$dealerStackView.attr('data-card-game-view-element'),
+		'stack',
+		'Expected the `data-card-game-view-element` attribute in the `$dealerStackView` jQuery object to have a value of "stack".'
+	);
+	var $originalDealerStackCards = $dealerStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	assert.strictEqual(
+		$originalDealerStackCards.length,
+		numCards,
+		'Expected the dealer stack to have ' + numCards + ' cards at this point in time.'
 	);
 
-	// shuffle the cards and check again.
-	numDifferent = 0;
-	good.__shuffleCards();
-
-	good.getCards().each(function(index, item) {
-		if ($(item).attr('src') !== $unsortedCards.eq(index).attr('src')) {
-			numDifferent++;
-		}
-	});
-
-	assert.ok(
-		numDifferent > 0,
-		'Expected the order of the randomized set of cards to be different from the original set of cards'
+	var goodStack = good.getGameRules().getStackModel()[0][3];
+	good.__stackCollectAllCards(goodStack);
+	assert.strictEqual(
+		good.getCards().length,
+		104,
+		'Expected 104 cards to still exist'
 	);
-
-	// shuffle the cards and check again.
-	numDifferent = 0;
-	var numTimesToShuffle = 3;//Math.ceil(Math.random() * 5);
-	good.__shuffleCards(numTimesToShuffle);
-
-	good.getCards().each(function(index, item) {
-		if ($(item).attr('src') !== $unsortedCards.eq(index).attr('src')) {
-			numDifferent++;
-		}
-	});
-
-	assert.ok(
-		numDifferent > 0,
-		'Expected the order of the randomized set of cards to be different from the original set of cards'
-	);*/
+	$originalDealerStackCards = $dealerStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	assert.strictEqual(
+		$originalDealerStackCards.length,
+		0,
+		'Expected the dealer stack to have 0 cards at this point in time.'
+	);
+	var $goodStackView = good.getGameView().getStackView(goodStack);
+	assert.strictEqual(
+		$goodStackView
+			.find('img')
+			.filter('[data-card-game-view-element="card"]')
+				.length,
+		numCards,
+		'Expected the `goodStack` stack to have ' + numCards + ' cards at this point in time.'
+	);
 });
 
 /** Public method tests ** /
