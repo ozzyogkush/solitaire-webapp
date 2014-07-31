@@ -40,6 +40,7 @@ var TestRules = Class({ extends : GameRules }, {
 	_numDecksInGame : 1,
 	_includeJokers : false,
 	_acesHigh : false,
+	_useTimer : true,
 	_layout : [
 		[ 
 			{
@@ -491,7 +492,7 @@ QUnit.test( "`__loadDefaultGame()` tests", function( assert ) {
 });
 
 QUnit.test( "`__loadGame()` tests", function( assert ) {
-	expect(5);
+	expect(7);
 
 	// Using a test mock class this works.
 	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
@@ -514,6 +515,17 @@ QUnit.test( "`__loadGame()` tests", function( assert ) {
 	// Expected success
 	gameNameLoaded = good.__loadGame(goodGames[0]);
 	assert.strictEqual(
+		typeof good.__timer,
+		'number',
+		'Expected the `__timer` to be a number'
+	);
+	var timerContainerHTML = good.getAppView().getTimerContainer().html();
+	assert.strictEqual(
+		timerContainerHTML,
+		':00',
+		'Expected the first HTML of the timer container to be ":00"'
+	);
+	assert.strictEqual(
 		good.getAppView().getContainer().find(canvasCtrlrSelector).length,
 		1,
 		'Expected only one `div` with the `data-card-game-view-element` attribute equal to "canvas-container".'
@@ -528,6 +540,39 @@ QUnit.test( "`__loadGame()` tests", function( assert ) {
 		goodGames[0],
 		'Expected the loaded game name to be "' + goodGames[0] + '".'
 	);
+});
+
+
+QUnit.test( "`__startGameTimer()` tests", function( assert ) {
+	expect(3);
+
+	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	clearInterval(good.__timer);
+
+	good.__startGameTimer();
+	assert.strictEqual(
+		typeof good.__timer,
+		'number',
+		'Expected the `__timer` to be a number'
+	);
+
+	var timerContainerHTML = good.getAppView().getTimerContainer().html();
+	assert.strictEqual(
+		timerContainerHTML,
+		':00',
+		'Expected the first HTML of the timer container to be ":00"'
+	);
+
+	QUnit.stop();
+	setTimeout(function() {
+		timerContainerHTML = good.getAppView().getTimerContainer().html();
+		assert.strictEqual(
+			timerContainerHTML,
+			':05',
+			'Expected the HTML of the timer container to be ":05" after 5 seconds'
+		);
+		QUnit.start();
+	}, 5000);
 });
 
 QUnit.test( "`__addGameViewToAppView()` tests", function( assert ) {
