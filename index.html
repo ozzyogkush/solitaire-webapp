@@ -5,22 +5,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="author" content="Derek Rosenzweig">
-    <title>Solitaire Prod Build Test Page</title>
+    <title>Card Game App PRODUCTION Build Page</title>
 
     <!-- Include all compiled stylesheets (below) - shall contain bootstrap and the solitaire app  -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="https://raw.githubusercontent.com/ozzyogkush/solitaire-webapp/tree/master/prodbuild/css/bootstrap.css" rel="stylesheet">
   </head>
   <body>
-    <h1>Solitaire Prod Build Test Page</h1>
+    <h1>Card Game App PRODUCTION Build Page</h1>
 
     <p>
-      Below is the current in-development version of the Solitaire game as last built.
+      Below is the current version of the Card Game App as last built for production.
     </p>
 
-    <div data-role="solitaire" data-solitaire-variation="solitaire"></div>
+    <div data-role="card-game" data-card-game="Solitaire"></div>
 
     <!-- Include all compiled plugins (below) - shall contain jQuery, bootstrap, and the solitaire app -->
-    <script src="js/assets.min.js"></script>
-    <script src="js/solitaire-webapp.min.js"></script>
+    <script type="text/javascript" src="https://raw.githubusercontent.com/ozzyogkush/solitaire-webapp/tree/master/prodbuild/js/assets.min.js"></script>
+    <script type="text/javascript" src="https://raw.githubusercontent.com/ozzyogkush/solitaire-webapp/tree/master/prodbuild/js/card-game-app.min.js"></script>
+    <script type="text/javascript">
+      var cardGame = null;
+      $(document).ready(function() {
+        cardGame = new CardGameApp(
+          $('div[data-role="card-game"]'), 
+          [
+            'Solitaire',
+            'FortyThieves'
+          ],
+          true
+        );
+      });
+    </script>
   </body>
 </html>
