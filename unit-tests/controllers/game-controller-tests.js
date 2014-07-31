@@ -441,55 +441,6 @@ QUnit.test( "`__stackCollectAllCards()` tests", function( assert ) {
 		numCards,
 		'Expected the dealer stack to have ' + numCards + ' cards at this point in time.'
 	);
-
-
-	/*// gotta begin gameplay to ensure cards are dealt
-	good.beginGamePlay();
-	var numCards = good.getCards().length;
-
-	var dealerStack = good.getGameRules().getDealerStack();
-	var $dealerStackView = good.getGameView().getStackView(dealerStack);
-	assert.strictEqual(
-		$dealerStackView.length,
-		1,
-		'Expected only one element in the `$dealerStackView` jQuery object'
-	);
-	assert.strictEqual(
-		$dealerStackView.attr('data-card-game-view-element'),
-		'stack',
-		'Expected the `data-card-game-view-element` attribute in the `$dealerStackView` jQuery object to have a value of "stack".'
-	);
-	var $originalDealerStackCards = $dealerStackView
-		.find('img').filter('[data-card-game-view-element="card"]');
-	assert.strictEqual(
-		$originalDealerStackCards.length,
-		numCards,
-		'Expected the dealer stack to have ' + numCards + ' cards at this point in time.'
-	);
-
-	var goodStack = good.getGameRules().getStackModel()[0][3];
-	good.__stackCollectAllCards(goodStack);
-	assert.strictEqual(
-		good.getCards().length,
-		104,
-		'Expected 104 cards to still exist'
-	);
-	$originalDealerStackCards = $dealerStackView
-		.find('img').filter('[data-card-game-view-element="card"]');
-	assert.strictEqual(
-		$originalDealerStackCards.length,
-		0,
-		'Expected the dealer stack to have 0 cards at this point in time.'
-	);
-	var $goodStackView = good.getGameView().getStackView(goodStack);
-	assert.strictEqual(
-		$goodStackView
-			.find('img')
-			.filter('[data-card-game-view-element="card"]')
-				.length,
-		numCards,
-		'Expected the `goodStack` stack to have ' + numCards + ' cards at this point in time.'
-	);*/
 });
 
 QUnit.test( "`__getNumCardsToDeal()` tests", function( assert ) {
@@ -531,8 +482,8 @@ QUnit.test( "`__dealCards()` tests", function( assert ) {
 		.find('img').filter('[data-card-game-view-element="card"]');
 	assert.strictEqual(
 		$dealerStackCards.length,
-		numCards - 7,
-		'Expected the dealer stack to have ' + (numCards - 7) + ' cards at this point in time.'
+		numCards - good.__getNumCardsToDeal(),
+		'Expected the dealer stack to have ' + (numCards - good.__getNumCardsToDeal()) + ' cards at this point in time.'
 	);
 
 	var inPlayStack = good.getGameRules().getStackModel()[0][3];
@@ -542,15 +493,57 @@ QUnit.test( "`__dealCards()` tests", function( assert ) {
 	
 	assert.strictEqual(
 		$inPlayStackCards.length,
-		7,
-		'Expected the only inPlay stack to have ' + 7 + ' cards at this point in time.'
+		good.__getNumCardsToDeal(),
+		'Expected the only inPlay stack to have ' + good.__getNumCardsToDeal() + ' cards at this point in time.'
 	);
 });
 
-/** Public method tests ** /
-QUnit.test( "`()` tests", function( assert ) {
-	expect();
+/** Public method tests **/
 
+QUnit.test( "`beginGamePlay()` tests", function( assert ) {
+	expect(5);
+
+	var good = new GameController(goodGameName);
+
+	// gotta begin gameplay to ensure cards are dealt
+	var begun = good.beginGamePlay();
+	var numCards = good.getCards().length;
+
+	var dealerStack = good.getGameRules().getDealerStack();
+	var $dealerStackView = good.getGameView().getStackView(dealerStack);
+	assert.strictEqual(
+		$dealerStackView.length,
+		1,
+		'Expected only one element in the `$dealerStackView` jQuery object'
+	);
+	assert.strictEqual(
+		$dealerStackView.attr('data-card-game-view-element'),
+		'stack',
+		'Expected the `data-card-game-view-element` attribute in the `$dealerStackView` jQuery object to have a value of "stack".'
+	);
+	var $dealerStackCards = $dealerStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	assert.strictEqual(
+		$dealerStackCards.length,
+		numCards - good.__getNumCardsToDeal(),
+		'Expected the dealer stack to have ' + (numCards - good.__getNumCardsToDeal()) + ' cards at this point in time.'
+	);
+
+	var inPlayStack = good.getGameRules().getStackModel()[0][3];
+	var $inPlayStackView = good.getGameView().getStackView(inPlayStack);
+	var $inPlayStackCards = $inPlayStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	
+	assert.strictEqual(
+		$inPlayStackCards.length,
+		good.__getNumCardsToDeal(),
+		'Expected the only inPlay stack to have ' + good.__getNumCardsToDeal() + ' cards at this point in time.'
+	);
+
+	assert.ok(
+		begun,
+		'Expected the `success` return val from `beginGamePlay()` to be true'
+	);
 });
 
 /** **/
