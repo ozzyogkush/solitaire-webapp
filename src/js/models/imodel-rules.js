@@ -71,6 +71,17 @@ var IModelRules = Interface({
 	 */
 	_layout : "array",
 
+	/**
+	 * Flag indicating whether to use a timer in this game (true) or not (false).
+	 *
+	 * @private
+	 * @type		string
+	 * @memberOf	IModelRules
+	 * @since		
+	 * @default		"boolean"
+	 */
+	_useTimer : "boolean"
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
