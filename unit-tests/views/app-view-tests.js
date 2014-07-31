@@ -33,7 +33,7 @@ QUnit.test( "constructor failure tests", function( assert ) {
 });
 
 QUnit.test( "constructor successful tests", function( assert ) {
-	expect(13);
+	expect(16);
 
 	var $theContainer = $goodContainer.clone();
 	var good = new AppView($theContainer);
@@ -93,11 +93,11 @@ QUnit.test( "constructor successful tests", function( assert ) {
 		"The second child of `$buttonContainer` should be the second one in the set returned from `getButtons()`."
 	);
 
-	var $modal = good.getContainer().children().last();
+	var $modal = good.getContainer().children().last().prev('div');
 	assert.strictEqual(
 		$modal.length,
 		1,
-		"Expected the `getContainer().children()`s last element to be a single `div` element"
+		"Expected the `getContainer().children()`s next-to-last element to be a single `div` element"
 	);
 	assert.strictEqual(
 		$modal.attr('data-card-game-view-element'),
@@ -108,6 +108,22 @@ QUnit.test( "constructor successful tests", function( assert ) {
 		good.getGameChoiceModal().get(0),
 		$modal.get(0),
 		"The jQuery element returned from `getGameChoiceModal()` does not match the one that's in the DOM."
+	);
+
+	var $timer = good.getContainer().children().last();
+	assert.strictEqual(
+		$timer.length,
+		1,
+		"Expected the `getContainer().children()`s last element to be a single `div` element"
+	);
+	assert.ok(
+		$timer.attr('data-card-game-view-element') !== null,
+		'Expected the timer `div` to have a `data-card-game-view-element` attribute.'
+	);
+	assert.strictEqual(
+		$timer.attr('data-card-game-view-element'),
+		"timer",
+		'Expected the `data-card-game-view-element` attribute in the timer `div` to equal "timer".'
 	);
 });
 
@@ -277,6 +293,75 @@ QUnit.test( "`__setGameChoiceModal()` and `getGameChoiceModal()` tests", functio
 		good.getGameChoiceModal(),
 		null,
 		"The jQuery element returned from `getGameChoiceModal()` should be null."
+	);
+});
+
+QUnit.test( "`__setTimerContainer()` and `getTimerContainer()` tests", function( assert ) {
+	expect(8);
+
+	// Bad type
+	assert.throws(
+		function() { 
+			var batTimer = "a string";
+			var good = new AppView($goodContainer.clone());
+			good.__setTimerContainer(batTimer);
+		},
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === "jQuery"
+			);
+		},
+		"Expected that `$tc` param must be a jQuery object was not thrown!"
+	);
+
+	// Correct type
+	var good = new AppView($goodContainer.clone());
+	var $goodTimer = $('<div></div>').prop('id', 'testtimer');
+	good.__setTimerContainer($goodTimer);
+	var $timer = good.getContainer().children().last();
+
+	assert.strictEqual(
+		$timer.length,
+		1,
+		"Expected the `getContainer().children()`s last element to be a single `div` element"
+	);
+	assert.ok(
+		$timer.attr('data-card-game-view-element') !== null,
+		'Expected the timer `div` to have a `data-card-game-view-element` attribute.'
+	);
+	assert.strictEqual(
+		$timer.attr('data-card-game-view-element'),
+		"timer",
+		'Expected the `data-card-game-view-element` attribute in the timer `div` to equal "timer".'
+	);
+	assert.ok(
+		$timer.prop('id') === 'testtimer',
+		"The `$timer` should have an ID of `testtimer`."
+	);
+	assert.strictEqual(
+		good.getTimerContainer(),
+		$goodTimer,
+		"The jQuery element returned from `getTimerContainer()` does not match the one passed into `__setTimerContainer()`."
+	);
+
+	// null button set
+	good.__setTimerContainer(null);
+	$timer = good
+		.getContainer()
+		.find(
+			'div[data-card-game-view-element="timer"]'
+		);
+
+	assert.strictEqual(
+		$timer.length,
+		0,
+		"Expected the `$timer` object to be empty"
+	);
+	assert.strictEqual(
+		good.getTimerContainer(),
+		null,
+		"The jQuery element returned from `getTimerContainer()` should be null."
 	);
 });
 
@@ -483,11 +568,35 @@ QUnit.test( "__createGameChoiceModal() tests", function( assert ) {
 	assert.strictEqual(
 		$modal.attr('data-card-game-view-element'),
 		"game-choice-modal",
-		"The first element in the `$buttons` object should have a 'data-card-game-view-element' attribute equal to 'game-choice-modal'."
+		"The first element in the `$modal` object should have a 'data-card-game-view-element' attribute equal to 'game-choice-modal'."
 	);
 
 	// @TODO - add tests here for children/grandchildren element inside
 	// the $modal DOM.
+});
+
+QUnit.test( "__createTimerContainer() tests", function( assert ) {
+	expect(3);
+
+	var good = new AppView($goodContainer.clone());
+	var $timer = good.__createTimerContainer();
+
+	assert.ok(
+		$timer.jquery !== undefined,
+		"The `$timer` object is not a jQuery object."
+	);
+
+	assert.strictEqual(
+		$timer.length,
+		1,
+		"The `$timer` jQuery object should have 1 div element."
+	);
+
+	assert.strictEqual(
+		$timer.attr('data-card-game-view-element'),
+		"timer",
+		"The first element in the `$timer` object should have a 'data-card-game-view-element' attribute equal to 'timer'."
+	);
 });
 
 /** Public method tests **/
@@ -534,5 +643,27 @@ QUnit.test( "`initGameView()` tests", function( assert ) {
 		$divBeforeModal.attr('data-card-game-view-element'),
 		"canvas-container",
 		'Expected the `data-card-game-view-element` attribute in the `div` before the game choice modal to equal "canvas-container".'
+	);
+});
+
+QUnit.test( "`updateTimer()` tests", function( assert ) {
+	expect(2);
+
+	var $theContainer = $goodContainer.clone();
+	var good = new AppView($theContainer);
+
+	assert.strictEqual(
+		good.getTimerContainer().html(),
+		"",
+		'Expected the default HTML of the timer element to be an empty string.'
+	);
+
+	var timerStr = "take a bong toke";
+	good.updateTimer(timerStr);
+
+	assert.strictEqual(
+		good.getTimerContainer().html(),
+		timerStr,
+		'Expected the HTML of the timer element to be "' + timerStr + '".'
 	);
 });

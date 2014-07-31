@@ -136,7 +136,9 @@ var AppView = Class({
 	_gameChoiceModal : null,
 	
 	/**
-	 * Sets the `_gameChoiceModal` property to the value of `$gcm`.
+	 * Sets the `_gameChoiceModal` property to the value of `$gcm` and
+	 * adds it to the DOM. Will first remove any existing game choice modal
+	 * elements.
 	 * 
 	 * @private
 	 * @throws		TypeException
@@ -190,6 +192,75 @@ var AppView = Class({
 		return this._gameChoiceModal;
 	},
 
+	/**
+	 * jQuery extended HTML element which displays the amount of time that's
+	 * elapsed since the current game was started.
+	 *
+	 * @private		
+	 * @type		jQuery
+	 * @memberOf	AppView
+	 * @since		
+	 * @default		null
+	 */
+	_timerContainer : null,
+	
+	/**
+	 * Sets the `_timerContainer` property to the value of `$tc` and
+	 * adds it to the DOM. Will first remove any existing game choice modal
+	 * elements.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	AppView
+	 * @since		
+	 * 
+	 * @param		jQuery			$tc			The element that shows the elapsed time in the current game. Required.
+	 */
+	__setTimerContainer : function($tc)
+	{
+		// Make sure the param is null or a jQuery object instance
+		if ($tc !== null &&
+			(typeof $tc !== "object" || $tc.jquery === undefined)) {
+			throw new TypeException("jQuery", "AppView.__setTimerContainer");
+		}
+		if (this._timerContainer !== null) {
+			// Always remove an existing game choice modal first
+			this.getContainer()
+				.find('div')
+					.filter('[data-card-game-view-element="timer"]')
+					.remove();
+		}
+
+		if ($tc !== null) {
+			// If the supplied element doesn't already have the correct value
+			// for the `data-card-game-view-element` attribute, set it.
+			if ($tc.attr('data-card-game-view-element') === null ||
+				$tc.attr('data-card-game-view-element') !== 'timer') {
+				$tc.attr('data-card-game-view-element', 'timer');
+			}
+			
+			// Add the modal element to the DOM.
+			this.getContainer().append($tc);
+		}
+
+		// Set the object property to the supplied param either way
+		this._timerContainer = $tc;
+	},
+	
+	/**
+	 * Returns the `_timerContainer` property.
+	 * 
+	 * @public
+	 * @memberOf	AppView
+	 * @since		
+	 *
+	 * @return		jQuery			_timerContainer			Returns the `_timerContainer` property.
+	 */
+	getTimerContainer : function()
+	{
+		return this._timerContainer;
+	},
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -226,8 +297,13 @@ var AppView = Class({
 
 		// ...create the game choice Modal...
 		var $modal = this.__createGameChoiceModal();
-		// ...and add it to the DOM.
+		// ...and add it to the DOM...
 		this.__setGameChoiceModal($modal);
+
+		// ...create the Timer element...
+		var $timerContainer = this.__createTimerContainer();
+		// ...and lastly, add it to the DOM.
+		this.__setTimerContainer($timerContainer);
 	},
 
 	/** Private Functions **/
@@ -315,7 +391,7 @@ var AppView = Class({
 	 * @memberOf	AppView
 	 * @since		
 	 *
-	 * @return		jQuery				$modal			A jQuery object containing a `div` element. Required.
+	 * @return		jQuery			$modal			A jQuery object containing a `div` element. Required.
 	 */
 	__createGameChoiceModal : function()
 	{
@@ -324,6 +400,24 @@ var AppView = Class({
 			.attr('data-card-game-view-element', 'game-choice-modal');
 
 		return $modal;
+	},
+
+	/**
+	 * Creates and returns the jQuery extended DOM element used for displaying
+	 * the elapsed time since the current game started.
+	 *
+	 * @private
+	 * @memberOf	AppView
+	 * @since		
+	 *
+	 * @return		jQuery			$timerContainer			A jQuery object containing a `div` element. Required.
+	 */
+	__createTimerContainer : function()
+	{
+		var $timerContainer = $('<div></div>')
+			.attr('data-card-game-view-element', 'timer');
+
+		return $timerContainer;
 	},
 
 	/** Public Functions **/
@@ -379,6 +473,21 @@ var AppView = Class({
 	{
 		// Removes the current GameView from the DOM.
 		this.__setGameViewCanvas(null);
+		this.updateTimer('');
+	},
+
+	/**
+	 * Update the HTML of the Timer container with the string passed in.
+	 * 
+	 * @public
+	 * @memberOf	AppView
+	 * @since		
+	 *
+	 * @param		String			timeStr				String indicating the number of elapsed minutes and seconds. Required.
+	 */
+	updateTimer : function(timeStr)
+	{
+		this.getTimerContainer().html(timeStr);
 	}
 
 	/** Event Handlers **/
