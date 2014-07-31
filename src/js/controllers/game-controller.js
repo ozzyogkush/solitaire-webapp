@@ -464,9 +464,87 @@ var GameController = Class({
 		.appendTo($stackDOMElement);
 	},
 
+	/**
+	 * Figure out how many cards need to be dealt to all the 'inPlay' stacks.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 *
+	 * @return		Integer			numCardsToDeal			The number of cards the app will deal to InPlay stacks.
+	 */
+	__getNumCardsToDeal : function() 
+	{
+		var numCardsToDeal = 0;
+		var st = new StackTypes();
+		this.getGameRules().runForEachStackObject(
+			this,
+			function(stack) {
+				if (stack !== null && 
+					stack.hasOwnProperty('instanceOf') &&
+					stack.instanceOf(Stack) === true &&
+					stack.getStackType().getStackTypeName() === st.inPlay.getStackTypeName()) {
+					numCardsToDeal += stack.getNumCardsFacingDown() + stack.getNumCardsFacingUp();
+				}
+			}
+		);
+
+		return numCardsToDeal;
+	},
+
+	/**
+	 * Deal all the Cards from the dealer Stack to all the inPlay Stacks, going 
+	 * one Card per Stack at a time, up to the calculated total number of Cards 
+	 * to deal.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 */
 	__dealCards : function()
 	{
+		var numCardsToDeal = this.__getNumCardsToDeal();
+		var st = new StackTypes();
+		var fd = new FanningDirectionSet();
 
+		var inPlayStacks = this.getGameRules().getStacksByType(st.inPlay);
+
+		var curCardIndex = 0;
+		var curStackIndex = 0;
+		var cardsNotDealt = true;
+		do {
+			var curStack = inPlayStacks[curStackIndex];
+			var totalCardsInStackNeeded = curStack.getNumCardsFacingDown() + curStack.getNumCardsFacingUp();
+
+			// Grab the Stack view...
+			var $stackDOMElement = this.getGameView().getStackView(curStack);
+			var $cardsInStack = $stackDOMElement
+				.children('img[data-card-game-view-element="card"]');
+			var curNumCardsInStack = $cardsInStack.length;
+			
+			// increment this now
+			curStackIndex = (curStackIndex + 1) % inPlayStacks.length;
+			if (curNumCardsInStack === totalCardsInStackNeeded) {
+				// This stack has all the cards it needs, so bounce now.
+				continue;
+			}
+
+			// This stack needs to add another card, so do it.
+			var $card = this.getCards().eq(curCardIndex);
+			if (curNumCardsInStack < curStack.getNumCardsFacingDown()) {
+				// Make sure the first cards up to curStack.getNumCardsFacingDown() are face down
+				$card = this.getGameView().showCardBack($card);
+			}
+			else {
+				// and the rest are face up.
+				$card = this.getGameView().showCardFront($card);
+			}
+
+			$card.appendTo($stackDOMElement);
+			curCardIndex++;
+
+			cardsNotDealt = (curCardIndex < numCardsToDeal);
+		} while (cardsNotDealt);
 	},
 
 	__startGameTimer : function()

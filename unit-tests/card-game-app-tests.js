@@ -43,13 +43,13 @@ var TestRules = Class({ extends : GameRules }, {
 	_layout : [
 		[ 
 			{
-				stackType : st.dealer.getStackTypeName(),
+				stackType : st.dealer,
 				fanningDirection : fd.none,
 				numCardsFacingDown : 104,
 				numCardsFacingUp : 0
 			},
 			{
-				stackType : st.inPlay.getStackTypeName(),
+				stackType : st.inPlay,
 				fanningDirection : fd.up,
 				numCardsFacingDown : 5,
 				numCardsFacingUp : 2

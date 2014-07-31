@@ -28,13 +28,13 @@ var TestRules = Class({ extends : GameRules }, {
 	_acesHigh : false,
 	_layout : [
 		[ null, null, null, {
-			stackType : st.inPlay.getStackTypeName(),
+			stackType : st.inPlay,
 			fanningDirection : fd.up,
 			numCardsFacingDown : 5,
 			numCardsFacingUp : 2
 		},
 		{
-			stackType : st.dealer.getStackTypeName(),
+			stackType : st.dealer,
 			fanningDirection : fd.none,
 			numCardsFacingDown : 104,
 			numCardsFacingUp : 0
@@ -395,11 +395,54 @@ QUnit.test( "`__storeCopyOfCards()` tests", function( assert ) {
 });
 
 QUnit.test( "`__stackCollectAllCards()` tests", function( assert ) {
-	expect(6);
+	expect(5);
 
 	var good = new GameController(goodGameName);
 
-	// gotta begin gameplay to ensure cards are dealt
+	good.__shuffleCards();
+	good.__storeCopyOfCards();
+	var numCards = good.getCards().length;
+	var dealerStack = good.getGameRules().getDealerStack();
+	var $dealerStackView = good.getGameView().getStackView(dealerStack);
+
+	var $dealerStackCards = $dealerStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	assert.strictEqual(
+		$dealerStackCards.length,
+		0,
+		'Expected the dealer stack to have 0 cards at this point in time.'
+	);
+
+	// Make the call to the main function...
+	good.__stackCollectAllCards(dealerStack);
+
+	// ...and do test assertions.
+	assert.strictEqual(
+		good.getCards().length,
+		104,
+		'Expected 104 cards to still exist'
+	);
+	
+	assert.strictEqual(
+		$dealerStackView.length,
+		1,
+		'Expected only one element in the `$dealerStackView` jQuery object'
+	);
+	assert.strictEqual(
+		$dealerStackView.attr('data-card-game-view-element'),
+		'stack',
+		'Expected the `data-card-game-view-element` attribute in the `$dealerStackView` jQuery object to have a value of "stack".'
+	);
+	$dealerStackCards = $dealerStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	assert.strictEqual(
+		$dealerStackCards.length,
+		numCards,
+		'Expected the dealer stack to have ' + numCards + ' cards at this point in time.'
+	);
+
+
+	/*// gotta begin gameplay to ensure cards are dealt
 	good.beginGamePlay();
 	var numCards = good.getCards().length;
 
@@ -445,6 +488,61 @@ QUnit.test( "`__stackCollectAllCards()` tests", function( assert ) {
 				.length,
 		numCards,
 		'Expected the `goodStack` stack to have ' + numCards + ' cards at this point in time.'
+	);*/
+});
+
+QUnit.test( "`__getNumCardsToDeal()` tests", function( assert ) {
+	expect(1);
+
+	var good = new GameController(goodGameName);
+	var numCardsToDeal = 7;
+	assert.strictEqual(
+		good.__getNumCardsToDeal(),
+		numCardsToDeal,
+		'Expected the game to want to deal ' + numCardsToDeal + ' cards.'
+	);
+});
+
+QUnit.test( "`__dealCards()` tests", function( assert ) {
+	expect(3);
+
+	var good = new GameController(goodGameName);
+
+	good.__shuffleCards();
+	good.__storeCopyOfCards();
+	var numCards = good.getCards().length;
+	var dealerStack = good.getGameRules().getDealerStack();
+	good.__stackCollectAllCards(dealerStack);
+
+	var $dealerStackView = good.getGameView().getStackView(dealerStack);
+	var $dealerStackCards = $dealerStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	assert.strictEqual(
+		$dealerStackCards.length,
+		numCards,
+		'Expected the dealer stack to have ' + numCards + ' cards at this point in time.'
+	);
+
+	// Deal the cards and test for assertions.
+	good.__dealCards();
+	
+	$dealerStackCards = $dealerStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	assert.strictEqual(
+		$dealerStackCards.length,
+		numCards - 7,
+		'Expected the dealer stack to have ' + (numCards - 7) + ' cards at this point in time.'
+	);
+
+	var inPlayStack = good.getGameRules().getStackModel()[0][3];
+	var $inPlayStackView = good.getGameView().getStackView(inPlayStack);
+	var $inPlayStackCards = $inPlayStackView
+		.find('img').filter('[data-card-game-view-element="card"]');
+	
+	assert.strictEqual(
+		$inPlayStackCards.length,
+		7,
+		'Expected the only inPlay stack to have ' + 7 + ' cards at this point in time.'
 	);
 });
 
