@@ -124,7 +124,7 @@ var Stack = Class({
 	__setNumCardsFacingDown : function(ncfd)
 	{
 		var parsed = null;
-		if (typeof ncfd !== "number" || ((parsed = parseInt(ncfd)) === null)) {
+		if (typeof ncfd !== "number" || isNaN(parsed = parseInt(ncfd))) {
 			throw new TypeException("Integer", "Stack.__setNumCardsFacingDown");
 		}
 		this._numCardsFacingDown = parsed;
@@ -168,7 +168,7 @@ var Stack = Class({
 	__setNumCardsFacingUp : function(ncfu)
 	{
 		var parsed = null;
-		if (typeof ncfu !== "number" || ((parsed = parseInt(ncfu)) === null)) {
+		if (typeof ncfu !== "number" || isNaN(parsed = parseInt(ncfu))) {
 			throw new TypeException("Integer", "Stack.__setNumCardsFacingUp");
 		}
 		this._numCardsFacingUp = parsed;
@@ -186,49 +186,6 @@ var Stack = Class({
 	getNumCardsFacingUp : function()
 	{
 		return this._numCardsFacingUp;
-	},
-
-	/**
-	 * Reference to the DOM element that represents this Stack in the view.
-	 *
-	 * @private		
-	 * @type		jQuery
-	 * @memberOf	Stack
-	 * @since		
-	 * @default		null
-	 */
-	_viewElement : null,
-
-	/**
-	 * Sets the `_viewElement` property to the value of `$ve`.
-	 * 
-	 * @public
-	 * @throws		TypeException
-	 * @memberOf	Stack
-	 * @since		
-	 * 
-	 * @param		jQuery			$ve			Reference to the DOM element that represents this Stack in the view. Required.
-	 */
-	setViewElement : function($ve)
-	{
-		if (typeof $ve !== "object" || $ve.jquery === undefined) {
-			throw new TypeException("jQuery", "Stack.setViewElement");
-		}
-		this._viewElement = $ve;
-	},
-
-	/**
-	 * Returns the `_viewElement` property.
-	 * 
-	 * @public
-	 * @memberOf	Stack
-	 * @since		
-	 *
-	 * @return		jQuery			_viewElement		Returns the `_viewElement` property.
-	 */
-	getViewElement : function()
-	{
-		return this._viewElement;
 	},
 
 	//--------------------------------------------------------------------------

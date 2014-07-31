@@ -292,38 +292,6 @@ QUnit.test( "`__setNumCardsFacingUp()` and `getNumCardsFacingUp()` tests", funct
 	);
 });
 
-QUnit.test( "`setViewElement()` and `getViewElement()` tests", function( assert ) {
-	expect(3);
-
-	var badStackViewElement = "a string";
-	var goodStackViewElement = $("<div></div>").prop('id', 'stackViewElement');
-
-	var good = new Stack(goodStackType);
-	assert.throws(
-		function () { good.setViewElement(badStackViewElement); },
-		function (e) {
-			return (
-				e.instanceOf(TypeException) === true &&
-				e.getType() === "jQuery"
-			);
-		},
-		"Expected that `viewElement` param must be a jQuery object was not thrown!"
-	);
-
-	var gsveClone = goodStackViewElement.clone();
-	good.setViewElement(gsveClone);
-	assert.strictEqual(
-		good.getViewElement(),
-		gsveClone,
-		"The returned value of `getViewElement()` doesn't equal the supplied jQuery object."
-	);
-	assert.strictEqual(
-		good.getViewElement().prop('id'),
-		'stackViewElement',
-		"The ID of the jQuery element returned from `getViewElement()` doesn't equal the expected value of 'stackViewElement'."
-	);
-});
-
 /* Private methods */
 
 /* Public methods */

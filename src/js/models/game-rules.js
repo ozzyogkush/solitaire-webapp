@@ -38,7 +38,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	__setNumDecksInGame : function(n)
 	{
 		var parsed = null;
-		if (typeof n !== "number" || ((parsed = parseInt(n)) === null)) {
+		if (typeof n !== "number" || isNaN(parsed = parseInt(n))) {
 			throw new TypeException("Integer", "GameRules.__setNumDecksInGame");
 		}
 		this._numDecksInGame = parsed;
@@ -232,6 +232,49 @@ var GameRules = Class({ implements : IModelRules }, {
 		return this._layout;
 	},
 
+	/**
+	 * Flag indicating whether to use a timer in this game (true) or not (false).
+	 *
+	 * @private
+	 * @type		Boolean
+	 * @memberOf	GameRules
+	 * @since		
+	 * @default		null
+	 */
+	_useTimer : null,
+	
+	/**
+	 * Sets the `_useTimer` property to the value of `timer`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	GameRules
+	 * @since		
+	 * 
+	 * @param		Boolean			timer			The flag indicating whether or not to use a timer. Required.
+	 */
+	__setUseTimer : function(timer)
+	{
+		if (typeof timer !== "boolean") {
+			throw new TypeException("Boolean", "GameRules.__setUseTimer");
+		}
+		this._useTimer = timer;
+	},
+	
+	/**
+	 * Returns the `_useTimer` property.
+	 * 
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		Boolean			_useTimer		Returns the `_useTimer` property.
+	 */
+	getUseTimer : function()
+	{
+		return this._useTimer;
+	},
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -277,8 +320,8 @@ var GameRules = Class({ implements : IModelRules }, {
 		var stacks = null;
 
 		if (layout !== null && layout.length > 0) {
-			var stackTypes = new StackTypes();
-			var fanningDirections = new FanningDirectionSet();
+            var stackTypes = new StackTypes();
+            var fanningDirections = new FanningDirectionSet();
 			stacks = [];
 
 			for (var i = 0; i < layout.length; i++) {
@@ -291,8 +334,8 @@ var GameRules = Class({ implements : IModelRules }, {
 					if (layoutStackInfo !== null) {
 						// Create the new Stack object...
 						st = new Stack(
-							stackTypes[layoutStackInfo.stackType],
-							fanningDirections[layoutStackInfo.fanningDirection],
+							stackTypes[layoutStackInfo.stackType.getStackTypeName()],
+							fanningDirections[layoutStackInfo.fanningDirection.getFanningDirectionName()],
 							layoutStackInfo.numCardsFacingDown,
 							layoutStackInfo.numCardsFacingUp
 						);	
@@ -323,27 +366,69 @@ var GameRules = Class({ implements : IModelRules }, {
 	 */
 	getDealerStack : function()
 	{
-		var dealerStack = null;
 		var stackTypes = new StackTypes();
+		var dealerStack = this.getStacksByType(stackTypes.dealer)[0];
+
+		return dealerStack;
+	},
+
+	/**
+	 * Find all the Stack objects in the `_stackModel` arrays which correspond
+	 * to the StackType passed in.
+	 *
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		Array			stacksTBR			The Stack elements with the matched StackType. Returns an empty array if none are found.
+	 */
+	getStacksByType : function(stackType)
+	{
+		var stacksTBR = [];
 		var stacks = this.getStackModel();
 
 		if (stacks !== null && stacks.length > 0) {
-			stackRowsLoop: for (var i = 0; i < stacks.length; i++) {
+			for (var i = 0; i < stacks.length; i++) {
 				var stackRow = stacks[i];
-				stacksInRowLoop: for (var j = 0; j < stackRow.length; j++) {
+				for (var j = 0; j < stackRow.length; j++) {
 					var stack = stackRow[j];
 					if (
 						stack !== null &&
-						stack.getStackType().getStackTypeName() === stackTypes.dealer.getStackTypeName()
+						stack.getStackType().getStackTypeName() === stackType.getStackTypeName()
 					) {
-						dealerStack = stack;
-						break stackRowsLoop;
+						stacksTBR.push(stack);
 					}
 				}
 			}
 		}
 
-		return dealerStack;
+		return stacksTBR;
+	},
+	
+	/**
+	 * Takes in a context and a method definition (or anonymous function)
+	 * and runs it for all the Stack objects in the generated Stack model
+	 * object. Safest way to ensure it hits all the Stacks.
+	 *
+	 * Also passes along the row index and cell (stack) index to the method
+	 * so it can use it.
+	 *
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @param		Object			context				The object/function which will become the value of `this` in the called method's scope.
+	 * @param		Function		methodToRun			The method to run on each Stack object in the model.
+	 */
+	runForEachStackObject : function(context, methodToRun)
+	{
+		var allStacks = this.getStackModel();
+		for (var i = 0, smlen = allStacks.length; i < smlen; i++) {
+			for (var j = 0, rowlen = allStacks[i].length; j < rowlen; j++) {
+				var curStack = allStacks[i][j];
+				methodToRun.call(context, curStack, i, j);
+			}
+		}
 	}
 
 });

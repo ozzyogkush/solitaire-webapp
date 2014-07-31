@@ -191,6 +191,49 @@ var GameController = Class({
 		return this._cards;
 	},
 
+	/**
+	 * Contains a copy of the shuffled set of cards prior to being dealt to any Stacks.
+	 *
+	 * @private
+	 * @type		jQuery
+	 * @memberOf	GameController
+	 * @since		
+	 * @default		null
+	 */
+	_cardsResetCopy : null,
+	
+	/**
+	 * Sets the `_cardsResetCopy` property to the value of `$cards`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	GameController
+	 * @since		
+	 * 
+	 * @param		jQuery			$cardsCopy			The copy of the set of jQuery extended card elements. Required.
+	 */
+	__setCardsResetCopy : function($cardsCopy)
+	{
+		if (typeof $cardsCopy !== "object" || $cardsCopy.jquery === undefined) {
+			throw new TypeException("jQuery", "GameController.__setCardsResetCopy");
+		}
+		this._cardsResetCopy = $cardsCopy;
+	},
+	
+	/**
+	 * Returns the `_cardsResetCopy` property.
+	 * 
+	 * @public
+	 * @memberOf	GameController
+	 * @since		
+	 *
+	 * @return		jQuery			_cardsResetCopy		Returns the `_cardsResetCopy` property.
+	 */
+	getCardsResetCopy : function()
+	{
+		return this._cardsResetCopy;
+	},
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -280,29 +323,228 @@ var GameController = Class({
 		}
 	},
 
-	__shuffleCards : function()
+	/**
+	 * Helper function to sort an array the way a human would shuffle
+	 * a deck of cards: split it in half, and alternate adding a small
+	 * random number of cards from the left deck then from the right deck
+	 * to the shuffled set.
+	 *
+	 * Recursive function that can shuffle an array any number of times in order
+	 * to get a more reasonable distribution.
+	 *
+	 * This should be relatively fast since we're not resizing arrays constantly.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 * @TODO		Speed test this algorithm with increasing cardArr length and numTimes
+	 *
+	 * @param		Array		cardArr				The array of card elements to shuffle. Required.
+	 * @param		Integer		numTimes			The number of times to recursively run this method. Optional.
+	 *
+	 * @return		Array		shuffledCardsArr	The shuffled array of cards.
+	 */
+	__shuffleCardArray : function(cardArr, numTimes)
 	{
+		cardArr.reverse();
+		var numCards = cardArr.length;
+		var middle = Math.floor(numCards/2);
+		var shuffledCardsArr = [];
+		shuffledCardsArr.length = numCards;
 
+		var cardLeftStart = 0;
+		var cardRightStart = middle;
+		var merged = false;
+		var i = 0;
+		while (! merged) {
+			// Choose the lower number between the number of cards
+			// remaining from the left pile, and a random # between 1 and 4,
+			// to add from the left pile first.
+			var cardsLeftRemaining = middle - cardLeftStart;
+			var randFromLeft = Math.min(
+				Math.ceil(Math.random() * 4),
+				cardsLeftRemaining
+			);
+			for (var j = 0; j < randFromLeft; j++) {
+				shuffledCardsArr[i++] = cardArr[cardLeftStart++];
+			}
+			
+			// Choose the lower number between the number of cards
+			// remaining from the right pile, and a random # between 1 and 4,
+			// to add from the right pile.
+			var cardsRightRemaining = numCards - cardRightStart;
+			var randFromRight = Math.min(
+				Math.ceil(Math.random() * 4),
+				cardsRightRemaining
+			);
+			for (var k = 0; k < randFromRight; k++) {
+				shuffledCardsArr[i++] = cardArr[cardRightStart++];
+			}
+
+			// The left and right hand splits of the cards have been merged
+			// when there are no more cards left to shuffle.
+			merged = (cardLeftStart == middle && cardRightStart == numCards);
+		}
+
+		var parsedNumTimes = null;
+		if (numTimes !== undefined && 
+			! isNaN(parsedNumTimes = parseInt(numTimes)) && 
+			parsedNumTimes > 0) {
+			return this.__shuffleCardArray(shuffledCardsArr, parsedNumTimes - 1);
+		}
+		
+		return shuffledCardsArr;
 	},
 
+	/**
+	 * Shuffle the set of cards a given number of times and re-stores it in `_cards`.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 *
+	 * @param		Integer			numTimes		The number of times to shuffle the cards. Optional.
+	 */
+	__shuffleCards : function(numTimes)
+	{
+		// Shuffle the cards...
+		var cardsArr = this.getCards().toArray();
+		var shuffledCardsArr = this.__shuffleCardArray(cardsArr, numTimes);
+
+		var $shuffledCards = $(shuffledCardsArr);
+		this.__setCards($shuffledCards);
+	},
+
+	/**
+	 * Takes a clone of the set of Cards and stores them for later re-use.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 */
 	__storeCopyOfCards : function()
 	{
-
+		this.__setCardsResetCopy(this.getCards().clone(true, false));
 	},
 
-	__stackCollectAllCards : function(dealerStack)
+	/**
+	 * Empty all the DOM elements representing all the Stacks in the model, 
+	 * then Find the DOM element representing a specific Stack object 
+	 * and append all the Card DOM elements to it.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 *
+	 * @param		Stack			stack			The Stack object whose view will receive all Card view DOM objects as children. Required.
+	 */
+	__stackCollectAllCards : function(stack)
 	{
+		// First, empty all the stacks.
+		this.getGameRules().runForEachStackObject(
+			this.getGameView(),
+			this.getGameView().emptyStackView
+		);
 
+		// Next, add all the cards to the specified stack.
+		var $stackDOMElement = this.getGameView().getStackView(stack);
+		var that = this;
+		this.getCards().each(function(index, card) {
+			var $card = $(card);
+			var cardIndexOne = index + 1;
+			if (cardIndexOne <= stack.getNumCardsFacingDown()) {
+				// Make sure the first cards up to stack.getNumCardsFacingDown() are face down
+				$card = that.getGameView().showCardBack($card);
+			}
+			else {
+				// and the rest are face up.
+				$card = that.getGameView().showCardFront($card);
+			}
+		})
+		.appendTo($stackDOMElement);
 	},
 
+	/**
+	 * Figure out how many cards need to be dealt to all the 'inPlay' stacks.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 *
+	 * @return		Integer			numCardsToDeal			The number of cards the app will deal to InPlay stacks.
+	 */
+	__getNumCardsToDeal : function() 
+	{
+		var numCardsToDeal = 0;
+		var st = new StackTypes();
+		this.getGameRules().runForEachStackObject(
+			this,
+			function(stack) {
+				if (stack !== null && 
+					stack.hasOwnProperty('instanceOf') &&
+					stack.instanceOf(Stack) === true &&
+					stack.getStackType().getStackTypeName() === st.inPlay.getStackTypeName()) {
+					numCardsToDeal += stack.getNumCardsFacingDown() + stack.getNumCardsFacingUp();
+				}
+			}
+		);
+
+		return numCardsToDeal;
+	},
+
+	/**
+	 * Deal all the Cards from the dealer Stack to all the inPlay Stacks, going 
+	 * one Card per Stack at a time, up to the calculated total number of Cards 
+	 * to deal.
+	 *
+	 * @private
+	 * @memberOf	GameController
+	 * @since		
+	 */
 	__dealCards : function()
 	{
+		var numCardsToDeal = this.__getNumCardsToDeal();
+		var st = new StackTypes();
+		var fd = new FanningDirectionSet();
 
-	},
+		var inPlayStacks = this.getGameRules().getStacksByType(st.inPlay);
 
-	__startGameTimer : function()
-	{
+		var curCardIndex = 0;
+		var curStackIndex = 0;
+		var cardsNotDealt = true;
+		do {
+			var curStack = inPlayStacks[curStackIndex];
+			var totalCardsInStackNeeded = curStack.getNumCardsFacingDown() + curStack.getNumCardsFacingUp();
 
+			// Grab the Stack view...
+			var $stackDOMElement = this.getGameView().getStackView(curStack);
+			var $cardsInStack = $stackDOMElement
+				.children('img[data-card-game-view-element="card"]');
+			var curNumCardsInStack = $cardsInStack.length;
+			
+			// increment this now
+			curStackIndex = (curStackIndex + 1) % inPlayStacks.length;
+			if (curNumCardsInStack === totalCardsInStackNeeded) {
+				// This stack has all the cards it needs, so bounce now.
+				continue;
+			}
+
+			// This stack needs to add another card, so do it.
+			var $card = this.getCards().eq(curCardIndex);
+			if (curNumCardsInStack < curStack.getNumCardsFacingDown()) {
+				// Make sure the first cards up to curStack.getNumCardsFacingDown() are face down
+				$card = this.getGameView().showCardBack($card);
+			}
+			else {
+				// and the rest are face up.
+				$card = this.getGameView().showCardFront($card);
+			}
+
+			$card.appendTo($stackDOMElement);
+			curCardIndex++;
+
+			cardsNotDealt = (curCardIndex < numCardsToDeal);
+		} while (cardsNotDealt);
 	},
 
 	/** Public Functions **/
@@ -310,25 +552,41 @@ var GameController = Class({
 	/**
 	 * Begins a new round of the current game.
 	 * 
+	 * @throws		CardGameException				If the Dealer stack can't be found.
 	 * @public
 	 * @memberOf	GameController
 	 * @since		
 	 *
-	 * @return		Boolean			RETURNOBJVAR			DESCRIPTION
+	 * @return		Boolean			success			Flag indicating that everything succeeded (true) or not (false).
 	 */
 	beginGamePlay : function()
 	{
 		var success = false;
 
-		this.__shuffleCards();
+		// Shuffle the cards a random number of times between 3 and 10
+		var numTimes = 0;
+		while (numTimes < 3) { numTimes = Math.floor(Math.random() * 10) + 1; }
+		this.__shuffleCards(numTimes);
 
+		// Store a copy of the cards in their currently shuffled state for later re-use.
 		this.__storeCopyOfCards();
 
-		this.__stackCollectAllCards(this.getGameRules().getDealerStack());
+		// Get the Dealer stack and send all the Cards to its view.
+		var dealerStack = this.getGameRules().getDealerStack();
+		if (dealerStack === null) {
+			throw new CardGameException('No Dealer stack exists in the layout.', 'GameController.beginGamePlay');
+		}
+		else if (
+			! dealerStack.hasOwnProperty('instanceOf') ||
+			dealerStack.instanceOf(Stack) !== true
+		) {
+			throw new CardGameException('The found Dealer stack is not a Stack object.', 'GameController.beginGamePlay');
+		}
+		this.__stackCollectAllCards(dealerStack);
 
+		// Do an animation of dealing the cards from the Dealer stack to
+		// the individual InPlay stacks (according to the rules of the game)
 		this.__dealCards();
-
-		this.__startGameTimer();
 
 		success = true;
 

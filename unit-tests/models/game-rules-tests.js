@@ -9,6 +9,9 @@ var goodIncludeJokers = true;
 var badAcesHigh = "aString";
 var goodAcesHigh = true;
 
+var badUseTimer = "aString";
+var goodUseTimer = true;
+
 var badStackModel = "aString";
 var goodStackModel = [];
 
@@ -17,12 +20,22 @@ var st = new StackTypes();
 var fd = new FanningDirectionSet();
 var badLayout = "aString";
 var goodLayout = [
-	[ null, null, null, {
-		stackType : st.inPlay.getStackTypeName(),
-		fanningDirection : fd.up,
-		numCardsFacingDown : 5,
-		numCardsFacingUp : 2
-	} ]
+	[ 
+		null, 
+		null, 
+		{
+			stackType : st.dealer,
+			fanningDirection : fd.none,
+			numCardsFacingDown : 104,
+			numCardsFacingUp : 0
+		},
+		{
+			stackType : st.inPlay,
+			fanningDirection : fd.up,
+			numCardsFacingDown : 5,
+			numCardsFacingUp : 2
+		} 
+	]
 ];
 
 /** Constructor tests **/
@@ -171,9 +184,35 @@ QUnit.test( "`__setLayout()` and `getLayout()` tests", function( assert ) {
 	);
 });
 
+QUnit.test( "`__setUseTimer()` and `getUseTimer()` tests", function( assert ) {
+	expect(2);
+
+	var good = new GameRules();
+
+	assert.throws(
+		function() { 
+			good.__setUseTimer(badUseTimer);
+		},
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === "Boolean"
+			);
+		},
+		"Expected that `timer` param must be a Boolean was not thrown!"
+	);
+
+	good.__setUseTimer(goodUseTimer);
+	assert.strictEqual(
+		good.getUseTimer(),
+		goodUseTimer,
+		"The Boolean returned from `getUseTimer()` does not match the one passed into `__setUseTimer()`."
+	);
+});
+
 /** Private method tests **/
 QUnit.test( "`__createStackModel()` tests", function( assert ) {
-	expect(6);
+	expect(8);
 
 	var good = new GameRules();
 	var stackModel = good.__createStackModel();
@@ -200,9 +239,18 @@ QUnit.test( "`__createStackModel()` tests", function( assert ) {
 		'Expected the first row of the returned `stackModel` to have 4 elements.'
 	);
 	assert.strictEqual(
-		stackModel[0][2],
+		stackModel[0][0],
 		null,
-		'Expected the third element of first row of the returned `stackModel` to be null.'
+		'Expected the first element of first row of the returned `stackModel` to be null.'
+	);
+	assert.strictEqual(
+		stackModel[0][1],
+		null,
+		'Expected the second element of first row of the returned `stackModel` to be null.'
+	);
+	assert.ok(
+		(stackModel[0][2].hasOwnProperty('instanceOf') && stackModel[0][2].instanceOf(Stack)),
+		'Expected the third element of first row of the returned `stackModel` to be a Stack.'
 	);
 	assert.ok(
 		(stackModel[0][3].hasOwnProperty('instanceOf') && stackModel[0][3].instanceOf(Stack)),
@@ -212,30 +260,76 @@ QUnit.test( "`__createStackModel()` tests", function( assert ) {
 
 /** Public method tests **/
 QUnit.test( "`getDealerStack()` tests", function( assert ) {
-	expect(2);
+	expect(1);
 
 	var good = new GameRules();
 	good.__setLayout(goodLayout);
 	good.__setStackModel(good.__createStackModel());
+	var stackModel = good.getStackModel();
 	var dealerStack = good.getDealerStack();
 	assert.strictEqual(
 		dealerStack,
-		null,
-		'Expected the returned `dealerStack` to be `null` since none could be found.'
+		stackModel[0][2],
+		'Expected the returned `dealerStack` to be equal to the Stack element stored in `stackModel[0][2]`.'
+	);
+});
+
+QUnit.test( "`getStacksByType()` tests", function( assert ) {
+	expect(5);
+
+	var good = new GameRules();
+	good.__setLayout(goodLayout);
+	good.__setStackModel(good.__createStackModel());
+	var stackModel = good.getStackModel();
+	var dealerStacks = good.getStacksByType(st.dealer);
+	assert.strictEqual(
+		dealerStacks.length,
+		1,
+		'Expected to find only one `dealer` Stack in the model'
+	);
+	assert.strictEqual(
+		dealerStacks[0],
+		stackModel[0][2],
+		'Expected the first object in the returned `dealerStacks` to be equal to the Stack element stored in `stackModel[0][2]`.'
 	);
 
-	var stackModel = good.getStackModel();
-	stackModel[0][4] = new Stack(
-		st.dealer,
-		fd.none,
-		52,
-		0
-	);
-	good.__setStackModel(stackModel);
-	dealerStack = good.getDealerStack();
+	var inPlayStacks = good.getStacksByType(st.inPlay);
 	assert.strictEqual(
-		dealerStack,
-		stackModel[0][4],
-		'Expected the returned `dealerStack` to be equal to the Stack element stored in `stackModel[0][4]`.'
+		inPlayStacks.length,
+		1,
+		'Expected to find only one `inPlay` Stack in the model'
 	);
+	assert.strictEqual(
+		inPlayStacks[0],
+		stackModel[0][3],
+		'Expected the first object in the returned `inPlayStacks` to be equal to the Stack element stored in `stackModel[0][3]`.'
+	);
+
+	var foundationStacks = good.getStacksByType(st.foundation);
+	assert.strictEqual(
+		foundationStacks.length,
+		0,
+		'Expected to find no `foundation` Stacks in the model'
+	);
+});
+
+
+QUnit.test( "`runForEachStackObject()` tests", function( assert ) {
+	expect(4);
+
+	var good = new GameRules();
+	good.__setLayout(goodLayout);
+	good.__setStackModel(good.__createStackModel());
+	var f = function(stack) {
+		var expected = stack === null ? 
+			"empty" : 
+			"a " + stack.getStackType().getStackTypeName();
+		assert.ok(
+			stack === null ? 
+				true : 
+				stack.instanceOf(Stack) === true,
+			'Expected this stack to be ' + expected
+		);
+	};
+	good.runForEachStackObject(this, f);
 });

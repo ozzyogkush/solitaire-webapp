@@ -118,18 +118,19 @@ var GameView = Class({
 			var stackRow = stackModel[i];
 			var rowGridSize = stackRow.length + 1;
 
-			var $domRow = $('<div></div>').attr('data-card-game-view-element', 'canvas-row');
+			var $domRow = $('<div></div>')
+				.attr('data-card-game-view-element', 'canvas-row')
+				.addClass('row');
 			for (var j = 0; j < stackRow.length; j++) {
 				var stack = stackRow[j];
 				
 				var $stackDOMElement = $('<div></div>')
 					.attr({
-						'data-card-game-view-element' : 'stack',
-						'data-card-game-view-stack' : (
-							stack === null ? 
-								"empty" : 
-								stack
-							)
+						'data-card-game-view-element' : 'stack'
+					})
+					.addClass('col-md-1')
+					.data({
+						'stack' : (stack !== null ? stack : "empty")
 					});
 
 				// Add this cell to the DOM row
@@ -153,26 +154,28 @@ var GameView = Class({
 	 * 
 	 * @param		jQuery			$card			The DOM element to check. Required.
 	 *
-	 * @return		Boolean			$tbr			True if the element is a valid Card image, false otherwise.
+	 * @return		Boolean			tbr				True if the element is a valid Card image, false otherwise.
 	 */
 	__isCard : function($card)
 	{
-		$tbr = true;
+		var tbr = true;
 
 		var isJquery = (typeof $card === "object" && $card.jquery !== undefined);
 
 		if (! isJquery ||
 			$card.prop('tagName').toLowerCase() !== "img" ||
+			$card.attr('data-card-game-view-element') === undefined ||
+			$card.attr('data-card-game-view-element') !== "card" ||
 			$card.attr('data-card-face-showing') === undefined ||
 			$card.attr('data-card-front-source') === undefined ||
 			$card.attr('data-card-back-source') === undefined ||
 			$card.attr('data-card-deck-num') === undefined ||
 			$card.data('suit') === undefined ||
 			$card.data('card-number') === undefined) {
-			$tbr = false;
+			tbr = false;
 		}
 
-		return $tbr;
+		return tbr;
 	},
 
 	/**
@@ -190,10 +193,14 @@ var GameView = Class({
 	 */
 	__createCard : function(deckNum, suitObj, cardNumberObject)
 	{
-		var cardImageSrcName = cardNumberObject.getCardNumberName() + "_of_" + suitObj.getSuitName() + ".png";
+		var cardImageSrcName = cardNumberObject.getCardNumberName().toLowerCase() + 
+			"_of_" + 
+			suitObj.getSuitName().toLowerCase() + 
+			".png";
 		var $card = $('<img />')
 			.attr({
 				src : "../img/cards/" + cardImageSrcName,
+				'data-card-game-view-element' : 'card',
 				'data-card-face-showing' : 'front',
 				'data-card-front-source' : "../img/cards/" + cardImageSrcName,
 				'data-card-back-source' : "../img/cards/card_back.png",
@@ -261,7 +268,7 @@ var GameView = Class({
 			throw new CardGameException('The `numDecks` param is required.', 'GameView.createCards');
 		}
 		var parsed = null;
-		if (typeof numDecks !== "number" || ((parsed = parseInt(numDecks)) === null)) {
+		if (typeof numDecks !== "number" || isNaN(parsed = parseInt(numDecks))) {
 			throw new TypeException("Integer", "GameView.createCards");
 		}
 
@@ -304,25 +311,129 @@ var GameView = Class({
 		if ($card === undefined) {
 			throw new CardGameException('The `$card` param is required.', 'GameView.flipCard');
 		}
-		if (! this.__isCard($card)) {
+		else if (! this.__isCard($card)) {
 			throw new CardGameException('The `$card` param is not a valid Card.', 'GameView.flipCard');
 		}
 
 		// @TODO: make this a cool animation
 		if ($card.attr('data-card-face-showing') === "front") {
-			$card.attr({
-				'src' : $card.attr('data-card-back-source'),
-				'data-card-face-showing' : "back"
-			}); 
+			$card = this.showCardBack($card);
 		}
 		else if ($card.attr('data-card-face-showing') === "back") {
-			$card.attr({
-				'src' : $card.attr('data-card-front-source'),
-				'data-card-face-showing' : "front"
-			}); 
+			$card = this.showCardFront($card);
 		}
 
 		return $card;
+	},
+
+	/**
+	 * Specifically show the back of a Card in the DOM.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		jQuery			$card			The Card DOM element of which to show the back. Required.
+	 */
+	showCardBack : function($card)
+	{
+		if ($card === undefined) {
+			throw new CardGameException('The `$card` param is required.', 'GameView.showCardBack');
+		}
+		else if (! this.__isCard($card)) {
+			throw new CardGameException('The `$card` param is not a valid Card.', 'GameView.showCardBack');
+		}
+
+		$card.attr({
+			'src' : $card.attr('data-card-back-source'),
+			'data-card-face-showing' : "back"
+		});
+
+		return $card;
+	},
+
+	/**
+	 * Specifically show the front of a Card in the DOM
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		jQuery			$card			The Card DOM element of which to show the front. Required.
+	 */
+	showCardFront : function($card)
+	{
+		if ($card === undefined) {
+			throw new CardGameException('The `$card` param is required.', 'GameView.showCardFront');
+		}
+		else if (! this.__isCard($card)) {
+			throw new CardGameException('The `$card` param is not a valid Card.', 'GameView.showCardFront');
+		}
+
+		$card.attr({
+			'src' : $card.attr('data-card-front-source'),
+			'data-card-face-showing' : "front"
+		});
+
+		return $card;
+	},
+
+	/**
+	 * Retrieve the DOM element representing a Stack element in the View.
+	 *
+	 * @throws		CardGameException				If the DOM element for the supplied Stack can't be found
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Stack			stack			The Stack whose DOM element we want to find. Required.
+	 *
+	 * @return		jQuery			$matchedView	The jQuery extended DOM element that represents the supplied Stack element in the View.
+	 */
+	getStackView : function(stack)
+	{
+		var $allStackDOMElements = this.getGameContainer()
+			.find('div')
+				.filter('[data-card-game-view-element="stack"]');
+		var $matchedView = $allStackDOMElements
+			.filter(function() {
+				return (
+					$(this).data('stack') !== null &&
+					$(this).data('stack') === stack
+				);
+			});
+
+		if ($matchedView.length === 0) {
+			throw new CardGameException(
+				'No Stack View could be found for the supplied Stack object', 
+				'GameView.getStackView'
+			);
+		}
+
+		return $matchedView;
+	},
+
+	/**
+	 * Empty the DOM element representing a Stack element in the View. If the
+	 * Stack is null or isn't an instance of the Stack class, do nothing.
+	 *
+	 * In either case, the elements removed should keep their data in case
+	 * they get re-added to the DOM later.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Stack			stack			The Stack whose DOM element we want to empty. Required.
+	 */
+	emptyStackView : function(stack)
+	{
+		if (stack !== null && 
+			stack.hasOwnProperty('instanceOf') &&
+			stack.instanceOf(Stack) === true) {
+			var $stackDOMElement = this.getStackView(stack);
+			$stackDOMElement.children().detach();
+		}
 	}
 
 	/** Event Handlers **/

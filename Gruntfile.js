@@ -9,6 +9,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     paths : {
+      imageSrc : 'src/img',
       bowerSrc : 'bower_components',
       devOut : 'devbuild',
       prodOut : 'prodbuild'
@@ -37,19 +38,39 @@ module.exports = function(grunt) {
       }
     },
 
-    /* Copy Bootstrap font files */
+    /* Copy Bootstrap font files and image assets */
     copy : {
       dev : {
-        expand : true,
-        cwd : '<%= paths.bowerSrc %>/bootstrap/dist/fonts/',
-        src : '*.*',
-        dest : '<%= paths.devOut %>/fonts/'
+        files : [
+          {
+            expand : true,
+            cwd : '<%= paths.bowerSrc %>/bootstrap/dist/fonts/',
+            src : '*.*',
+            dest : '<%= paths.devOut %>/fonts/'
+          },
+          {
+            expand : true,
+            cwd : '<%= paths.imageSrc %>/',
+            src : ['**/*.*'],
+            dest : '<%= paths.devOut %>/img/'
+          },
+        ]
       },
       prod : {
-        expand : true,
-        cwd : '<%= paths.bowerSrc %>/bootstrap/dist/fonts/',
-        src : '*.*',
-        dest : '<%= paths.prodOut %>/fonts/'
+        files : [
+          {
+            expand : true,
+            cwd : '<%= paths.bowerSrc %>/bootstrap/dist/fonts/',
+            src : '*.*',
+            dest : '<%= paths.prodOut %>/fonts/'
+          },
+          {
+            expand : true,
+            cwd : '<%= paths.imageSrc %>/',
+            src : ['**/*.*'],
+            dest : '<%= paths.prodOut %>/img/'
+          },
+        ]
       }
     },
 

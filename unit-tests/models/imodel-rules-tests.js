@@ -1,7 +1,7 @@
 // Unit tests for models/imodel-rules.js
 
 QUnit.test( "property tests", function( assert ) {
-	expect(5);
+	expect(6);
 
 	// Property/attribute property tests
 
@@ -33,6 +33,12 @@ QUnit.test( "property tests", function( assert ) {
 		IModelRules._layout,
 		'array',
 		'`IModelRules._layout` must be an "array".'
+	);
+
+	assert.strictEqual(
+		IModelRules._useTimer,
+		'boolean',
+		'`IModelRules._useTimer` must be an "boolean".'
 	);
 
 	// Function property tests

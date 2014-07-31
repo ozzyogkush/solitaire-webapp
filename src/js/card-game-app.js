@@ -236,6 +236,18 @@ var CardGameApp = Class({
 		return this._debug;
 	},
 
+	/**
+	 * Contains the current interval that runs once per second to update
+	 * the HTML showing the amount of time elapsed.
+	 *
+	 * @private
+	 * @type		number
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * @default		null
+	 */
+	__timer : null,
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -486,6 +498,14 @@ var CardGameApp = Class({
 			// Begin the game!
 			this.getGameController().beginGamePlay();
 
+			if (this.getGameController().getGameRules().getUseTimer()) {
+				// Clear the current game timer, if one exists...
+				clearInterval(this.__timer);
+
+				// ...and start a new game timer.
+				this.__startGameTimer();
+			}
+
 			// All the above operations succeeded without throwing an exception.
 			gameNameLoaded = gameName;
 		}
@@ -495,6 +515,39 @@ var CardGameApp = Class({
 		}
 
 		return gameNameLoaded;
+	},
+
+	/**
+	 * Start up a new game timer, and create the interval that will
+	 * auto-update the DOM every second.
+	 * 
+	 * @private
+	 * @memberOf	CardGameApp
+	 * @since		
+	 */
+	__startGameTimer : function()
+	{
+		var dateObj = new Date();
+		dateObj.setHours(0);
+		dateObj.setMinutes(0);
+		dateObj.setSeconds(0);
+
+		this.getAppView().updateTimer(":00");
+		var that = this;
+		this.__timer = setInterval(function() {
+			dateObj.setSeconds(dateObj.getSeconds() + 1);
+
+			var timeStr = '';
+			if (dateObj.getMinutes() > 0) {
+				timeStr += dateObj.getMinutes();
+			}
+			timeStr += ':';
+			if (dateObj.getSeconds() < 10) {
+				timeStr += '0';
+			}
+			timeStr += dateObj.getSeconds();
+			that.getAppView().updateTimer(timeStr);
+		}, 1000);
 	},
 
 	/**
@@ -606,6 +659,13 @@ var CardGameApp = Class({
 	 */
 	__restartCurrentGameBtnClickHandler : function(event)
 	{
+		// Begin the game!
+		this.getGameController().beginGamePlay();
 
+		if (this.getGameController().getGameRules().getUseTimer()) {
+			// Start a game timer.
+			clearInterval(this.__timer);
+			this.__startGameTimer();
+		}
 	}
 });

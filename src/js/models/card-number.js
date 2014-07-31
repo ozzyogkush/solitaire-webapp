@@ -38,7 +38,7 @@ var CardNumber = Class({
 	__setCardValue : function(cv)
 	{
 		var parsed = null;
-		if (typeof cv !== "number" || (parsed = parseInt(cv) === null)) {
+		if (typeof cv !== "number" || isNaN(parsed = parseInt(cv))) {
 			throw new TypeException("Integer", "CardNumber.__setCardValue");
 		}
 		this._cardValue = cv;
