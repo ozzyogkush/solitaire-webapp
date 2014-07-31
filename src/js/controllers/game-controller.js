@@ -547,11 +547,6 @@ var GameController = Class({
 		} while (cardsNotDealt);
 	},
 
-	__startGameTimer : function()
-	{
-
-	},
-
 	/** Public Functions **/
 
 	/**
@@ -592,9 +587,6 @@ var GameController = Class({
 		// Do an animation of dealing the cards from the Dealer stack to
 		// the individual InPlay stacks (according to the rules of the game)
 		this.__dealCards();
-
-		// Start a game timer.
-		this.__startGameTimer();
 
 		success = true;
 

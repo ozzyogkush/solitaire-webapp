@@ -26,6 +26,7 @@ var TestRules = Class({ extends : GameRules }, {
 	_numDecksInGame : 2,
 	_includeJokers : false,
 	_acesHigh : false,
+	_useTimer : true,
 	_layout : [
 		[ null, null, null, {
 			stackType : st.inPlay,
