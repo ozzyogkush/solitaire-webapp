@@ -1,17 +1,14 @@
 /**
  * Basic webserver that sets up two connections:
  *	1.) to the /devbuild directory, for feature development
- *	2.) to the /prototype directory, for testing out ideas separate of the current in-dev feature
+ *	2.) to the base / directory, for hitting any file in the repo
  *
  * This allows you to specify a port as the first parameter after the name of the application.
  *
  * Default port is 8080 if none is specified.
  *
- * A special port is available for prototyping ideas outside of the repository branch source
- *
- * @TODO - allow the user to specify the directory they're prototyping from.
+ * A special port is available for viewing any file in the repository branch source
  */
-
 var connect = require('connect');
 var serveStatic = require('serve-static');
 
@@ -30,10 +27,11 @@ if (process.argv[2] !== null) {
 
 // Special port for prototyping ideas that shouldn't be done in the branch source 
 // (ie throwaway implementations). This is the "/devbuild" port number + 1.
-var prototypePort = port + 1;
+var baseDirPort = port + 1;
 
 // We serve the "/bin" directory out of the port we determined.
 connect().use(serveStatic(__dirname + "/devbuild")).listen(port);
 
-// Lastly we serve the "/prototype" directory out of the special port we determined.
-connect().use(serveStatic(__dirname + "/prototype")).listen(prototypePort);
+// Lastly we serve the out of the base directory (or any of its
+// sub-directories) out of the special port we determined.
+connect().use(serveStatic(__dirname)).listen(baseDirPort);

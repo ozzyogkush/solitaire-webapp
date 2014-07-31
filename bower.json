@@ -5,7 +5,9 @@
     "type": "git",
     "url": "git://github.com/ozzyogkush/solitaire-clone"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "color": "moagrius/Color",
     "joii": "haroldiedema/joii#>=2.1",
     "jquery": "jquery/jquery#>=1.11 <2.0",
     "bootstrap": "ozzyogkush/bootstrap#solitaire-webapp"
