@@ -9,6 +9,9 @@ var goodIncludeJokers = true;
 var badAcesHigh = "aString";
 var goodAcesHigh = true;
 
+var badUseTimer = "aString";
+var goodUseTimer = true;
+
 var badStackModel = "aString";
 var goodStackModel = [];
 
@@ -178,6 +181,32 @@ QUnit.test( "`__setLayout()` and `getLayout()` tests", function( assert ) {
 		good.getLayout(),
 		goodLayout,
 		"The Array returned from `getLayout()` does not match the one passed into `__setLayout()`."
+	);
+});
+
+QUnit.test( "`__setUseTimer()` and `getUseTimer()` tests", function( assert ) {
+	expect(2);
+
+	var good = new GameRules();
+
+	assert.throws(
+		function() { 
+			good.__setUseTimer(badUseTimer);
+		},
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === "Boolean"
+			);
+		},
+		"Expected that `timer` param must be a Boolean was not thrown!"
+	);
+
+	good.__setUseTimer(goodUseTimer);
+	assert.strictEqual(
+		good.getUseTimer(),
+		goodUseTimer,
+		"The Boolean returned from `getUseTimer()` does not match the one passed into `__setUseTimer()`."
 	);
 });
 

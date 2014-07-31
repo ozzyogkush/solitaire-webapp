@@ -232,6 +232,49 @@ var GameRules = Class({ implements : IModelRules }, {
 		return this._layout;
 	},
 
+	/**
+	 * Flag indicating whether to use a timer in this game (true) or not (false).
+	 *
+	 * @private
+	 * @type		Boolean
+	 * @memberOf	GameRules
+	 * @since		
+	 * @default		null
+	 */
+	_useTimer : null,
+	
+	/**
+	 * Sets the `_useTimer` property to the value of `timer`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	GameRules
+	 * @since		
+	 * 
+	 * @param		Boolean			timer			The flag indicating whether or not to use a timer. Required.
+	 */
+	__setUseTimer : function(timer)
+	{
+		if (typeof timer !== "boolean") {
+			throw new TypeException("Boolean", "GameRules.__setUseTimer");
+		}
+		this._useTimer = timer;
+	},
+	
+	/**
+	 * Returns the `_useTimer` property.
+	 * 
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		Boolean			_useTimer		Returns the `_useTimer` property.
+	 */
+	getUseTimer : function()
+	{
+		return this._useTimer;
+	},
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
