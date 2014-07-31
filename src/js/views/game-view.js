@@ -118,7 +118,9 @@ var GameView = Class({
 			var stackRow = stackModel[i];
 			var rowGridSize = stackRow.length + 1;
 
-			var $domRow = $('<div></div>').attr('data-card-game-view-element', 'canvas-row');
+			var $domRow = $('<div></div>')
+				.attr('data-card-game-view-element', 'canvas-row')
+				.addClass('row');
 			for (var j = 0; j < stackRow.length; j++) {
 				var stack = stackRow[j];
 				
@@ -126,6 +128,7 @@ var GameView = Class({
 					.attr({
 						'data-card-game-view-element' : 'stack'
 					})
+					.addClass('col-md-1')
 					.data({
 						'stack' : (stack !== null ? stack : "empty")
 					});
