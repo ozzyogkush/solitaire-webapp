@@ -9,6 +9,23 @@
 
     <!-- Include all compiled stylesheets (below) - shall contain bootstrap and the solitaire app  -->
     <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+    div[data-card-game-view-element="stack"] {
+        position: relative;
+    }
+    div[data-card-game-view-element="stack"] > img {
+        position: absolute;
+        width : 100px;
+        height : 145px;
+        top: 0px;
+        left: 0px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    div[data-card-game-view-element="stack"] > img:first-child {
+        position: relative;
+    }
+    </style>
   </head>
   <body>
     <h1>Card Game App DEV Build Test Page</h1>
@@ -24,10 +41,62 @@
     <script type="text/javascript" src="js/card-game-app.js"></script>
     <script type="text/javascript">
       var cardGame = null;
+      var TestRules = null;
+      var TestView = null;
+      var st = null;
+      var fd = null;
       $(document).ready(function() {
+        st = new StackTypes();
+        fd = new FanningDirectionSet();
+        TestRules = Class({ extends : GameRules }, {
+          _numDecksInGame : 2,
+          _includeJokers : false,
+          _acesHigh : false,
+          _useTimer : true,
+          _layout : [
+            [ 
+              {
+                stackType : st.dealer,
+                fanningDirection : fd.none,
+                numCardsFacingDown : 104,
+                numCardsFacingUp : 0
+              }, 
+              null, 
+              null, {
+                stackType : st.inPlay,
+                fanningDirection : fd.down,
+                numCardsFacingDown : 0,
+                numCardsFacingUp : 1
+              }, 
+              {
+                stackType : st.inPlay,
+                fanningDirection : fd.up,
+                numCardsFacingDown : 1,
+                numCardsFacingUp : 1 
+              }, 
+              {
+                stackType : st.inPlay,
+                fanningDirection : fd.down,
+                numCardsFacingDown : 2,
+                numCardsFacingUp : 1
+              }, 
+              {
+                stackType : st.inPlay,
+                fanningDirection : fd.up,
+                numCardsFacingDown : 3,
+                numCardsFacingUp : 1
+              } 
+            ]
+          ],
+          __construct : function() { this.super('__construct'); } 
+        });
+        TestView = Class({ extends : GameView }, {
+          __construct : function(stackModel) { this.super('__construct', stackModel); } 
+        });
         cardGame = new CardGameApp(
           $('div[data-role="card-game"]'), 
           [
+            'Test',
             'Solitaire',
             'FortyThieves'
           ],
