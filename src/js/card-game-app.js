@@ -7,7 +7,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		CardGameApp
  * @name		CardGameApp
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var CardGameApp = Class({
@@ -23,7 +23,7 @@ var CardGameApp = Class({
 	 * @private		
 	 * @type		AppView
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_appView : null,
@@ -34,7 +34,7 @@ var CardGameApp = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		AppView			appView			The overall application view. Required.
 	 */
@@ -53,7 +53,7 @@ var CardGameApp = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		AppView			_appView		Returns the `_appView` property.
 	 */
@@ -68,7 +68,7 @@ var CardGameApp = Class({
 	 * @private		
 	 * @type		GameController
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_gameController : null,
@@ -79,7 +79,7 @@ var CardGameApp = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		GameController			gameController			The game controller. Required.
 	 */
@@ -98,7 +98,7 @@ var CardGameApp = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		GameController			_gameController		Returns the `_gameController` property.
 	 */
@@ -113,7 +113,7 @@ var CardGameApp = Class({
 	 * @private		
 	 * @type		Array
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_registeredGames : null,
@@ -124,7 +124,7 @@ var CardGameApp = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Array			rg			The set of games to register in the app. Required.
 	 */
@@ -141,7 +141,7 @@ var CardGameApp = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Array			_registeredGames		Returns the `_registeredGames` property.
 	 */
@@ -156,7 +156,7 @@ var CardGameApp = Class({
 	 * @private		
 	 * @type		String
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_loadedGame : null,
@@ -167,7 +167,7 @@ var CardGameApp = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		String			lgName			The name of the game. Required.
 	 */
@@ -184,7 +184,7 @@ var CardGameApp = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		String			_loadedGame		Returns the `_loadedGame` property.
 	 */
@@ -199,7 +199,7 @@ var CardGameApp = Class({
 	 * @private		
 	 * @type		Boolean
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * @default		false
 	 */
 	_debug : false,
@@ -210,7 +210,7 @@ var CardGameApp = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Boolean			debug			Flag indicating whether to allow debug or not. Required.
 	 */
@@ -227,7 +227,7 @@ var CardGameApp = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Boolean			_debug		Returns the `_debug` property.
 	 */
@@ -243,7 +243,7 @@ var CardGameApp = Class({
 	 * @private
 	 * @type		number
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	__timer : null,
@@ -261,7 +261,7 @@ var CardGameApp = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		jQuery			$containerElement				The jQuery extended DOM element that will contain the entire application and game views. Required.
 	 * @param		Array			games							The set of names of games which the user will be able to play. Required.
@@ -342,7 +342,7 @@ var CardGameApp = Class({
 	 * @private
 	 * @throws		CardGameException
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Array			games				The set of names of games to register as available. Required.
 	 */
@@ -401,7 +401,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$containerElement		The jQuery extended DOM element that will contain the entire application and game views. Required.
 	 */
@@ -417,7 +417,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 */
 	__setApplicationEvents : function()
 	{
@@ -442,7 +442,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		String						The name of the game that is successfully loaded by `__loadGame()`.
 	 */
@@ -470,7 +470,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		String			gameName				The name of the game to load. Required.
 	 *
@@ -523,7 +523,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 */
 	__startGameTimer : function()
 	{
@@ -555,7 +555,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 */
 	__addGameViewToAppView : function()
 	{
@@ -576,7 +576,7 @@ var CardGameApp = Class({
 	 *
 	 * @public
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		CardGameDebugMessage			debugObject			A `CardGameDebugMessage` instance, or a subclass
 	 */
@@ -614,7 +614,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 */
 	__startNewGameBtnClickHandler : function(event)
 	{
@@ -627,7 +627,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 */
 	__startNewSelectedGameBtnClickHandler : function(event)
 	{
@@ -655,7 +655,7 @@ var CardGameApp = Class({
 	 * 
 	 * @private
 	 * @memberOf	CardGameApp
-	 * @since		
+	 * @since		0.2
 	 */
 	__restartCurrentGameBtnClickHandler : function(event)
 	{

@@ -6,7 +6,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		CardGameDebugMessage
  * @name		CardGameDebugMessage
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var CardGameDebugMessage = Class({
@@ -22,7 +22,7 @@ var CardGameDebugMessage = Class({
 	 * @private
 	 * @type		String|Object|Array
 	 * @memberOf	CardGameDebugMessage
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	message : null,
@@ -32,7 +32,7 @@ var CardGameDebugMessage = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardGameDebugMessage
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		mixed			message			Returns the message.
 	 */
@@ -48,7 +48,7 @@ var CardGameDebugMessage = Class({
 	 * @private
 	 * @type		String
 	 * @memberOf	CardGameDebugMessage
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	callingMethod : null,
@@ -58,7 +58,7 @@ var CardGameDebugMessage = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardGameDebugMessage
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		mixed			message			Returns the calling method.
 	 */
@@ -79,7 +79,7 @@ var CardGameDebugMessage = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	CardGameDebugMessage
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		mixed				message				The message or data object used to describe the exception. Required.
 	 * @param		String				callingMethod		The name of the method triggering the exception. Required.
@@ -114,7 +114,7 @@ var CardGameDebugMessage = Class({
 	 *
 	 * @public
 	 * @memberOf	CardGameDebugMessage
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @returns		String				string_val			Constructed message including prefix, calling method, and exception message.
 	 */
@@ -136,7 +136,7 @@ var CardGameDebugMessage = Class({
 	 *
 	 * @public
 	 * @memberOf	CardGameDebugMessage
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @returns		mixed				tbr					The most console-friendly version of this instance of the CardGameDebugMessage class.
 	 */

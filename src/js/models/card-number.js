@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		CardNumber
  * @name		CardNumber
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var CardNumber = Class({
@@ -21,7 +21,7 @@ var CardNumber = Class({
 	 * @private
 	 * @type		String
 	 * @memberOf	CardNumber
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_cardValue : null,
@@ -32,7 +32,7 @@ var CardNumber = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	CardNumber
-	 * @since		
+	 * @since		0.2
 	 * @param		Integer			cv			The numeric value of the CardNumber. Required.
 	 */
 	__setCardValue : function(cv)
@@ -49,7 +49,7 @@ var CardNumber = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumber
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Integer			_cardValue			Returns the `_cardValue` property.
 	 */
@@ -64,7 +64,7 @@ var CardNumber = Class({
 	 * @private
 	 * @type		String
 	 * @memberOf	CardNumber
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_cardNumberName : null,
@@ -75,7 +75,7 @@ var CardNumber = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	CardNumber
-	 * @since		
+	 * @since		0.2
 	 * @param		String			na			The color of the CardNumber. Required.
 	 */
 	__setCardNumberName : function(na)
@@ -91,7 +91,7 @@ var CardNumber = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumber
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		String			_cardNumberName			Returns the `_cardNumberName` property.
 	 */
@@ -112,7 +112,7 @@ var CardNumber = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	CardNumber
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		Integer				cardValue			The value of the CardNumber. Required.
 	 * @param		String				cardNumberName		The name of the CardNumber. Required.

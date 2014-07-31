@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		IModelRules
  * @name		IModelRules
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var IModelRules = Interface({

@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		CardNumberSet
  * @name		CardNumberSet
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var CardNumberSet = Class({
@@ -20,7 +20,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	two : null,
@@ -30,7 +30,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.two		The `two` CardNumber object.
 	 */
@@ -45,7 +45,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	three : null,
@@ -55,7 +55,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.three		The `three` CardNumber object.
 	 */
@@ -70,7 +70,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	four : null,
@@ -80,7 +80,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.four		The `four` CardNumber object.
 	 */
@@ -95,7 +95,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	five : null,
@@ -105,7 +105,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.five		The `five` CardNumber object.
 	 */
@@ -120,7 +120,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	six : null,
@@ -130,7 +130,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.six		The `six` CardNumber object.
 	 */
@@ -145,7 +145,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	seven : null,
@@ -155,7 +155,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.seven		The `seven` CardNumber object.
 	 */
@@ -170,7 +170,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	eight : null,
@@ -180,7 +180,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.eight		The `eight` CardNumber object.
 	 */
@@ -195,7 +195,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	nine : null,
@@ -205,7 +205,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.nine		The `nine` CardNumber object.
 	 */
@@ -220,7 +220,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	ten : null,
@@ -230,7 +230,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.ten		The `ten` CardNumber object.
 	 */
@@ -245,7 +245,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	jack : null,
@@ -255,7 +255,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.jack		The `jack` CardNumber object.
 	 */
@@ -270,7 +270,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	queen : null,
@@ -280,7 +280,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.queen		The `queen` CardNumber object.
 	 */
@@ -295,7 +295,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	king : null,
@@ -305,7 +305,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.king		The `king` CardNumber object.
 	 */
@@ -320,7 +320,7 @@ var CardNumberSet = Class({
 	 * @private
 	 * @type		CardNumber
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	ace : null,
@@ -330,7 +330,7 @@ var CardNumberSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		CardNumber		this.ace		The `ace` CardNumber object.
 	 */
@@ -351,7 +351,7 @@ var CardNumberSet = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	CardNumberSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Object									The public API for the CardNumberSet static object.
 	 */

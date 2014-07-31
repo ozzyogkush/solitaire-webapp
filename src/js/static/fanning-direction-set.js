@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		FanningDirectionSet
  * @name		FanningDirectionSet
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var FanningDirectionSet = Class({
@@ -20,7 +20,7 @@ var FanningDirectionSet = Class({
 	 * @private
 	 * @type		FanningDirection
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	up : null,
@@ -30,7 +30,7 @@ var FanningDirectionSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		FanningDirection		this.up		The `up` FanningDirection object.
 	 */
@@ -45,7 +45,7 @@ var FanningDirectionSet = Class({
 	 * @private
 	 * @type		FanningDirection
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	down : null,
@@ -55,7 +55,7 @@ var FanningDirectionSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		FanningDirection		this.down		The `down` FanningDirection object.
 	 */
@@ -70,7 +70,7 @@ var FanningDirectionSet = Class({
 	 * @private
 	 * @type		FanningDirection
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	left : null,
@@ -80,7 +80,7 @@ var FanningDirectionSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		FanningDirection		this.left		The `left` FanningDirection object.
 	 */
@@ -95,7 +95,7 @@ var FanningDirectionSet = Class({
 	 * @private
 	 * @type		FanningDirection
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	right : null,
@@ -105,7 +105,7 @@ var FanningDirectionSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		FanningDirection		this.right		The `right` FanningDirection object.
 	 */
@@ -120,7 +120,7 @@ var FanningDirectionSet = Class({
 	 * @private
 	 * @type		FanningDirection
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	none : null,
@@ -130,7 +130,7 @@ var FanningDirectionSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		FanningDirection		this.none		The `none` FanningDirection object.
 	 */
@@ -151,7 +151,7 @@ var FanningDirectionSet = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	FanningDirectionSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Object									The public API for the FanningDirectionSet static object.
 	 */

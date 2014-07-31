@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameController
  * @name		GameController
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var GameController = Class({
@@ -22,7 +22,7 @@ var GameController = Class({
 	 * @private
 	 * @type		String
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_gameName : null,
@@ -33,7 +33,7 @@ var GameController = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		String			gn			The name of the game. Required.
 	 */
@@ -50,7 +50,7 @@ var GameController = Class({
 	 * 
 	 * @public
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		String			_gameName		Returns the `_gameName` property.
 	 */
@@ -66,7 +66,7 @@ var GameController = Class({
 	 * @private
 	 * @type		GameRules
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_gameRules : null,
@@ -77,7 +77,7 @@ var GameController = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		GameRules			gr			The rules and layout of the game. Required.
 	 */
@@ -94,7 +94,7 @@ var GameController = Class({
 	 * 
 	 * @public
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		GameRules			_gameRules		Returns the `_gameRules` property.
 	 */
@@ -110,7 +110,7 @@ var GameController = Class({
 	 * @private
 	 * @type		GameView
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_gameView : null,
@@ -121,7 +121,7 @@ var GameController = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		GameView			gv			The rules and layout of the game. Required.
 	 */
@@ -138,7 +138,7 @@ var GameController = Class({
 	 * 
 	 * @public
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		GameView			_gameView		Returns the `_gameView` property.
 	 */
@@ -154,7 +154,7 @@ var GameController = Class({
 	 * @private
 	 * @type		jQuery
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_cards : null,
@@ -165,7 +165,7 @@ var GameController = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$cards			The set of jQuery extended card elements. Required.
 	 */
@@ -182,7 +182,7 @@ var GameController = Class({
 	 * 
 	 * @public
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			_cards		Returns the `_cards` property.
 	 */
@@ -197,7 +197,7 @@ var GameController = Class({
 	 * @private
 	 * @type		jQuery
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_cardsResetCopy : null,
@@ -208,7 +208,7 @@ var GameController = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$cardsCopy			The copy of the set of jQuery extended card elements. Required.
 	 */
@@ -225,7 +225,7 @@ var GameController = Class({
 	 * 
 	 * @public
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			_cardsResetCopy		Returns the `_cardsResetCopy` property.
 	 */
@@ -248,7 +248,7 @@ var GameController = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		String			gameName			The name of the game. Prefix for the extended GameRules and GameView classes. Required.
 	 */
@@ -282,7 +282,7 @@ var GameController = Class({
 	 *
 	 * @private
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 */
 	__loadGameRules : function()
 	{
@@ -306,7 +306,7 @@ var GameController = Class({
 	 *
 	 * @private
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 */
 	__loadGameView : function()
 	{
@@ -336,7 +336,7 @@ var GameController = Class({
 	 *
 	 * @private
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 * @TODO		Speed test this algorithm with increasing cardArr length and numTimes
 	 *
 	 * @param		Array		cardArr				The array of card elements to shuffle. Required.
@@ -401,7 +401,7 @@ var GameController = Class({
 	 *
 	 * @private
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		Integer			numTimes		The number of times to shuffle the cards. Optional.
 	 */
@@ -420,7 +420,7 @@ var GameController = Class({
 	 *
 	 * @private
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 */
 	__storeCopyOfCards : function()
 	{
@@ -434,7 +434,7 @@ var GameController = Class({
 	 *
 	 * @private
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		Stack			stack			The Stack object whose view will receive all Card view DOM objects as children. Required.
 	 */
@@ -469,7 +469,7 @@ var GameController = Class({
 	 *
 	 * @private
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Integer			numCardsToDeal			The number of cards the app will deal to InPlay stacks.
 	 */
@@ -499,7 +499,7 @@ var GameController = Class({
 	 *
 	 * @private
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 */
 	__dealCards : function()
 	{
@@ -555,7 +555,7 @@ var GameController = Class({
 	 * @throws		CardGameException				If the Dealer stack can't be found.
 	 * @public
 	 * @memberOf	GameController
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Boolean			success			Flag indicating that everything succeeded (true) or not (false).
 	 */

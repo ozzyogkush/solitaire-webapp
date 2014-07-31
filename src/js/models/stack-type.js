@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		StackType
  * @name		StackType
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var StackType = Class({
@@ -20,7 +20,7 @@ var StackType = Class({
 	 * @private
 	 * @type		String
 	 * @memberOf	StackType
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_stackTypeName : null,
@@ -31,7 +31,7 @@ var StackType = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	StackType
-	 * @since		
+	 * @since		0.2
 	 * @param		String			stn			The english description of the type of Stack this represents. Required.
 	 */
 	__setStackTypeName : function(stn)
@@ -47,7 +47,7 @@ var StackType = Class({
 	 * 
 	 * @public
 	 * @memberOf	StackType
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		String			_stackTypeName			Returns the `_stackTypeName` property.
 	 */
@@ -68,7 +68,7 @@ var StackType = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	StackType
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		String			stackTypeName		The english description of the type of the Stack. Required.
 	 */

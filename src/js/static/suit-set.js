@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		SuitSet
  * @name		SuitSet
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var SuitSet = Class({
@@ -20,7 +20,7 @@ var SuitSet = Class({
 	 * @private
 	 * @type		Suit
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	hearts : null,
@@ -30,7 +30,7 @@ var SuitSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Suit		this.hearts		The Hearts suit object.
 	 */
@@ -45,7 +45,7 @@ var SuitSet = Class({
 	 * @private
 	 * @type		Suit
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	diamonds : null,
@@ -55,7 +55,7 @@ var SuitSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Suit		this.diamonds		The Diamonds suit object.
 	 */
@@ -70,7 +70,7 @@ var SuitSet = Class({
 	 * @private
 	 * @type		Suit
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	spades : null,
@@ -80,7 +80,7 @@ var SuitSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Suit		this.spades		The Spades suit object.
 	 */
@@ -95,7 +95,7 @@ var SuitSet = Class({
 	 * @private
 	 * @type		Suit
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	clubs : null,
@@ -105,7 +105,7 @@ var SuitSet = Class({
 	 * 
 	 * @public
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Suit		this.clubs		The Clubs suit object.
 	 */
@@ -126,7 +126,7 @@ var SuitSet = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	SuitSet
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Object									The public API for the SuitSet static object.
 	 */

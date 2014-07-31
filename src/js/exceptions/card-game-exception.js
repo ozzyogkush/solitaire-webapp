@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		CardGameException
  * @name		CardGameException
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var CardGameException = Class({ extends : CardGameDebugMessage },
@@ -22,7 +22,7 @@ var CardGameException = Class({ extends : CardGameDebugMessage },
 	 * @private
 	 * @type		CardGameExceptionSeverity
 	 * @memberOf	CardGameException
-	 * @since		
+	 * @since		0.2
 	 * @default		CardGameException.ERROR
 	 */
 	severity : CardGameExceptionSeverity.ERROR,
@@ -32,7 +32,7 @@ var CardGameException = Class({ extends : CardGameDebugMessage },
 	 * 
 	 * @public
 	 * @memberOf	CardGameException
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		mixed			message			Returns the severity.
 	 */
@@ -52,7 +52,7 @@ var CardGameException = Class({ extends : CardGameDebugMessage },
 	 *
 	 * @public
 	 * @memberOf	CardGameException
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		mixed				message				The message or data object used to describe the exception. Required.
 	 * @param		String				callingMethod		The name of the method triggering the exception. Required.
@@ -80,7 +80,7 @@ var CardGameException = Class({ extends : CardGameDebugMessage },
 	 *
 	 * @public
 	 * @memberOf	CardGameException
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @returns		String				string_val			Constructed message including prefix, calling method, and exception message.
 	 */

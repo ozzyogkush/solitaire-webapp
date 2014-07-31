@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		AppView
  * @name		AppView
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var AppView = Class({
@@ -21,7 +21,7 @@ var AppView = Class({
 	 * @private		
 	 * @type		jQuery
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_container : null,
@@ -32,7 +32,7 @@ var AppView = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$con			The container element which contains all game elements. Required.
 	 */
@@ -49,7 +49,7 @@ var AppView = Class({
 	 * 
 	 * @public
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			_container		Returns the `_container` property.
 	 */
@@ -65,7 +65,7 @@ var AppView = Class({
 	 * @private		
 	 * @type		jQuery
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_buttons : null,
@@ -76,7 +76,7 @@ var AppView = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$btns			The set of Buttons that the user will use to interact with the game. Required.
 	 */
@@ -114,7 +114,7 @@ var AppView = Class({
 	 * 
 	 * @public
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			_buttons		Returns the `_buttons` property.
 	 */
@@ -130,7 +130,7 @@ var AppView = Class({
 	 * @private		
 	 * @type		jQuery
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_gameChoiceModal : null,
@@ -143,7 +143,7 @@ var AppView = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$gcm			The Modal element giving the Player a choice of games to load. Required.
 	 */
@@ -183,7 +183,7 @@ var AppView = Class({
 	 * 
 	 * @public
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			_gameChoiceModal		Returns the `_gameChoiceModal` property.
 	 */
@@ -199,7 +199,7 @@ var AppView = Class({
 	 * @private		
 	 * @type		jQuery
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_timerContainer : null,
@@ -212,7 +212,7 @@ var AppView = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$tc			The element that shows the elapsed time in the current game. Required.
 	 */
@@ -252,7 +252,7 @@ var AppView = Class({
 	 * 
 	 * @public
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			_timerContainer			Returns the `_timerContainer` property.
 	 */
@@ -275,7 +275,7 @@ var AppView = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		jQuery				$container			The jQuery extended HTML element that will contain the entire view area. Required.
 	 */
@@ -316,7 +316,7 @@ var AppView = Class({
 	 *
 	 * @private
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery				$buttons			A jQuery object containing two jQuery extended Button elements. Required.
 	 */
@@ -343,7 +343,7 @@ var AppView = Class({
 	 *
 	 * @private
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		String				dataCardGameButton			The value of the new button's 'data-card-game-button' attribute. Required.
 	 * @param		String				buttonText					The text that the button will display. Required.
@@ -389,7 +389,7 @@ var AppView = Class({
 	 *
 	 * @private
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			$modal			A jQuery object containing a `div` element. Required.
 	 */
@@ -408,7 +408,7 @@ var AppView = Class({
 	 *
 	 * @private
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			$timerContainer			A jQuery object containing a `div` element. Required.
 	 */
@@ -427,7 +427,7 @@ var AppView = Class({
 	 * 
 	 * @public
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		jQuery			$gameContainer		The DOM element that contains all the elements of the actual Game being played. Required.
 	 */
@@ -465,9 +465,7 @@ var AppView = Class({
 	 * 
 	 * @public
 	 * @memberOf	AppView
-	 * @since		
-	 *
-	 * @param		
+	 * @since		0.2
 	 */
 	resetGameView : function()
 	{
@@ -481,7 +479,7 @@ var AppView = Class({
 	 * 
 	 * @public
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		String			timeStr				String indicating the number of elapsed minutes and seconds. Required.
 	 */

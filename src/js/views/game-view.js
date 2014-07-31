@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameView
  * @name		GameView
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var GameView = Class({
@@ -21,7 +21,7 @@ var GameView = Class({
 	 * @private		
 	 * @type		jQuery
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_gameContainer : null,
@@ -32,7 +32,7 @@ var GameView = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$gc			The set of DOM elements that make up the plugin view canvas. Required.
 	 */
@@ -49,7 +49,7 @@ var GameView = Class({
 	 * 
 	 * @public
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		jQuery			_gameContainer		Returns the `_gameContainer` property.
 	 */
@@ -73,7 +73,7 @@ var GameView = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		Array			stackModel			The set of Stacks that define the layout. Required.
 	 */
@@ -102,7 +102,7 @@ var GameView = Class({
 	 * 
 	 * @private
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Array			stackModel				The set of Stacks that define the layout. Required.
 	 *
@@ -150,7 +150,7 @@ var GameView = Class({
 	 *
 	 * @private
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$card			The DOM element to check. Required.
 	 *
@@ -183,7 +183,7 @@ var GameView = Class({
 	 * 
 	 * @private
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		Integer			deckNum					The current deck number for this deck of cards. Required.
 	 * @param		Suit			suitObj					The current deck number for this deck of cards. Required.
@@ -219,7 +219,7 @@ var GameView = Class({
 	 * 
 	 * @private
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * @TODO		implement Jokers
 	 *
 	 * @param		Integer			deckNum			The current deck number for this deck of cards. Required.
@@ -255,7 +255,7 @@ var GameView = Class({
 	 * 
 	 * @public
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		Integer			numDecks		The number of decks of cards to generate.
 	 *
@@ -302,7 +302,7 @@ var GameView = Class({
 	 *
 	 * @public
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$card			The Card DOM element to visually flip. Required.
 	 */
@@ -331,7 +331,7 @@ var GameView = Class({
 	 *
 	 * @public
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$card			The Card DOM element of which to show the back. Required.
 	 */
@@ -357,7 +357,7 @@ var GameView = Class({
 	 *
 	 * @public
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		jQuery			$card			The Card DOM element of which to show the front. Required.
 	 */
@@ -384,7 +384,7 @@ var GameView = Class({
 	 * @throws		CardGameException				If the DOM element for the supplied Stack can't be found
 	 * @public
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Stack			stack			The Stack whose DOM element we want to find. Required.
 	 *
@@ -422,7 +422,7 @@ var GameView = Class({
 	 *
 	 * @public
 	 * @memberOf	GameView
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Stack			stack			The Stack whose DOM element we want to empty. Required.
 	 */

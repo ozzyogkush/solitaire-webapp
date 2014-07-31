@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		StackTypes
  * @name		StackTypes
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var StackTypes = Class({
@@ -20,7 +20,7 @@ var StackTypes = Class({
 	 * @private
 	 * @type		StackType
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	dealer : null,
@@ -30,7 +30,7 @@ var StackTypes = Class({
 	 * 
 	 * @public
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		StackType		this.dealer		The `dealer` StackType object.
 	 */
@@ -45,7 +45,7 @@ var StackTypes = Class({
 	 * @private
 	 * @type		StackType
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	draw : null,
@@ -55,7 +55,7 @@ var StackTypes = Class({
 	 * 
 	 * @public
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		StackType		this.draw		The `draw` StackType object.
 	 */
@@ -70,7 +70,7 @@ var StackTypes = Class({
 	 * @private
 	 * @type		StackType
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	inPlay : null,
@@ -80,7 +80,7 @@ var StackTypes = Class({
 	 * 
 	 * @public
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		StackType		this.inPlay		The `inPlay` StackType object.
 	 */
@@ -95,7 +95,7 @@ var StackTypes = Class({
 	 * @private
 	 * @type		StackType
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	foundation : null,
@@ -105,7 +105,7 @@ var StackTypes = Class({
 	 * 
 	 * @public
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		StackType		this.foundation		The `foundation` StackType object.
 	 */
@@ -126,7 +126,7 @@ var StackTypes = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	StackTypes
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Object									The public API for the StackTypes static object.
 	 */

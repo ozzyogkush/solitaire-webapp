@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		FanningDirection
  * @name		FanningDirection
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var FanningDirection = Class({
@@ -20,7 +20,7 @@ var FanningDirection = Class({
 	 * @private
 	 * @type		String
 	 * @memberOf	FanningDirection
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_fanningDirectionName : null,
@@ -31,7 +31,7 @@ var FanningDirection = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	FanningDirection
-	 * @since		
+	 * @since		0.2
 	 * @param		String			fdn			The color of the FanningDirection. Required.
 	 */
 	__setFanningDirectionName : function(fdn)
@@ -47,7 +47,7 @@ var FanningDirection = Class({
 	 * 
 	 * @public
 	 * @memberOf	FanningDirection
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		String			_fanningDirectionName			Returns the `_fanningDirectionName` property.
 	 */
@@ -68,7 +68,7 @@ var FanningDirection = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	FanningDirection
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		String			fanningDirectionName		The english description of the direction of the FanningDirection. Required.
 	 */

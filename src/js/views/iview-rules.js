@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		IViewRules
  * @name		IViewRules
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var IViewRules = Interface({
@@ -21,7 +21,7 @@ var IViewRules = Interface({
 	 * @public
 	 * @type		string
 	 * @memberOf	IViewRules
-	 * @since		
+	 * @since		0.2
 	 * @default		"string"
 	 */
 	_variationName : "string",
@@ -32,7 +32,7 @@ var IViewRules = Interface({
 	 * @public
 	 * @type		string
 	 * @memberOf	IViewRules
-	 * @since		
+	 * @since		0.2
 	 * @default		"array"
 	 */
 	_cards : "array",
@@ -49,7 +49,7 @@ var IViewRules = Interface({
 	 * @public
 	 * @type		string
 	 * @memberOf	IViewRules
-	 * @since		
+	 * @since		0.2
 	 * @default		"function"
 	 */
 	mouseDownTouchStartEventHandler : "function",
@@ -60,7 +60,7 @@ var IViewRules = Interface({
 	 * @public
 	 * @type		string
 	 * @memberOf	IViewRules
-	 * @since		
+	 * @since		0.2
 	 * @default		"function"
 	 */
 	mouseUpTouchEndEventHandler : "function",
@@ -71,7 +71,7 @@ var IViewRules = Interface({
 	 * @public
 	 * @type		string
 	 * @memberOf	IViewRules
-	 * @since		
+	 * @since		0.2
 	 * @default		"function"
 	 */
 	mouseClickEventHandler : "function",
@@ -82,7 +82,7 @@ var IViewRules = Interface({
 	 * @public
 	 * @type		string
 	 * @memberOf	IViewRules
-	 * @since		
+	 * @since		0.2
 	 * @default		"function"
 	 */
 	mouseMoveTouchMoveEventHandler : "function"

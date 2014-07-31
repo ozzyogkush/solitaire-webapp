@@ -7,7 +7,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		CardGameExceptionSeverity
  * @name		CardGameExceptionSeverity
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var CardGameExceptionSeverity = {
@@ -26,7 +26,7 @@ var CardGameExceptionSeverity = {
 	 * @public
 	 * @type		Object
 	 * @memberOf	CardGameExceptionSeverity
-	 * @since		
+	 * @since		0.2
 	 */
 	INFO : {
 		code: 0,
@@ -42,7 +42,7 @@ var CardGameExceptionSeverity = {
 	 * @public
 	 * @type		Object
 	 * @memberOf	CardGameExceptionSeverity
-	 * @since		
+	 * @since		0.2
 	 */
 	WARNING : {
 		code: 1,
@@ -58,7 +58,7 @@ var CardGameExceptionSeverity = {
 	 * @public
 	 * @type		Object
 	 * @memberOf	CardGameExceptionSeverity
-	 * @since		
+	 * @since		0.2
 	 */
 	ERROR : {
 		code: 2,
@@ -74,7 +74,7 @@ var CardGameExceptionSeverity = {
 	 * @public
 	 * @type		Object
 	 * @memberOf	CardGameExceptionSeverity
-	 * @since		
+	 * @since		0.2
 	 */
 	SPEED : {
 		code : 3,

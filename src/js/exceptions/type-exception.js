@@ -6,7 +6,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		TypeException
  * @name		TypeException
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var TypeException = Class({ extends : CardGameException },
@@ -23,7 +23,7 @@ var TypeException = Class({ extends : CardGameException },
 	 * @private
 	 * @type		String
 	 * @memberOf	TypeException
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	type : null,
@@ -33,7 +33,7 @@ var TypeException = Class({ extends : CardGameException },
 	 * 
 	 * @public
 	 * @memberOf	TypeException
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		mixed			type			Returns the type.
 	 */
@@ -53,7 +53,7 @@ var TypeException = Class({ extends : CardGameException },
 	 *
 	 * @public
 	 * @memberOf	TypeException
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		String				expectedType		The message or data object used to describe the exception. Required.
 	 * @param		String				callingMethod		The name of the method triggering the exception. Required.

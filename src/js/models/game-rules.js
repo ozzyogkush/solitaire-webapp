@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameRules
  * @name		GameRules
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var GameRules = Class({ implements : IModelRules }, {
@@ -20,7 +20,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @type		Integer
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_numDecksInGame : null,
@@ -31,7 +31,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Integer			n			The number of decks of cards in the game. Required.
 	 */
@@ -49,7 +49,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * 
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Integer			_numDecksInGame				Returns the `_numDecksInGame` property.
 	 */
@@ -64,7 +64,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @type		Boolean
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_includeJokers : null,
@@ -75,7 +75,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Boolean			ij			The flag indicating whether to include Jokers. Required.
 	 */
@@ -92,7 +92,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * 
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Boolean			_includeJokers		Returns the `_includeJokers` property.
 	 */
@@ -107,7 +107,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @type		Boolean
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * @default		false
 	 */
 	_acesHigh : null,
@@ -118,7 +118,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Boolean			ah			The flag indicating whether Aces are high. Required.
 	 */
@@ -135,7 +135,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * 
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Boolean			_acesHigh		Returns the `_acesHigh` property.
 	 */
@@ -150,7 +150,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @type		Array
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_stackModel : null,
@@ -161,7 +161,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Array			st			The set of Stack objects making up the play area. Required.
 	 */
@@ -178,7 +178,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * 
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Array			_stackModel			Returns the `_stackModel` property.
 	 */
@@ -195,7 +195,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @type		Array
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_layout : null,
@@ -206,7 +206,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Array			ly			The description of the game layout based on StackTypes. Required.
 	 */
@@ -223,7 +223,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * 
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Array			_layout		Returns the `_layout` property.
 	 */
@@ -238,7 +238,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @type		Boolean
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_useTimer : null,
@@ -249,7 +249,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Boolean			timer			The flag indicating whether or not to use a timer. Required.
 	 */
@@ -266,7 +266,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * 
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Boolean			_useTimer		Returns the `_useTimer` property.
 	 */
@@ -291,7 +291,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 * @constructor
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 */
 	__construct : function()
 	{
@@ -309,7 +309,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 *
 	 * @private
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Array				stacks				Ordered sets of Stack objects in rows as defined by the layout
 	 */
@@ -360,7 +360,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 *
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Stack			dealerStack			The Stack element with StackType equal to 'dealer'. Returns null when no Dealer Stack is available.
 	 */
@@ -378,7 +378,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 *
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Array			stacksTBR			The Stack elements with the matched StackType. Returns an empty array if none are found.
 	 */
@@ -415,7 +415,7 @@ var GameRules = Class({ implements : IModelRules }, {
 	 *
 	 * @public
 	 * @memberOf	GameRules
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		Object			context				The object/function which will become the value of `this` in the called method's scope.
 	 * @param		Function		methodToRun			The method to run on each Stack object in the model.

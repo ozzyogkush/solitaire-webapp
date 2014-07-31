@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		Stack
  * @name		Stack
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var Stack = Class({
@@ -20,7 +20,7 @@ var Stack = Class({
 	 * @private		
 	 * @type		StackType
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_stackType : null,
@@ -31,7 +31,7 @@ var Stack = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		StackType			st			The StackType classification for this Stack. Required.
 	 */
@@ -48,7 +48,7 @@ var Stack = Class({
 	 * 
 	 * @public
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		StackType			_stackType		Returns the `_stackType` property.
 	 */
@@ -63,7 +63,7 @@ var Stack = Class({
 	 * @private		
 	 * @type		FanningDirection
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	_fanningDirection : null,
@@ -74,7 +74,7 @@ var Stack = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		FanningDirection			fd			The FanningDirection this Stack will use in the display. Required.
 	 */
@@ -91,7 +91,7 @@ var Stack = Class({
 	 * 
 	 * @public
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		FanningDirection			_fanningDirection		Returns the `_fanningDirection` property.
 	 */
@@ -106,7 +106,7 @@ var Stack = Class({
 	 * @private		
 	 * @type		Integer
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 * @default		0
 	 */
 	_numCardsFacingDown : 0,
@@ -117,7 +117,7 @@ var Stack = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Integer			ncfd			The number of cards to display face down at the start of the game. Required.
 	 */
@@ -135,7 +135,7 @@ var Stack = Class({
 	 * 
 	 * @public
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Integer			_numCardsFacingDown		Returns the `_numCardsFacingDown` property.
 	 */
@@ -150,7 +150,7 @@ var Stack = Class({
 	 * @private		
 	 * @type		Integer
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 * @default		0
 	 */
 	_numCardsFacingUp : 0,
@@ -161,7 +161,7 @@ var Stack = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 * 
 	 * @param		Integer			ncfu			The number of cards to display face up at the start of the game. Required.
 	 */
@@ -179,7 +179,7 @@ var Stack = Class({
 	 * 
 	 * @public
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Integer			_numCardsFacingUp		Returns the `_numCardsFacingUp` property.
 	 */
@@ -200,7 +200,7 @@ var Stack = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	Stack
-	 * @since		
+	 * @since		0.2
 	 */
 	__construct : function(stackType, fanningDirection, numCardsFacingDown, numCardsFacingUp)
 	{

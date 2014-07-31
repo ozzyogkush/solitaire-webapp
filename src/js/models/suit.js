@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		Suit
  * @name		Suit
- * @version		
+ * @version		0.2
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var Suit = Class({
@@ -21,7 +21,7 @@ var Suit = Class({
 	 * @private
 	 * @type		String
 	 * @memberOf	Suit
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	suitName : null,
@@ -32,7 +32,7 @@ var Suit = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	Suit
-	 * @since		
+	 * @since		0.2
 	 * @param		String			n			The name of the Suit. Required.
 	 */
 	__setSuitName : function(n)
@@ -48,7 +48,7 @@ var Suit = Class({
 	 * 
 	 * @public
 	 * @memberOf	Suit
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		String			suitName			Returns the name string.
 	 */
@@ -63,7 +63,7 @@ var Suit = Class({
 	 * @private
 	 * @type		Color
 	 * @memberOf	Suit
-	 * @since		
+	 * @since		0.2
 	 * @default		null
 	 */
 	color : null,
@@ -74,7 +74,7 @@ var Suit = Class({
 	 * @private
 	 * @throws		TypeException
 	 * @memberOf	Suit
-	 * @since		
+	 * @since		0.2
 	 * @param		Color			c			The color of the Suit. Required.
 	 */
 	__setColor : function(c)
@@ -90,7 +90,7 @@ var Suit = Class({
 	 * 
 	 * @public
 	 * @memberOf	Suit
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @return		Color			color			Returns the color object.
 	 */
@@ -111,7 +111,7 @@ var Suit = Class({
 	 * @constructor
 	 * @public
 	 * @memberOf	Suit
-	 * @since		
+	 * @since		0.2
 	 *
 	 * @param		String				suitName		The name of the Suit. Required.
 	 * @param		Color				color			The color of the Suit. Required.
