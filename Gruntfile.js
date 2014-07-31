@@ -131,7 +131,7 @@ module.exports = function(grunt) {
           'src/js/views/iview-rules.js',
           'src/js/views/*.js', 
           'src/js/static/*.js',
-          'src/js/plugins/*.js',
+          'src/js/games/*.js',
           'src/js/controllers/*.js',
           'src/js/*.js'
         ],
@@ -146,7 +146,7 @@ module.exports = function(grunt) {
           'src/js/views/iview-rules.js',
           'src/js/views/*.js', 
           'src/js/static/*.js',
-          'src/js/plugins/*.js',
+          'src/js/games/*.js',
           'src/js/controllers/*.js',
           'src/js/*.js'
         ],
