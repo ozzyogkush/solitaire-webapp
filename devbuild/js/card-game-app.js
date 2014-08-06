@@ -1723,7 +1723,7 @@ var IViewRules = Interface({
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		AppView
  * @name		AppView
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var AppView = Class({
@@ -1995,6 +1995,7 @@ var AppView = Class({
 	 * @public
 	 * @memberOf	AppView
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @param		jQuery				$container			The jQuery extended HTML element that will contain the entire view area. Required.
 	 */
@@ -2021,11 +2022,24 @@ var AppView = Class({
 
 		// ...create the Timer element...
 		var $timerContainer = this.__createTimerContainer();
-		// ...and lastly, add it to the DOM.
+		// ...and lastly, add it to the DOM and position it.
 		this.__setTimerContainer($timerContainer);
+		this.__scrollToGameViewContainer();
 	},
 
 	/** Private Functions **/
+
+	/**
+	 * Scroll the document to the top position of the container element.
+	 *
+	 * @private
+	 * @memberOf	AppView
+	 * @since		0.3
+	 */
+	__scrollToGameViewContainer : function()
+	{
+		$(document).scrollTop(this.getContainer().position().top);
+	},
 
 	/**
 	 * Creates and returns a set of jQuery extended Button elements which will
@@ -2036,6 +2050,7 @@ var AppView = Class({
 	 * @private
 	 * @memberOf	AppView
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @return		jQuery				$buttons			A jQuery object containing two jQuery extended Button elements. Required.
 	 */
@@ -2046,10 +2061,12 @@ var AppView = Class({
 				'startNewGame', 
 				"Start New Game"
 			)
-			.add(this.__createButtonAddEventHandler(
-				'restartCurrentGame',
-				"Restart Current Game"
-			));
+			.add(
+				this.__createButtonAddEventHandler(
+					'restartCurrentGame',
+					"Restart Current Game"
+				)
+			).addClass('btn btn-primary');
 
 		// ...and return it.
 		return $buttons;
@@ -2313,7 +2330,7 @@ var Card = new Class({
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameView
  * @name		GameView
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var GameView = Class({
@@ -2412,6 +2429,7 @@ var GameView = Class({
 	 * @private
 	 * @memberOf	GameView
 	 * @since		0.2
+	 * @updated		0.3
 	 * 
 	 * @param		Array			stackModel				The set of Stacks that define the layout. Required.
 	 *
@@ -2425,22 +2443,28 @@ var GameView = Class({
 
 		for (var i = 0; i < stackModel.length; i++) {
 			var stackRow = stackModel[i];
-			var rowGridSize = stackRow.length + 1;
+			var rowGridSize = stackRow.length;
 
 			var $domRow = $('<div></div>')
 				.attr('data-card-game-view-element', 'canvas-row')
-				.addClass('row');
+				.addClass('row stacks-' + rowGridSize);
+				
 			for (var j = 0; j < stackRow.length; j++) {
 				var stack = stackRow[j];
+				var fanClass = 'fan-' + (stack !== null ? 
+					stack.getFanningDirection().getFanningDirectionName() :
+					"none"
+				);
 				
 				var $stackDOMElement = $('<div></div>')
-					.attr({
-						'data-card-game-view-element' : 'stack'
-					})
-					.addClass('col-md-1')
+					.attr('data-card-game-view-element', 'stack')
+					.addClass(fanClass)
 					.data({
 						'stack' : (stack !== null ? stack : "empty")
-					});
+					})
+					.append(
+						 $('<div></div>').attr('data-card-game-view-element', 'card-container')
+					);
 
 				// Add this cell to the DOM row
 				$domRow.append($stackDOMElement);
@@ -2732,6 +2756,7 @@ var GameView = Class({
 	 * @public
 	 * @memberOf	GameView
 	 * @since		0.2
+	 * @updated		0.3
 	 * 
 	 * @param		Stack			stack			The Stack whose DOM element we want to empty. Required.
 	 */
@@ -2741,7 +2766,12 @@ var GameView = Class({
 			stack.hasOwnProperty('instanceOf') &&
 			stack.instanceOf(Stack) === true) {
 			var $stackDOMElement = this.getStackView(stack);
-			$stackDOMElement.children().detach();
+			$stackDOMElement
+				.children('div')
+				.filter('[data-card-game-view-element="card-container"]')
+					.children('img')
+					.filter('[data-card-game-view-element="card"]')
+						.detach();
 		}
 	}
 
@@ -3844,7 +3874,7 @@ var SolitaireView = Class({ extends : GameView }, {
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameController
  * @name		GameController
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var GameController = Class({
@@ -4274,6 +4304,7 @@ var GameController = Class({
 	 * @private
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @param		Stack			stack			The Stack object whose view will receive all Card view DOM objects as children. Required.
 	 */
@@ -4287,6 +4318,7 @@ var GameController = Class({
 
 		// Next, add all the cards to the specified stack.
 		var $stackDOMElement = this.getGameView().getStackView(stack);
+		var $cardContainer = $stackDOMElement.children('div[data-card-game-view-element="card-container"]');
 		var that = this;
 		this.getCards().each(function(index, card) {
 			var $card = $(card);
@@ -4300,7 +4332,7 @@ var GameController = Class({
 				$card = that.getGameView().showCardFront($card);
 			}
 		})
-		.appendTo($stackDOMElement);
+		.appendTo($cardContainer);
 	},
 
 	/**
@@ -4339,6 +4371,7 @@ var GameController = Class({
 	 * @private
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 */
 	__dealCards : function()
 	{
@@ -4357,8 +4390,8 @@ var GameController = Class({
 
 			// Grab the Stack view...
 			var $stackDOMElement = this.getGameView().getStackView(curStack);
-			var $cardsInStack = $stackDOMElement
-				.children('img[data-card-game-view-element="card"]');
+			var $cardContainer = $stackDOMElement.children('div[data-card-game-view-element="card-container"]');
+			var $cardsInStack = $cardContainer.children('img[data-card-game-view-element="card"]');
 			var curNumCardsInStack = $cardsInStack.length;
 			
 			// increment this now
@@ -4379,7 +4412,7 @@ var GameController = Class({
 				$card = this.getGameView().showCardFront($card);
 			}
 
-			$card.appendTo($stackDOMElement);
+			$card.appendTo($cardContainer);
 			curCardIndex++;
 
 			cardsNotDealt = (curCardIndex < numCardsToDeal);
@@ -4395,20 +4428,25 @@ var GameController = Class({
 	 * @public
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 *
-	 * @return		Boolean			success			Flag indicating that everything succeeded (true) or not (false).
+	 * @param		Boolean			shuffleAndCopy		Flag indicating whether (true) or not (false) to shuffle and copy the deck as a first step. Optional. Default true.
+	 *
+	 * @return		Boolean			success				Flag indicating that everything succeeded (true) or not (false).
 	 */
-	beginGamePlay : function()
+	beginGamePlay : function(shuffleAndCopy)
 	{
 		var success = false;
 
-		// Shuffle the cards a random number of times between 3 and 10
-		var numTimes = 0;
-		while (numTimes < 3) { numTimes = Math.floor(Math.random() * 10) + 1; }
-		this.__shuffleCards(numTimes);
+		if (shuffleAndCopy === undefined || typeof shuffleAndCopy !== "boolean" || shuffleAndCopy === true) {
+			// Shuffle the cards a random number of times between 3 and 10
+			var numTimes = 0;
+			while (numTimes < 3) { numTimes = Math.floor(Math.random() * 10) + 1; }
+			this.__shuffleCards(numTimes);
 
-		// Store a copy of the cards in their currently shuffled state for later re-use.
-		this.__storeCopyOfCards();
+			// Store a copy of the cards in their currently shuffled state for later re-use.
+			this.__storeCopyOfCards();
+		}
 
 		// Get the Dealer stack and send all the Cards to its view.
 		var dealerStack = this.getGameRules().getDealerStack();
@@ -4441,7 +4479,7 @@ var GameController = Class({
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		CardGameApp
  * @name		CardGameApp
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var CardGameApp = Class({
@@ -5090,11 +5128,12 @@ var CardGameApp = Class({
 	 * @private
 	 * @memberOf	CardGameApp
 	 * @since		0.2
+	 * @updated		0.3
 	 */
 	__restartCurrentGameBtnClickHandler : function(event)
 	{
 		// Begin the game!
-		this.getGameController().beginGamePlay();
+		this.getGameController().beginGamePlay(false);
 
 		if (this.getGameController().getGameRules().getUseTimer()) {
 			// Start a game timer.

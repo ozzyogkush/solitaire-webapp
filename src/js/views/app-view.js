@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		AppView
  * @name		AppView
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var AppView = Class({
@@ -276,6 +276,7 @@ var AppView = Class({
 	 * @public
 	 * @memberOf	AppView
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @param		jQuery				$container			The jQuery extended HTML element that will contain the entire view area. Required.
 	 */
@@ -302,11 +303,24 @@ var AppView = Class({
 
 		// ...create the Timer element...
 		var $timerContainer = this.__createTimerContainer();
-		// ...and lastly, add it to the DOM.
+		// ...and lastly, add it to the DOM and position it.
 		this.__setTimerContainer($timerContainer);
+		this.__scrollToGameViewContainer();
 	},
 
 	/** Private Functions **/
+
+	/**
+	 * Scroll the document to the top position of the container element.
+	 *
+	 * @private
+	 * @memberOf	AppView
+	 * @since		0.3
+	 */
+	__scrollToGameViewContainer : function()
+	{
+		$(document).scrollTop(this.getContainer().position().top);
+	},
 
 	/**
 	 * Creates and returns a set of jQuery extended Button elements which will
@@ -317,6 +331,7 @@ var AppView = Class({
 	 * @private
 	 * @memberOf	AppView
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @return		jQuery				$buttons			A jQuery object containing two jQuery extended Button elements. Required.
 	 */
@@ -327,10 +342,12 @@ var AppView = Class({
 				'startNewGame', 
 				"Start New Game"
 			)
-			.add(this.__createButtonAddEventHandler(
-				'restartCurrentGame',
-				"Restart Current Game"
-			));
+			.add(
+				this.__createButtonAddEventHandler(
+					'restartCurrentGame',
+					"Restart Current Game"
+				)
+			).addClass('btn btn-primary');
 
 		// ...and return it.
 		return $buttons;

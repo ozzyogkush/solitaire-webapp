@@ -127,7 +127,7 @@ QUnit.test( "`__setGameContainer()` and `getGameContainer()` tests", function( a
 /** Private method tests **/
 QUnit.test( "`__createLayoutFromSpecs()` tests", function( assert ) {
 	// This method assumes that the input is valid (a non-empty array or arrays of Stack objects).
-	expect(5);
+	expect(6);
 
 	var good = new GameView(goodStackModel);
 	var $gameViewContainer = good.__createLayoutFromSpecs(goodStackModel);
@@ -151,6 +151,14 @@ QUnit.test( "`__createLayoutFromSpecs()` tests", function( assert ) {
 		$rows.eq(0).children('div[data-card-game-view-element="stack"]').length,
 		goodStackModel[0].length,
 		'Expected the first row of the top-level `div` to have ' + goodStackModel[0].length + ' rows.'
+	);
+	assert.strictEqual(
+		$rows.eq(0)
+			.children('div[data-card-game-view-element="stack"]').eq(0)
+			.children('div[data-card-game-view-element="card-container"]')
+				.length,
+		1,
+		'Expected the first row of the top-level `div` to have 1 child `div` with an `data-card-game-view-element` attribute equal to "card-container".'
 	);
 	assert.strictEqual(
 		$rows.eq(0).children('div[data-card-game-view-element="stack"]').eq(1)
@@ -563,23 +571,27 @@ QUnit.test("`getStackView()` tests", function( assert ) {
 });
 
 QUnit.test("`emptyStackView()` tests", function( assert ) {
-	//expect(2);
+	expect(2);
 
 	var good = new GameView(goodStackModel);
+	var $someCards = good.createCards(1, false, false);
 	good.getGameContainer()
-		.find('div[data-card-game-view-element="stack"]')
-		.append($('<div></div>').text('A bunch of text'));
+		.find('div[data-card-game-view-element="card-container"]')
+		.append($someCards);
 
 	assert.strictEqual(
-		good.getStackView(goodStackModel[0][0]).children('div').eq(0).text(),
-		'A bunch of text',
-		'Expected the first Stacks View object to have a div with some text'
+		good.getStackView(goodStackModel[0][0])
+			.children('div[data-card-game-view-element="card-container"]')
+			.children('img[data-card-game-view-element="card"]')
+			.length,
+		52,
+		'Expected the first Stack View\'s card container to have 52 cards'
 	);
 
 	good.emptyStackView(goodStackModel[0][0]);
 	assert.strictEqual(
-		good.getStackView(goodStackModel[0][0]).children().length,
+		good.getStackView(goodStackModel[0][0]).children('div[data-card-game-view-element="card-container"]').children().length,
 		0,
-		'Expected all the children of the first Stacks View object to be deleted'
+		'Expected all the children of the first Stacks View\'s card container to be deleted'
 	);
 });

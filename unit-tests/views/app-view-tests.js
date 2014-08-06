@@ -519,7 +519,7 @@ QUnit.test( "__createButtonAddEventHandler() tests", function( assert ) {
 });
 
 QUnit.test( "__createButtons() tests", function( assert ) {
-	expect(4);
+	expect(5);
 
 	var good = new AppView($goodContainer.clone());
 	var $buttons = good.__createButtons();
@@ -533,6 +533,12 @@ QUnit.test( "__createButtons() tests", function( assert ) {
 		$buttons.length,
 		2,
 		"The `$buttons` jQuery object should have 2 button elements."
+	);
+
+	assert.strictEqual(
+		$buttons.filter('.btn.btn-primary').length,
+		2,
+		'Expected both buttons to have the following classes: "btn" and "btn-primary".'
 	);
 
 	assert.strictEqual(

@@ -7,7 +7,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		CardGameApp
  * @name		CardGameApp
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var CardGameApp = Class({
@@ -656,11 +656,12 @@ var CardGameApp = Class({
 	 * @private
 	 * @memberOf	CardGameApp
 	 * @since		0.2
+	 * @updated		0.3
 	 */
 	__restartCurrentGameBtnClickHandler : function(event)
 	{
 		// Begin the game!
-		this.getGameController().beginGamePlay();
+		this.getGameController().beginGamePlay(false);
 
 		if (this.getGameController().getGameRules().getUseTimer()) {
 			// Start a game timer.

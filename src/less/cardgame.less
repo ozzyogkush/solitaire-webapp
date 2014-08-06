@@ -1,0 +1,163 @@
+/* Custom Mixins */
+@fanning-pct: 8;
+
+// Set the zIndex property
+.z-index(@num) {
+	z-index: @num;
+}
+.card-game-fan-down(@total) when (@total > 0) {
+	.card-game-fan-down((@total - 1));
+
+	div[data-card-game-view-element="stack"].fan-down > div[data-card-game-view-element="card-container"] > img[data-card-game-view-element="card"]:nth-child(@{total}) {
+		.z-index(@total);
+		top: percentage(((@total - 1) * @fanning-pct) / 100);
+		left: 0px;
+	}
+}
+.card-game-fan-up(@total) when (@total > 0) {
+	.card-game-fan-up((@total - 1));
+
+	div[data-card-game-view-element="stack"].fan-up > div[data-card-game-view-element="card-container"] > img[data-card-game-view-element="card"]:nth-child(@{total}) {
+		.z-index(@total);
+		top: percentage(((@total - 1) * -@fanning-pct) / 100);
+		left: 0px;
+	}
+}
+.card-game-fan-left(@total) when (@total > 0) {
+	.card-game-fan-left((@total - 1));
+
+	div[data-card-game-view-element="stack"].fan-left > div[data-card-game-view-element="card-container"] > img[data-card-game-view-element="card"]:nth-child(@{total}) {
+		.z-index(@total);
+		left: percentage(((@total - 1) * -@fanning-pct) / 100);
+		top: 0px;
+	}
+}
+.card-game-fan-right(@total) when (@total > 0) {
+	.card-game-fan-right((@total - 1));
+
+	div[data-card-game-view-element="stack"].fan-right > div[data-card-game-view-element="card-container"] > img[data-card-game-view-element="card"]:nth-child(@{total}) {
+		.z-index(@total);
+		left: percentage(((@total - 1) * @fanning-pct) / 100);
+		top: 0px;
+	}
+}
+
+.stacks-in-row(@total) when (@total > 0) {
+	.stacks-in-row((@total - 1));
+	div[data-card-game-view-element="canvas-row"].stacks-@{total} > div[data-card-game-view-element="stack"] {
+		width: percentage(1 / @total);
+	}
+}
+
+/* Constructed CardGame styles */
+
+/* Extra small devices (phones, less than 768px) */
+/* No media query since this is the default in Bootstrap */
+html, body {
+	height: 100%;
+}
+[data-role="card-game"] {
+	display: block;
+	position: relative;
+	min-width: @screen-xs-min;
+	width: 100%;
+	height: 100%;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	margin-left: auto;
+	margin-right: auto;
+}
+div[data-card-game-view-element="button-container"] {
+	text-align: center;
+}
+button[data-card-game-button] {
+	.button-size(8px, 8px, 14px, 14px, 4px);
+}
+button[data-card-game-button="restartCurrentGame"] {
+	margin-left: 15px;
+}
+
+div[data-card-game-view-element="canvas-row"] {
+	margin-top:20px;
+}
+div[data-card-game-view-element="stack"] {
+    display: inline-block;
+    position: relative;
+    z-index: 100;
+}
+
+.stacks-in-row(16);
+
+div[data-card-game-view-element="stack"] > div[data-card-game-view-element="card-container"] {
+	position: relative;
+	display: block;
+	width: 50px;
+	margin-left: auto;
+	margin-right: auto;
+}
+div[data-card-game-view-element="card-container"] > img[data-card-game-view-element="card"] {
+    width : 50px;
+    height : 72.5px;
+}
+img[data-card-game-view-element="card"] {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+img[data-card-game-view-element="card"]:first-child {
+    position: relative;
+}
+
+.card-game-fan-down(20);
+.card-game-fan-up(20);
+.card-game-fan-left(20);
+.card-game-fan-right(20);
+
+div[data-card-game-view-element="timer"] {
+	position: absolute;
+	font-size: 1.3em;
+	font-weight: bold;
+	padding: 0px 5%;
+	bottom: 0px;
+	right: 0px;
+}
+
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: @screen-sm-min) { 
+	button[data-card-game-button] {
+		.button-size(8px, 8px, 14px, 14px, 4px);
+	}
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: @screen-md-min) {
+	button[data-card-game-button] {
+		.button-size(10px, 10px, 16px, 16px, 4px);
+	}
+
+	div[data-card-game-view-element="stack"] > div[data-card-game-view-element="card-container"] {
+		width: 75px;
+	}
+	div[data-card-game-view-element="card-container"] > img[data-card-game-view-element="card"] {
+	    width : 75px;
+	    height : 108.75px;
+	}
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: @screen-lg-min) {
+	div[data-card-game-view-element="button-container"] > button[data-card-game-button] {
+		.button-size(15px, 15px, 16px, 16px, 4px);
+	}
+
+	div[data-card-game-view-element="stack"] > div[data-card-game-view-element="card-container"] {
+		width: 100px;
+	}
+	div[data-card-game-view-element="card-container"] > img[data-card-game-view-element="card"] {
+	    width : 100px;
+	    height : 145px;
+	}
+}

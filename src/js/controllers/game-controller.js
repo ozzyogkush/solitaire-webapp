@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameController
  * @name		GameController
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var GameController = Class({
@@ -435,6 +435,7 @@ var GameController = Class({
 	 * @private
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @param		Stack			stack			The Stack object whose view will receive all Card view DOM objects as children. Required.
 	 */
@@ -448,6 +449,7 @@ var GameController = Class({
 
 		// Next, add all the cards to the specified stack.
 		var $stackDOMElement = this.getGameView().getStackView(stack);
+		var $cardContainer = $stackDOMElement.children('div[data-card-game-view-element="card-container"]');
 		var that = this;
 		this.getCards().each(function(index, card) {
 			var $card = $(card);
@@ -461,7 +463,7 @@ var GameController = Class({
 				$card = that.getGameView().showCardFront($card);
 			}
 		})
-		.appendTo($stackDOMElement);
+		.appendTo($cardContainer);
 	},
 
 	/**
@@ -500,6 +502,7 @@ var GameController = Class({
 	 * @private
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 */
 	__dealCards : function()
 	{
@@ -518,8 +521,8 @@ var GameController = Class({
 
 			// Grab the Stack view...
 			var $stackDOMElement = this.getGameView().getStackView(curStack);
-			var $cardsInStack = $stackDOMElement
-				.children('img[data-card-game-view-element="card"]');
+			var $cardContainer = $stackDOMElement.children('div[data-card-game-view-element="card-container"]');
+			var $cardsInStack = $cardContainer.children('img[data-card-game-view-element="card"]');
 			var curNumCardsInStack = $cardsInStack.length;
 			
 			// increment this now
@@ -540,7 +543,7 @@ var GameController = Class({
 				$card = this.getGameView().showCardFront($card);
 			}
 
-			$card.appendTo($stackDOMElement);
+			$card.appendTo($cardContainer);
 			curCardIndex++;
 
 			cardsNotDealt = (curCardIndex < numCardsToDeal);
@@ -556,20 +559,25 @@ var GameController = Class({
 	 * @public
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 *
-	 * @return		Boolean			success			Flag indicating that everything succeeded (true) or not (false).
+	 * @param		Boolean			shuffleAndCopy		Flag indicating whether (true) or not (false) to shuffle and copy the deck as a first step. Optional. Default true.
+	 *
+	 * @return		Boolean			success				Flag indicating that everything succeeded (true) or not (false).
 	 */
-	beginGamePlay : function()
+	beginGamePlay : function(shuffleAndCopy)
 	{
 		var success = false;
 
-		// Shuffle the cards a random number of times between 3 and 10
-		var numTimes = 0;
-		while (numTimes < 3) { numTimes = Math.floor(Math.random() * 10) + 1; }
-		this.__shuffleCards(numTimes);
+		if (shuffleAndCopy === undefined || typeof shuffleAndCopy !== "boolean" || shuffleAndCopy === true) {
+			// Shuffle the cards a random number of times between 3 and 10
+			var numTimes = 0;
+			while (numTimes < 3) { numTimes = Math.floor(Math.random() * 10) + 1; }
+			this.__shuffleCards(numTimes);
 
-		// Store a copy of the cards in their currently shuffled state for later re-use.
-		this.__storeCopyOfCards();
+			// Store a copy of the cards in their currently shuffled state for later re-use.
+			this.__storeCopyOfCards();
+		}
 
 		// Get the Dealer stack and send all the Cards to its view.
 		var dealerStack = this.getGameRules().getDealerStack();
