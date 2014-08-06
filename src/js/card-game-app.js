@@ -660,7 +660,7 @@ var CardGameApp = Class({
 	__restartCurrentGameBtnClickHandler : function(event)
 	{
 		// Begin the game!
-		this.getGameController().beginGamePlay();
+		this.getGameController().beginGamePlay(false);
 
 		if (this.getGameController().getGameRules().getUseTimer()) {
 			// Start a game timer.

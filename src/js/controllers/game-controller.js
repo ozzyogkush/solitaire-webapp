@@ -558,19 +558,23 @@ var GameController = Class({
 	 * @memberOf	GameController
 	 * @since		0.2
 	 *
-	 * @return		Boolean			success			Flag indicating that everything succeeded (true) or not (false).
+	 * @param		Boolean			shuffleAndCopy		Flag indicating whether (true) or not (false) to shuffle and copy the deck as a first step. Optional. Default true.
+	 *
+	 * @return		Boolean			success				Flag indicating that everything succeeded (true) or not (false).
 	 */
-	beginGamePlay : function()
+	beginGamePlay : function(shuffleAndCopy)
 	{
 		var success = false;
 
-		// Shuffle the cards a random number of times between 3 and 10
-		var numTimes = 0;
-		while (numTimes < 3) { numTimes = Math.floor(Math.random() * 10) + 1; }
-		this.__shuffleCards(numTimes);
+		if (shuffleAndCopy === undefined || typeof shuffleAndCopy !== "boolean" || shuffleAndCopy === true) {
+			// Shuffle the cards a random number of times between 3 and 10
+			var numTimes = 0;
+			while (numTimes < 3) { numTimes = Math.floor(Math.random() * 10) + 1; }
+			this.__shuffleCards(numTimes);
 
-		// Store a copy of the cards in their currently shuffled state for later re-use.
-		this.__storeCopyOfCards();
+			// Store a copy of the cards in their currently shuffled state for later re-use.
+			this.__storeCopyOfCards();
+		}
 
 		// Get the Dealer stack and send all the Cards to its view.
 		var dealerStack = this.getGameRules().getDealerStack();
