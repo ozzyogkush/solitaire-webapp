@@ -116,22 +116,28 @@ var GameView = Class({
 
 		for (var i = 0; i < stackModel.length; i++) {
 			var stackRow = stackModel[i];
-			var rowGridSize = stackRow.length + 1;
+			var rowGridSize = stackRow.length;
 
 			var $domRow = $('<div></div>')
 				.attr('data-card-game-view-element', 'canvas-row')
-				.addClass('row');
+				.addClass('row stacks-' + rowGridSize);
+				
 			for (var j = 0; j < stackRow.length; j++) {
 				var stack = stackRow[j];
+				var fanClass = 'fan-' + (stack !== null ? 
+					stack.getFanningDirection().getFanningDirectionName() :
+					"none"
+				);
 				
 				var $stackDOMElement = $('<div></div>')
-					.attr({
-						'data-card-game-view-element' : 'stack'
-					})
-					.addClass('col-md-1')
+					.attr('data-card-game-view-element', 'stack')
+					.addClass(fanClass)
 					.data({
 						'stack' : (stack !== null ? stack : "empty")
-					});
+					})
+					.append(
+						 $('<div></div>').attr('data-card-game-view-element', 'card-container')
+					);
 
 				// Add this cell to the DOM row
 				$domRow.append($stackDOMElement);
@@ -432,7 +438,12 @@ var GameView = Class({
 			stack.hasOwnProperty('instanceOf') &&
 			stack.instanceOf(Stack) === true) {
 			var $stackDOMElement = this.getStackView(stack);
-			$stackDOMElement.children().detach();
+			$stackDOMElement
+				.children('div')
+				.filter('[data-card-game-view-element="card-container"]')
+					.children('img')
+					.filter('[data-card-game-view-element="card"]')
+						.detach();
 		}
 	}
 

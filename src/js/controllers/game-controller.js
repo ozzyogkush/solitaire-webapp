@@ -448,6 +448,7 @@ var GameController = Class({
 
 		// Next, add all the cards to the specified stack.
 		var $stackDOMElement = this.getGameView().getStackView(stack);
+		var $cardContainer = $stackDOMElement.children('div[data-card-game-view-element="card-container"]');
 		var that = this;
 		this.getCards().each(function(index, card) {
 			var $card = $(card);
@@ -461,7 +462,7 @@ var GameController = Class({
 				$card = that.getGameView().showCardFront($card);
 			}
 		})
-		.appendTo($stackDOMElement);
+		.appendTo($cardContainer);
 	},
 
 	/**
@@ -518,8 +519,8 @@ var GameController = Class({
 
 			// Grab the Stack view...
 			var $stackDOMElement = this.getGameView().getStackView(curStack);
-			var $cardsInStack = $stackDOMElement
-				.children('img[data-card-game-view-element="card"]');
+			var $cardContainer = $stackDOMElement.children('div[data-card-game-view-element="card-container"]');
+			var $cardsInStack = $cardContainer.children('img[data-card-game-view-element="card"]');
 			var curNumCardsInStack = $cardsInStack.length;
 			
 			// increment this now
@@ -540,7 +541,7 @@ var GameController = Class({
 				$card = this.getGameView().showCardFront($card);
 			}
 
-			$card.appendTo($stackDOMElement);
+			$card.appendTo($cardContainer);
 			curCardIndex++;
 
 			cardsNotDealt = (curCardIndex < numCardsToDeal);

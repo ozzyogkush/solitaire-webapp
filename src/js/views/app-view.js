@@ -302,11 +302,24 @@ var AppView = Class({
 
 		// ...create the Timer element...
 		var $timerContainer = this.__createTimerContainer();
-		// ...and lastly, add it to the DOM.
+		// ...and lastly, add it to the DOM and position it.
 		this.__setTimerContainer($timerContainer);
+		this.__scrollToGameViewContainer();
 	},
 
 	/** Private Functions **/
+
+	/**
+	 * Scroll the document to the top position of the container element.
+	 *
+	 * @private
+	 * @memberOf	AppView
+	 * @since		
+	 */
+	__scrollToGameViewContainer : function()
+	{
+		$(document).scrollTop(this.getContainer().position().top);
+	},
 
 	/**
 	 * Creates and returns a set of jQuery extended Button elements which will
@@ -327,10 +340,12 @@ var AppView = Class({
 				'startNewGame', 
 				"Start New Game"
 			)
-			.add(this.__createButtonAddEventHandler(
-				'restartCurrentGame',
-				"Restart Current Game"
-			));
+			.add(
+				this.__createButtonAddEventHandler(
+					'restartCurrentGame',
+					"Restart Current Game"
+				)
+			).addClass('btn btn-primary');
 
 		// ...and return it.
 		return $buttons;
