@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameView
  * @name		GameView
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var GameView = Class({
@@ -103,6 +103,7 @@ var GameView = Class({
 	 * @private
 	 * @memberOf	GameView
 	 * @since		0.2
+	 * @updated		0.3
 	 * 
 	 * @param		Array			stackModel				The set of Stacks that define the layout. Required.
 	 *
@@ -429,6 +430,7 @@ var GameView = Class({
 	 * @public
 	 * @memberOf	GameView
 	 * @since		0.2
+	 * @updated		0.3
 	 * 
 	 * @param		Stack			stack			The Stack whose DOM element we want to empty. Required.
 	 */

@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		AppView
  * @name		AppView
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var AppView = Class({
@@ -276,6 +276,7 @@ var AppView = Class({
 	 * @public
 	 * @memberOf	AppView
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @param		jQuery				$container			The jQuery extended HTML element that will contain the entire view area. Required.
 	 */
@@ -314,7 +315,7 @@ var AppView = Class({
 	 *
 	 * @private
 	 * @memberOf	AppView
-	 * @since		
+	 * @since		0.3
 	 */
 	__scrollToGameViewContainer : function()
 	{
@@ -330,6 +331,7 @@ var AppView = Class({
 	 * @private
 	 * @memberOf	AppView
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @return		jQuery				$buttons			A jQuery object containing two jQuery extended Button elements. Required.
 	 */

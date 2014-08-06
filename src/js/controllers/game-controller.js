@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		GameController
  * @name		GameController
- * @version		0.2
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var GameController = Class({
@@ -435,6 +435,7 @@ var GameController = Class({
 	 * @private
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @param		Stack			stack			The Stack object whose view will receive all Card view DOM objects as children. Required.
 	 */
@@ -501,6 +502,7 @@ var GameController = Class({
 	 * @private
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 */
 	__dealCards : function()
 	{
@@ -557,6 +559,7 @@ var GameController = Class({
 	 * @public
 	 * @memberOf	GameController
 	 * @since		0.2
+	 * @updated		0.3
 	 *
 	 * @param		Boolean			shuffleAndCopy		Flag indicating whether (true) or not (false) to shuffle and copy the deck as a first step. Optional. Default true.
 	 *
