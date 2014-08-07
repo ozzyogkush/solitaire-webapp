@@ -7,7 +7,7 @@ var srAllFd = new FanningDirectionSet();
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		SolitaireRules
  * @name		SolitaireRules
- * @version		
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var SolitaireRules = Class({ extends : GameRules }, {
@@ -23,7 +23,7 @@ var SolitaireRules = Class({ extends : GameRules }, {
 	 * @private
 	 * @type		Integer
 	 * @memberOf	SolitaireRules
-	 * @since		
+	 * @since		0.3
 	 * @default		1
 	 */
 	_numDecksInGame : 1,
@@ -34,7 +34,7 @@ var SolitaireRules = Class({ extends : GameRules }, {
 	 * @private
 	 * @type		Boolean
 	 * @memberOf	SolitaireRules
-	 * @since		
+	 * @since		0.3
 	 * @default		false
 	 */
 	_includeJokers : false,
@@ -45,7 +45,7 @@ var SolitaireRules = Class({ extends : GameRules }, {
 	 * @private
 	 * @type		Boolean
 	 * @memberOf	SolitaireRules
-	 * @since		
+	 * @since		0.3
 	 * @default		false
 	 */
 	_acesHigh : false,
@@ -57,7 +57,7 @@ var SolitaireRules = Class({ extends : GameRules }, {
 	 * @private
 	 * @type		Array
 	 * @memberOf	SolitaireRules
-	 * @since		
+	 * @since		0.3
 	 */
 	_layout : [
 		[ 
@@ -146,7 +146,7 @@ var SolitaireRules = Class({ extends : GameRules }, {
 	 * @private
 	 * @type		Boolean
 	 * @memberOf	SolitaireRules
-	 * @since		
+	 * @since		0.3
 	 * @default		true
 	 */
 	_useTimer : true,
@@ -163,7 +163,7 @@ var SolitaireRules = Class({ extends : GameRules }, {
 	 * @constructor
 	 * @public
 	 * @memberOf	SolitaireRules
-	 * @since		
+	 * @since		0.3
 	 */
 	__construct : function()
 	{

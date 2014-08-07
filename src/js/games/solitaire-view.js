@@ -4,7 +4,7 @@
  * @copyright	Copyright (c) 2014, Derek Rosenzweig
  * @class		SolitaireView
  * @name		SolitaireView
- * @version		
+ * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
 var SolitaireView = Class({ extends : GameView }, {
@@ -26,13 +26,14 @@ var SolitaireView = Class({ extends : GameView }, {
 	 * @constructor
 	 * @public
 	 * @memberOf	SolitaireView
-	 * @since		
+	 * @since		0.3
 	 *
 	 * @param		Array			stackModel			The set of Stacks that define the layout. Required.
+	 * @param		String			imageDir			Location of the image directory from which to serve card images. Required.
 	 */
-	__construct : function(stackModel)
+	__construct : function(stackModel, imageDir)
 	{
-		this.super('__construct', stackModel);
+		this.super('__construct', stackModel, imageDir);
 	}
 
 	/** Private Functions **/
