@@ -251,19 +251,27 @@ var GameController = Class({
 	 * @since		0.2
 	 *
 	 * @param		String			gameName			The name of the game. Prefix for the extended GameRules and GameView classes. Required.
+	 * @param		String			imageDir			Location of the image directory from which to serve card images. Required.
 	 */
-	__construct : function(gameName)
+	__construct : function(gameName, imageDir)
 	{
 		if (gameName === undefined) {
 			throw new CardGameException('The `gameName` param is required.', 'GameController.__construct');
 		}
+		else if (imageDir === undefined) {
+			throw new CardGameException('The `imageDir` param is required.', 'GameController.__construct');
+		}
+		else if (typeof imageDir !== "string") {
+			throw new TypeException('String', 'GameController.__construct');
+		}
+
 		this.__setGameName(gameName);
 
 		// Load the game rules
 		this.__loadGameRules();
 
 		// Load the game view
-		this.__loadGameView();
+		this.__loadGameView(imageDir);
 
 		// Generate the set of cards needed for this game and store them for future use.
 		var $cards = this.getGameView().createCards(
@@ -308,15 +316,15 @@ var GameController = Class({
 	 * @memberOf	GameController
 	 * @since		0.2
 	 */
-	__loadGameView : function()
+	__loadGameView : function(imageDir)
 	{
 		var gvClassName = this.getGameName() + 'View';
 		try {
-			var gameView = new window[gvClassName](this.getGameRules().getStackModel());
+			var gameView = new window[gvClassName](this.getGameRules().getStackModel(), imageDir);
 			this.__setGameView(gameView);
 		}
 		catch (e) {
-			if (e.message.match(/'undefined' is not a constructor \(evaluating 'new window\[gvClassName\]\(this\.getGameRules\(\)\.getStackModel\(\)\)'\)/) !== null) {
+			if (e.message.match(/'undefined' is not a constructor \(evaluating 'new window\[gvClassName\]\(this\.getGameRules\(\)\.getStackModel\(\), imageDir\)'\)/) !== null) {
 				throw new CardGameException('The expected game class "' + gvClassName + '" does not exist.', 'GameController.__loadGameView');
 			}
 			else { throw e; }

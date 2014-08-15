@@ -7,8 +7,12 @@ var goodGameName = "Test";
 var badGameRules = "what";
 var goodGameRules = new GameRules();
 
+var badImgDir = { a : "b" };
+var badImgDirEmpty = "";
+var goodImgDir = 'img/cards';
+
 var badGameView = "what";
-var goodGameView = new GameView([[]]);
+var goodGameView = new GameView([[]], goodImgDir);
 
 var badStackModel = "bong";
 
@@ -43,12 +47,14 @@ var TestRules = Class({ extends : GameRules }, {
 	],
 	__construct : function() { this.super('__construct'); } 
 });
-var TestView = Class({ extends : GameView }, { __construct : function(stackModel) { this.super('__construct', stackModel); } });
+var TestView = Class({ extends : GameView }, {
+	__construct : function(stackModel, imageDir) { this.super('__construct', stackModel, imageDir); } 
+});
 
 
 /** Constructor tests **/
 QUnit.test( "constructor failure tests", function( assert ) {
-	expect(3);
+	expect(5);
 
 	assert.throws(
 		function() { var gc = new GameController(); },
@@ -63,7 +69,7 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	);
 
 	assert.throws(
-		function() { var gc = new GameController(badGameNameValue); },
+		function() { var gc = new GameController(badGameNameValue, goodImgDir); },
 		function (e) {
 			return (
 				e.instanceOf(CardGameException) === true &&
@@ -75,7 +81,7 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	);
 
 	assert.throws(
-		function() { var gc = new GameController(badGameName); },
+		function() { var gc = new GameController(badGameName, goodImgDir); },
 		function (e) {
 			return (
 				e.instanceOf(TypeException) === true &&
@@ -85,12 +91,34 @@ QUnit.test( "constructor failure tests", function( assert ) {
 		"Expected that `gameName` param is a String was not thrown!"
 	);
 
+	assert.throws(
+		function() { var gc = new GameController(goodGameName); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'The `imageDir` param is required.' &&
+				e.getCallingMethod() === 'GameController.__construct'
+			);
+		},
+		"Expected that `imageDir` param is a required was not thrown!"
+	);
+
+	assert.throws(
+		function() { var gc = new GameController(goodGameName, badImgDir); },
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === 'String'
+			);
+		},
+		"Expected that `imageDir` param is a String was not thrown!"
+	);
 });
 
 QUnit.test( "constructor success tests", function( assert ) {
 	expect(1);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	assert.ok(
 		good.instanceOf(GameController) === true,
 		"Expected that the instantiated object is a `GameController` class."
@@ -101,7 +129,7 @@ QUnit.test( "constructor success tests", function( assert ) {
 QUnit.test( "`__setGameName()` and `getGameName()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	assert.throws(
 		function() { good.__setGameName(badGameName); },
 		function (e) {
@@ -127,7 +155,7 @@ QUnit.test( "`__setGameName()` and `getGameName()` tests", function( assert ) {
 QUnit.test( "`__setGameRules()` and `getGameRules()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	assert.throws(
 		function() { good.__setGameRules(badGameRules); },
 		function (e) {
@@ -153,7 +181,7 @@ QUnit.test( "`__setGameRules()` and `getGameRules()` tests", function( assert ) 
 QUnit.test( "`__setGameView()` and `getGameView()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	assert.throws(
 		function() { good.__setGameView(badGameRules); },
 		function (e) {
@@ -179,7 +207,7 @@ QUnit.test( "`__setGameView()` and `getGameView()` tests", function( assert ) {
 QUnit.test( "`__setCards()` and `getCards()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	assert.throws(
 		function() { good.__setCards(badCards); },
 		function (e) {
@@ -205,7 +233,7 @@ QUnit.test( "`__setCards()` and `getCards()` tests", function( assert ) {
 QUnit.test( "`__setCardsResetCopy()` and `getCardsResetCopy()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	assert.throws(
 		function() { good.__setCardsResetCopy(badCards); },
 		function (e) {
@@ -232,7 +260,7 @@ QUnit.test( "`__setCardsResetCopy()` and `getCardsResetCopy()` tests", function(
 QUnit.test( "`__loadGameRules()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	good.__setGameName(badGameNameValue);
 	assert.throws(
 		function() { good.__loadGameRules(); },
@@ -258,11 +286,11 @@ QUnit.test( "`__loadGameRules()` tests", function( assert ) {
 QUnit.test( "`__loadGameView()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 
 	good.__setGameName(badGameNameValue);
 	assert.throws(
-		function() { good.__loadGameView(); },
+		function() { good.__loadGameView(goodImgDir); },
 		function (e) {
 			return (
 				e.instanceOf(CardGameException) === true &&
@@ -274,7 +302,7 @@ QUnit.test( "`__loadGameView()` tests", function( assert ) {
 	);
 
 	good.__setGameName(goodGameName);
-	good.__loadGameView();
+	good.__loadGameView(goodImgDir);
 	var gv = good.getGameView();
 	assert.ok(
 		gv.instanceOf(TestView) === true,
@@ -285,7 +313,7 @@ QUnit.test( "`__loadGameView()` tests", function( assert ) {
 QUnit.test( "`__shuffleCardArray()` tests", function( assert ) {
 	expect(4);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 
 	// Setup our base array
 	var unsortedArr = [];
@@ -334,7 +362,7 @@ QUnit.test( "`__shuffleCardArray()` tests", function( assert ) {
 QUnit.test( "`__shuffleCards()` tests", function( assert ) {
 	expect(3);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	var $unsortedCards = good.getCards();
 	var unsortedCards = $unsortedCards.toArray();
 
@@ -378,7 +406,7 @@ QUnit.test( "`__shuffleCards()` tests", function( assert ) {
 QUnit.test( "`__storeCopyOfCards()` tests", function( assert ) {
 	expect(1);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	good._cardsResetCopy = null;
 
 	good.__storeCopyOfCards();
@@ -398,7 +426,7 @@ QUnit.test( "`__storeCopyOfCards()` tests", function( assert ) {
 QUnit.test( "`__stackCollectAllCards()` tests", function( assert ) {
 	expect(5);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 
 	good.__shuffleCards();
 	good.__storeCopyOfCards();
@@ -446,7 +474,7 @@ QUnit.test( "`__stackCollectAllCards()` tests", function( assert ) {
 QUnit.test( "`__getNumCardsToDeal()` tests", function( assert ) {
 	expect(1);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 	var numCardsToDeal = 7;
 	assert.strictEqual(
 		good.__getNumCardsToDeal(),
@@ -458,7 +486,7 @@ QUnit.test( "`__getNumCardsToDeal()` tests", function( assert ) {
 QUnit.test( "`__dealCards()` tests", function( assert ) {
 	expect(3);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 
 	good.__shuffleCards();
 	good.__storeCopyOfCards();
@@ -503,7 +531,7 @@ QUnit.test( "`__dealCards()` tests", function( assert ) {
 QUnit.test( "`beginGamePlay()` tests", function( assert ) {
 	expect(5);
 
-	var good = new GameController(goodGameName);
+	var good = new GameController(goodGameName, goodImgDir);
 
 	// gotta begin gameplay to ensure cards are dealt
 	var begun = good.beginGamePlay();

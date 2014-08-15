@@ -58,6 +58,55 @@ var GameView = Class({
 		return this._gameContainer;
 	},
 
+	/**
+	 * Contains the location of images where cards etc. reside. Will always contain 
+	 * a trailing slash ("/").
+	 *
+	 * @private		
+	 * @type		String
+	 * @memberOf	GameView
+	 * @since		
+	 * @default		null
+	 */
+	_imageDir : null,
+
+	/**
+	 * Sets the `_imageDir` property to the value of `dir`. Will append a trailing slash ("/")
+	 * if one is not already there.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		String			dir			The directory where images are stored.. Required.
+	 */
+	__setImageDir : function(dir)
+	{
+		if (typeof dir !== "string") {
+			throw new TypeException("String", "GameView.__setImageDir");
+		}
+
+		if (dir.lastIndexOf("/") < (dir.length - 1)) {
+			dir += "/";			
+		}
+		this._imageDir = dir;
+	},
+
+	/**
+	 * Returns the `_imageDir` property.
+	 * 
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 *
+	 * @return		String			_imageDir		Returns the `_imageDir` property.
+	 */
+	getImageDir : function()
+	{
+		return this._imageDir;
+	},
+
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -76,22 +125,38 @@ var GameView = Class({
 	 * @since		0.2
 	 *
 	 * @param		Array			stackModel			The set of Stacks that define the layout. Required.
+	 * @param		String			imageDir			Location of the image directory from which to serve card images. Required.
 	 */
-	__construct : function(stackModel)
+	__construct : function(stackModel, imageDir)
 	{
+		var callStackCurrent = 'GameView.__construct';
+
 		if (stackModel === undefined) {
-			throw new CardGameException('The `stackModel` array param is required.', 'GameView.__construct');
+			throw new CardGameException('The `stackModel` array param is required.', callStackCurrent);
 		}
 		if ($.type(stackModel) !== "array") {
 			throw new TypeException('Array', 'GameView.__construct');
 		}
 		if (stackModel.length < 1) {
-			throw new CardGameException('Expected `stackModel` param to have at least one row of stacks.', 'GameView.__construct');	
+			throw new CardGameException('Expected `stackModel` param to have at least one row of stacks.', callStackCurrent);	
 		}
 
 		// Set the screen with Stacks that do not yet have cards in them.
 		var $gameViewContainer = this.__createLayoutFromSpecs(stackModel);
 		this.__setGameContainer($gameViewContainer);
+			
+		if ($.type(imageDir) === "undefined") {
+			throw new CardGameException("The `imageDir` param is required.", callStackCurrent);
+		}
+		else if ($.type(imageDir) !== "string") {
+			throw new TypeException("String", callStackCurrent);
+		}
+		else if (imageDir.length === 0) {
+			throw new CardGameException("The `imageDir` string must not be empty.", callStackCurrent);
+		}
+
+		// We have a good image directory, so set it.
+		this.__setImageDir(imageDir);
 	},
 
 	/** Private Functions **/
@@ -206,11 +271,11 @@ var GameView = Class({
 			".png";
 		var $card = $('<img />')
 			.attr({
-				src : "../img/cards/" + cardImageSrcName,
+				src : this.getImageDir() + cardImageSrcName,
 				'data-card-game-view-element' : 'card',
 				'data-card-face-showing' : 'front',
-				'data-card-front-source' : "../img/cards/" + cardImageSrcName,
-				'data-card-back-source' : "../img/cards/card_back.png",
+				'data-card-front-source' : this.getImageDir() + cardImageSrcName,
+				'data-card-back-source' : this.getImageDir() + "card_back.png",
 				'data-card-deck-num' : deckNum
 			})
 			.data({

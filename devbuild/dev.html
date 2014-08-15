@@ -26,12 +26,15 @@
       var cardGame = null;
       $(document).ready(function() {
         cardGame = new CardGameApp(
-          $('div[data-role="card-game"]'), 
-          [
-            'Solitaire',
-            'FortyThieves'
-          ],
-          true
+          {
+            containerElement : $('div[data-role="card-game"]'), 
+            games : [
+              'Solitaire',
+              'FortyThieves'
+            ],
+            debug : true,
+            imgdir : 'img/cards'
+          }
         );
       });
     </script>

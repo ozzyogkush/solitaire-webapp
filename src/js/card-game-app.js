@@ -237,6 +237,55 @@ var CardGameApp = Class({
 	},
 
 	/**
+	 * Contains the location of images where cards etc. reside. Will always contain 
+	 * a trailing slash ("/").
+	 *
+	 * @private		
+	 * @type		String
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * @default		null
+	 */
+	_imageDir : null,
+
+	/**
+	 * Sets the `_imageDir` property to the value of `dir`. Will append a trailing slash ("/")
+	 * if one is not already there.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	CardGameApp
+	 * @since		
+	 * 
+	 * @param		String			dir			The directory where images are stored.. Required.
+	 */
+	__setImageDir : function(dir)
+	{
+		if (typeof dir !== "string") {
+			throw new TypeException("String", "CardGameApp.__setImageDir");
+		}
+
+		if (dir.lastIndexOf("/") < (dir.length - 1)) {
+			dir += "/";			
+		}
+		this._imageDir = dir;
+	},
+
+	/**
+	 * Returns the `_imageDir` property.
+	 * 
+	 * @public
+	 * @memberOf	CardGameApp
+	 * @since		
+	 *
+	 * @return		String			_imageDir		Returns the `_imageDir` property.
+	 */
+	getImageDir : function()
+	{
+		return this._imageDir;
+	},
+
+	/**
 	 * Contains the current interval that runs once per second to update
 	 * the HTML showing the amount of time elapsed.
 	 *
@@ -267,47 +316,69 @@ var CardGameApp = Class({
 	 * @param		Array			games							The set of names of games which the user will be able to play. Required.
 	 * @param		Boolean			debug							Flag to turn on debugging for development or testing. Optional.
 	 */
-	__construct : function($containerElement, games, debug)
+	__construct : function(options)
 	{
 		var callStackCurrent = "CardGameApp.__construct";
 
 		try {
-			// Check for required parameters
-			if ($.type($containerElement) === "undefined") {
-				throw new CardGameException("Container element is required.", callStackCurrent);
+			if ($.type(options) === "undefined") {
+				throw new CardGameException("Options are required.", callStackCurrent);
 			}
 			else if (
-				$.type($containerElement) !== "object" ||
-			 	$.type($containerElement.jquery) === "undefined"
+				$.type(options) !== "object" ||
+			 	$.type(options) === "undefined"
+			) {
+				throw new TypeException("Object", callStackCurrent);
+			}
+
+			// Check for required parameters
+			if ($.type(options.containerElement) === "undefined") {
+				throw new CardGameException("Container element option is required.", callStackCurrent);
+			}
+			else if (
+				$.type(options.containerElement) !== "object" ||
+			 	$.type(options.containerElement.jquery) === "undefined"
 			) {
 				throw new TypeException("jQuery", callStackCurrent);
 			}
-			else if ($containerElement.length === 0) {
+			else if (options.containerElement.length === 0) {
 				throw new CardGameException("Specified element could not be found.", callStackCurrent);
 			}
-			// `$containerElement` is valid.
+			// `options.containerElement` is valid.
 			
-			if ($.type(games) === "undefined") {
+			if ($.type(options.games) === "undefined") {
 				throw new CardGameException("List of games is required.", callStackCurrent);
 			}
-			else if ($.type(games) !== "array") {
+			else if ($.type(options.games) !== "array") {
 				throw new TypeException("Array", callStackCurrent);
 			}
-			else if (games.length === 0) {
+			else if (options.games.length === 0) {
 				throw new CardGameException("List of games cannot be empty.", callStackCurrent);
 			}
-			// `games` is valid.
+			// `options.games` is valid.
+
+			if ($.type(options.imgdir) === "undefined") {
+				throw new CardGameException("Image directory option is required.", callStackCurrent);
+			}
+			else if ($.type(options.imgdir) !== "string") {
+				throw new TypeException("String", callStackCurrent);
+			}
+			else if (options.imgdir.length === 0) {
+				throw new CardGameException("Image directory must not be empty.", callStackCurrent);
+			}
+			// `options.imgdir` is valid.
+			this.__setImageDir(options.imgdir);
 
 			// Proceed with checking and setting the optional `debug` property.
-			if ($.type(debug) !== "undefined") {
-				this.__setDebug(debug);
+			if ($.type(options.debug) !== "undefined") {
+				this.__setDebug(options.debug);
 			}
 
 			// First, make sure we have at least one game available, and register them.
-			this.__registerGames(games);
+			this.__registerGames(options.games);
 
 			// Initialize the application view.
-			this.__initApplication($containerElement);
+			this.__initApplication(options.containerElement);
 
 			// Set the application view's event handlers.
 			this.__setApplicationEvents();
@@ -487,7 +558,7 @@ var CardGameApp = Class({
 
 		try {
 			// Generate the GameController...
-			var gameController = new GameController(gameName);
+			var gameController = new GameController(gameName, this.getImageDir());
 
 			// ...set the generated GameController...
 			this.__setGameController(gameController);

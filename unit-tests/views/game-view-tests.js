@@ -23,6 +23,10 @@ var goodStackModel = [
 var badStackModel = false;
 var badStackModel2 = [];
 
+var badImgDir = { a : "b" };
+var badImgDirEmpty = "";
+var goodImgDir = 'img/cards';
+
 var $goodContainer = $('<div></div>');
 var $badContainer = "a string";
 var $goodCard = $('<img />')
@@ -48,7 +52,7 @@ var $badCard = $('<img />')
 
 /** Constructor tests **/
 QUnit.test( "constructor failure tests", function( assert ) {
-	expect(3);
+	expect(6);
 
 	assert.throws(
 		function() { var gv = new GameView(); },
@@ -63,7 +67,7 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	);
 
 	assert.throws(
-		function() { var gv = new GameView(badStackModel); },
+		function() { var gv = new GameView(badStackModel, goodImgDir); },
 		function (e) {
 			return (
 				e.instanceOf(TypeException) === true &&
@@ -74,7 +78,7 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	);
 
 	assert.throws(
-		function() { var gv = new GameView(badStackModel2); },
+		function() { var gv = new GameView(badStackModel2, goodImgDir); },
 		function (e) {
 			return (
 				e.instanceOf(CardGameException) === true &&
@@ -84,12 +88,47 @@ QUnit.test( "constructor failure tests", function( assert ) {
 		},
 		"Expected that `stackModel` param has at least one row of stacks was not thrown!"
 	);
+
+	assert.throws(
+		function() { var gv = new GameView(goodStackModel); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'The `imageDir` param is required.' &&
+				e.getCallingMethod() === 'GameView.__construct'
+			);
+		},
+		"Expected that `imageDir` param is required was not thrown!"
+	);
+
+	assert.throws(
+		function() { var gv = new GameView(goodStackModel, badImgDir); },
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === 'String'
+			);
+		},
+		"Expected that `imageDir` param is a String was not thrown!"
+	);
+
+	assert.throws(
+		function() { var gv = new GameView(goodStackModel, badImgDirEmpty); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'The `imageDir` string must not be empty.' &&
+				e.getCallingMethod() === 'GameView.__construct'
+			);
+		},
+		"Expected that `imageDir` param is not empty was not thrown!"
+	);
 });
 
 QUnit.test( "constructor success tests", function( assert ) {
 	expect(1);
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	assert.ok(
 		good.instanceOf(GameView) === true,
 		"Expected that the instantiated object is a `GameView` class."
@@ -102,7 +141,7 @@ QUnit.test( "`__setGameContainer()` and `getGameContainer()` tests", function( a
 
 	assert.throws(
 		function() { 
-			var good = new GameView(goodStackModel);
+			var good = new GameView(goodStackModel, goodImgDir);
 			good.__setGameContainer($badContainer);
 		},
 		function (e) {
@@ -115,7 +154,7 @@ QUnit.test( "`__setGameContainer()` and `getGameContainer()` tests", function( a
 	);
 
 	var $gcClone = $goodContainer.clone();
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	good.__setGameContainer($gcClone);
 	assert.strictEqual(
 		good.getGameContainer(),
@@ -124,12 +163,36 @@ QUnit.test( "`__setGameContainer()` and `getGameContainer()` tests", function( a
 	);
 });
 
+QUnit.test( "`__setImageDir()` and `getImageDir()` tests", function( assert ) {
+	expect(2);
+
+	var good = new GameView(goodStackModel, goodImgDir);
+
+	assert.throws(
+		function() { good.__setImageDir(badImgDir); },
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === 'String'
+			);
+		},
+		"Expected that `dir` param is a String was not thrown!"
+	);
+
+	good.__setImageDir(goodImgDir);
+	assert.strictEqual(
+		good.getImageDir(),
+		goodImgDir + "/",
+		'Expected the String returned from `getImageDir()` to be the same one passed into `__setImageDir()` plus a trailing "/" character.'
+	);
+});
+
 /** Private method tests **/
 QUnit.test( "`__createLayoutFromSpecs()` tests", function( assert ) {
 	// This method assumes that the input is valid (a non-empty array or arrays of Stack objects).
 	expect(6);
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	var $gameViewContainer = good.__createLayoutFromSpecs(goodStackModel);
 	assert.ok(
 		$gameViewContainer.prop('tagName').toLowerCase() === "div",
@@ -171,7 +234,7 @@ QUnit.test( "`__createLayoutFromSpecs()` tests", function( assert ) {
 QUnit.test( "`__isCard()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	assert.ok(
 		good.__isCard($badCard) === false,
 		"Expected the `$badCard` element to cause the method to return false."
@@ -190,14 +253,14 @@ QUnit.test( "`__createCard()` tests", function( assert ) {
 	var spades = ss.spades;
 	var ace = cns.ace;
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	var $card = good.__createCard(1, spades, ace);
 	assert.ok(
 		good.__isCard($card),
 		"Expected `$card` to be a valid card."
 	);
 
-	var expectedSrc = "../img/cards/" + ace.getCardNumberName() + "_of_" + spades.getSuitName() + ".png";
+	var expectedSrc = goodImgDir + "/" + ace.getCardNumberName() + "_of_" + spades.getSuitName() + ".png";
 	assert.ok(
 		$card.prop('src').match(expectedSrc) !== null,
 		'Expected the `src` property to equate to "' + expectedSrc + "'."
@@ -213,8 +276,8 @@ QUnit.test( "`__createCard()` tests", function( assert ) {
 	);
 	assert.strictEqual(
 		$card.attr('data-card-back-source'),
-		'../img/cards/card_back.png',
-		'Expected the `data-card-back-source` attribute to equate to "../img/cards/card_back.png".'
+		goodImgDir + '/card_back.png',
+		'Expected the `data-card-back-source` attribute to equate to "' + goodImgDir + '/card_back.png".'
 	);
 	assert.strictEqual(
 		parseInt($card.attr('data-card-deck-num')),
@@ -236,7 +299,7 @@ QUnit.test( "`__createCard()` tests", function( assert ) {
 QUnit.test( "`__createDeck()` tests", function( assert ) {
 	expect(6);
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	var $deck = good.__createDeck(2, false, false);
 
 	assert.strictEqual(
@@ -299,7 +362,7 @@ QUnit.test( "`__createDeck()` tests", function( assert ) {
 QUnit.test( "`createCards()` tests", function( assert ) {
 	expect(10);
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	// Failure attempts
 	assert.throws(
 		function() { var $deck = good.createCards(); },
@@ -408,7 +471,7 @@ QUnit.test( "`flipCard()` tests", function( assert ) {
 	var spades = ss.spades;
 	var ace = cns.ace;
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	var $card = good.__createCard(1, spades, ace);
 	// Failure attempts
 	assert.throws(
@@ -467,7 +530,7 @@ QUnit.test( "`showCardBack()` tests", function( assert ) {
 	var spades = ss.spades;
 	var ace = cns.ace;
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	var $card = good.__createCard(1, spades, ace);
 	// Failure attempts
 	assert.throws(
@@ -514,7 +577,7 @@ QUnit.test( "`showCardFront()` tests", function( assert ) {
 	var spades = ss.spades;
 	var ace = cns.ace;
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	var $card = good.__createCard(1, spades, ace);
 	// Failure attempts
 	assert.throws(
@@ -556,7 +619,7 @@ QUnit.test( "`showCardFront()` tests", function( assert ) {
 QUnit.test("`getStackView()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	var $goodStackView = good.getStackView(goodStackModel[0][0]);
 	assert.strictEqual(
 		$goodStackView.length,
@@ -573,7 +636,7 @@ QUnit.test("`getStackView()` tests", function( assert ) {
 QUnit.test("`emptyStackView()` tests", function( assert ) {
 	expect(2);
 
-	var good = new GameView(goodStackModel);
+	var good = new GameView(goodStackModel, goodImgDir);
 	var $someCards = good.createCards(1, false, false);
 	good.getGameContainer()
 		.find('div[data-card-game-view-element="card-container"]')
