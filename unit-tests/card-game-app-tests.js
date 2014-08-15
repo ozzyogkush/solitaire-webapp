@@ -30,6 +30,10 @@ var goodGames = ['Test', 'Nonexistent'];
 var badDebug = 'plop';
 var goodDebug = true;
 
+var badImgDir = { a : "b" };
+var badImgDirEmpty = "";
+var goodImgDir = 'img/cards';
+
 /** 
  * Requires the extended classes which implement the required abstract classes' stuff.
  * Gotta do it this way until QUnit has mock objects. *shrug*
@@ -62,12 +66,12 @@ var TestRules = Class({ extends : GameRules }, {
 	__construct : function() { this.super('__construct'); } 
 });
 var TestView = Class({ extends : GameView }, {
-	__construct : function(stackModel) { this.super('__construct', stackModel); } 
+	__construct : function(stackModel, imageDir) { this.super('__construct', stackModel, imageDir); } 
 });
 
 /** Constructor tests **/
 QUnit.test( "constructor failure tests", function( assert ) {
-	expect(14);
+	expect(23);
 
 	var cga = new CardGameApp();
 	assert.strictEqual(
@@ -77,11 +81,33 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	);
 	assert.strictEqual(
 		console.getLastMessage().getMessage(),
-		'Container element is required.',
-		"The `$containerElement` param is required."
+		'Options are required.',
+		"The `options` param is required."
 	);
 
-	cga = new CardGameApp($badContainerElement);
+	var badOptionsType = "a string";
+	cga = new CardGameApp(badOptionsType);
+	assert.strictEqual(
+		console.getLastMessage().instanceOf(TypeException),
+		true,
+		'Expected a `TypeException` to have been thrown and handled.'
+	);
+	assert.strictEqual(
+		console.getLastMessage().getType(),
+		'Object',
+		"The expected type of the `options` param is `Object`."
+	);
+
+	cga = new CardGameApp({});
+	assert.strictEqual(
+		console.getLastMessage().getMessage(),
+		'Container element option is required.',
+		"The `containerElement` option is required."
+	);
+
+	cga = new CardGameApp({
+		containerElement : $badContainerElement
+	});
 	assert.strictEqual(
 		console.getLastMessage().instanceOf(TypeException),
 		true,
@@ -90,10 +116,12 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	assert.strictEqual(
 		console.getLastMessage().getType(),
 		'jQuery',
-		"The expected type of the `$containerElement` param is `jQuery`."
+		"The expected type of the `containerElement` option is `jQuery`."
 	);
 
-	cga = new CardGameApp($badContainerElementEmpty);
+	cga = new CardGameApp({
+		containerElement : $badContainerElementEmpty
+	});
 	assert.strictEqual(
 		console.getLastMessage().instanceOf(CardGameException),
 		true,
@@ -105,7 +133,9 @@ QUnit.test( "constructor failure tests", function( assert ) {
 		"The `$containerElement` param jQuery object cannot be empty."
 	);
 
-	cga = new CardGameApp($goodContainerElement);
+	cga = new CardGameApp({
+		containerElement : $goodContainerElement
+	});
 	assert.strictEqual(
 		console.getLastMessage().instanceOf(CardGameException),
 		true,
@@ -114,10 +144,13 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	assert.strictEqual(
 		console.getLastMessage().getMessage(),
 		'List of games is required.',
-		"The `games` param is required."
+		"The `games` option is required."
 	);
 
-	cga = new CardGameApp($goodContainerElement, badGames);
+	cga = new CardGameApp({
+		containerElement : $goodContainerElement,
+		games : badGames
+	});
 	assert.strictEqual(
 		console.getLastMessage().instanceOf(TypeException),
 		true,
@@ -126,10 +159,13 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	assert.strictEqual(
 		console.getLastMessage().getType(),
 		'Array',
-		"The expected type of the `games` param is `Array`."
+		"The expected type of the `games` option is `Array`."
 	);
 
-	cga = new CardGameApp($goodContainerElement, badGamesEmpty);
+	cga = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : badGamesEmpty
+	});
 	assert.strictEqual(
 		console.getLastMessage().instanceOf(CardGameException),
 		true,
@@ -138,10 +174,62 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	assert.strictEqual(
 		console.getLastMessage().getMessage(),
 		'List of games cannot be empty.',
-		"The `games` param Array cannot be empty."
+		"The `games` option Array cannot be empty."
 	);
 
-	cga = new CardGameApp($goodContainerElement, goodGames, badDebug);
+	cga = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames
+	});
+	assert.strictEqual(
+		console.getLastMessage().instanceOf(CardGameException),
+		true,
+		'Expected a `CardGameException` to have been thrown and handled.'
+	);
+	assert.strictEqual(
+		console.getLastMessage().getMessage(),
+		'Image directory option is required.',
+		"The `imgdir` option is required."
+	);
+
+	cga = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : badImgDir
+	});
+	assert.strictEqual(
+		console.getLastMessage().instanceOf(TypeException),
+		true,
+		'Expected a `TypeException` to have been thrown and handled.'
+	);
+	assert.strictEqual(
+		console.getLastMessage().getType(),
+		'String',
+		"The expected type of the `imgdir` option is `String`."
+	);
+
+	cga = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : badImgDirEmpty
+	});
+	assert.strictEqual(
+		console.getLastMessage().instanceOf(CardGameException),
+		true,
+		'Expected a `CardGameException` to have been thrown and handled.'
+	);
+	assert.strictEqual(
+		console.getLastMessage().getMessage(),
+		'Image directory must not be empty.',
+		"The `imgdir` option String cannot be empty."
+	);
+
+	cga = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : badDebug
+	});
 	assert.strictEqual(
 		console.getLastMessage().instanceOf(TypeException),
 		true,
@@ -150,19 +238,29 @@ QUnit.test( "constructor failure tests", function( assert ) {
 	assert.strictEqual(
 		console.getLastMessage().getType(),
 		'Boolean',
-		"The expected type of the optional `debug` param is `Boolean`."
+		"The expected type of the optional `debug` option is `Boolean`."
 	);
 });
 
 QUnit.test( "constructor success tests", function( assert ) {
-	expect(6);
+	expect(7);
 
 	// Using a test mock class this works.
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
 	assert.strictEqual(
 		good.getDebug(),
 		goodDebug,
 		'The Boolean object returned from `getDebug()` does not match the one passed into the constructor.'
+	);
+	assert.strictEqual(
+		good.getImageDir(),
+		goodImgDir + "/",
+		'The String object returned from `getImageDir()` does not match the one passed into the constructor.'
 	);
 	assert.strictEqual(
 		good.getRegisteredGames().length,
@@ -196,7 +294,13 @@ QUnit.test( "constructor success tests", function( assert ) {
 QUnit.test( "`__setAppView()` and `getAppView()` tests", function( assert ) {
 	expect(3);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 	good.__setAppView(null);
 	assert.strictEqual(
 		good.getAppView(),
@@ -227,7 +331,13 @@ QUnit.test( "`__setAppView()` and `getAppView()` tests", function( assert ) {
 QUnit.test( "`__setGameController()` and `getGameController()` tests", function( assert ) {
 	expect(3);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 	good.__setGameController(null);
 	assert.strictEqual(
 		good.getGameController(),
@@ -246,7 +356,7 @@ QUnit.test( "`__setGameController()` and `getGameController()` tests", function(
 		"Expected that `gameController` param is an GameController was not thrown!"
 	);
 
-	var goodGameController = new GameController('Test');
+	var goodGameController = new GameController('Test', goodImgDir);
 	good.__setGameController(goodGameController);
 	assert.strictEqual(
 		good.getGameController(),
@@ -258,7 +368,12 @@ QUnit.test( "`__setGameController()` and `getGameController()` tests", function(
 QUnit.test( "`__setRegisteredGames()` and `getGameController()` tests", function( assert ) {
 	expect(2);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
 
 	assert.throws(
 		function() { good.__setRegisteredGames("bong"); },
@@ -282,7 +397,13 @@ QUnit.test( "`__setRegisteredGames()` and `getGameController()` tests", function
 QUnit.test( "`__setLoadedGame()` and `getGameController()` tests", function( assert ) {
 	expect(2);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 
 	assert.throws(
 		function() { good.__setLoadedGame([]); },
@@ -306,7 +427,13 @@ QUnit.test( "`__setLoadedGame()` and `getGameController()` tests", function( ass
 QUnit.test( "`__setDebug()` and `getDebug()` tests", function( assert ) {
 	expect(2);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 
 	assert.throws(
 		function() { good.__setDebug(badDebug); },
@@ -327,11 +454,47 @@ QUnit.test( "`__setDebug()` and `getDebug()` tests", function( assert ) {
 	);
 });
 
+QUnit.test( "`__setImageDir()` and `getImageDir()` tests", function( assert ) {
+	expect(2);
+
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
+
+	assert.throws(
+		function() { good.__setImageDir(badImgDir); },
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === 'String'
+			);
+		},
+		"Expected that `dir` param is a String was not thrown!"
+	);
+
+	good.__setImageDir(goodImgDir);
+	assert.strictEqual(
+		good.getImageDir(),
+		goodImgDir + "/",
+		'Expected the String returned from `getImageDir()` to be the same one passed into `__setImageDir()` plus a trailing "/" character.'
+	);
+});
+
 /** Private method tests **/
 QUnit.test( "`__registerGames()` tests", function( assert ) {
 	expect(6);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 
 	assert.throws(
 		function() { good.__registerGames(badGamesEmpty); },
@@ -383,7 +546,13 @@ QUnit.test( "`__registerGames()` tests", function( assert ) {
 QUnit.test( "`__initApplication()` tests", function( assert ) {
 	expect(3);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 
 	assert.throws(
 		function() { good.__initApplication(); },
@@ -419,7 +588,13 @@ QUnit.test( "`__initApplication()` tests", function( assert ) {
 QUnit.test( "`__setApplicationEvents()` tests", function( assert ) {
 	expect(3);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 	good._appView = null;
 	assert.throws(
 		function() { good.__setApplicationEvents(); },
@@ -470,7 +645,13 @@ QUnit.test( "`__loadDefaultGame()` tests", function( assert ) {
 	expect(3);
 
 	// Using a test mock class this works.
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 	var canvasCtrlrSelector = 'div[data-card-game-view-element="canvas-container"]';
 	assert.strictEqual(
 		good.getAppView().getContainer().find(canvasCtrlrSelector).length,
@@ -495,7 +676,13 @@ QUnit.test( "`__loadGame()` tests", function( assert ) {
 	expect(7);
 
 	// Using a test mock class this works.
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 	var canvasCtrlrSelector = 'div[data-card-game-view-element="canvas-container"]';
 	assert.strictEqual(
 		good.getAppView().getContainer().find(canvasCtrlrSelector).length,
@@ -546,7 +733,13 @@ QUnit.test( "`__loadGame()` tests", function( assert ) {
 QUnit.test( "`__startGameTimer()` tests", function( assert ) {
 	expect(3);
 
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 	clearInterval(good.__timer);
 
 	good.__startGameTimer();
@@ -579,7 +772,13 @@ QUnit.test( "`__addGameViewToAppView()` tests", function( assert ) {
 	expect(2);
 
 	// Using a test mock class this works.
-	var good = new CardGameApp($goodContainerElement, goodGames, goodDebug);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir,
+		debug : goodDebug
+	});
+	
 	var canvasCtrlrSelector = 'div[data-card-game-view-element="canvas-container"]';
 	assert.strictEqual(
 		good.getAppView().getContainer().find(canvasCtrlrSelector).length,
@@ -600,7 +799,11 @@ QUnit.test( "`logConsoleDebugMessage()` tests", function( assert ) {
 	expect(5);
 
 	// Using a test mock class this works.
-	var good = new CardGameApp($goodContainerElement, goodGames);
+	var good = new CardGameApp({
+		containerElement : $goodContainerElement, 
+		games : goodGames,
+		imgdir : goodImgDir
+	});
 
 	// Expect nothing to happen
 	var currentLoggedMessagesLength = console.loggedMessages.length;
