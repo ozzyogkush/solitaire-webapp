@@ -15,15 +15,27 @@ var IModelRules = Interface({
 	//--------------------------------------------------------------------------
 
 	/**
+	 * Contains the number of cards a player is able currently allowed to move
+	 * from an "In Play" stack to another "In Play" Stack (with cards or empty).
+	 *
+	 * @private
+	 * @type		string
+	 * @memberOf	IModelRules
+	 * @since		
+	 * @default		"Integer"
+	 */
+	_cardNumAbleToMoveFromInPlayStack : "Integer",
+
+	/**
 	 * The number of full Decks of Cards that the game will require to be played.
 	 *
 	 * @private
 	 * @type		string
 	 * @memberOf	IModelRules
 	 * @since		
-	 * @default		"number"
+	 * @default		"Integer"
 	 */
-	_numDecksInGame : "number",
+	_numDecksInGame : "Integer",
 
 	/**
 	 * Flag indicating whether aces are highher than kings (true) or lower than twos (false).
@@ -80,11 +92,36 @@ var IModelRules = Interface({
 	 * @since		
 	 * @default		"boolean"
 	 */
-	_useTimer : "boolean"
+	_useTimer : "boolean",
 
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
 	//
 	//--------------------------------------------------------------------------
+
+	/**
+	 * This function will perform a check of specified logic conditions that, when
+	 * evaluated to `true`, indicates that the Player can put a set of Cards on
+	 * a specified Stack.
+	 *
+	 * @private
+	 * @type		string
+	 * @memberOf	IModelRules
+	 * @since		
+	 * @default		"function"
+	 */
+	cardsCanDropIntoStack : "function",
+
+	/**
+	 * This function will perform a check of specified logic conditions that, when 
+	 * evaluated to `true`, indicates that the Player has won the current game.
+	 *
+	 * @private
+	 * @type		string
+	 * @memberOf	IModelRules
+	 * @since		
+	 * @default		"function"
+	 */
+	gameWon : "function"
 });

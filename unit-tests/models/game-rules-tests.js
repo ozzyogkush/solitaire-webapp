@@ -15,6 +15,9 @@ var goodUseTimer = true;
 var badStackModel = "aString";
 var goodStackModel = [];
 
+var badCardNumAbleToMoveFromInPlayStack = "a string";
+var badCardNumAbleToMoveFromInPlayStackNegative = -5;
+var goodCardNumAbleToMoveFromInPlayStack = 5;
 
 var st = new StackTypes();
 var fd = new FanningDirectionSet();
@@ -51,6 +54,49 @@ QUnit.test( "constructor success tests", function( assert ) {
 });
 
 /** Set/Get methods **/
+QUnit.test( "`__setCardNumAbleToMoveFromInPlayStack()` and `getCardNumAbleToMoveFromInPlayStack()` tests", function( assert ) {
+	expect(3);
+
+	var good = new GameRules();
+
+	assert.throws(
+		function() { 
+			good.__setCardNumAbleToMoveFromInPlayStack(badCardNumAbleToMoveFromInPlayStack);
+		},
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === "Integer"
+			);
+		},
+		"Expected that `cna` param must be an Integer was not thrown!"
+	);
+
+	assert.throws(
+		function() { 
+			good.__setCardNumAbleToMoveFromInPlayStack(badCardNumAbleToMoveFromInPlayStackNegative);
+		},
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'Expected the `cna` param to be a positive integer.' &&
+				e.getCallingMethod() === 'GameRules.__setCardNumAbleToMoveFromInPlayStack'
+			);
+		},
+		"Expected that `cna` param must be a positive Integer was not thrown!"
+	);
+
+	good.__setCardNumAbleToMoveFromInPlayStack(goodCardNumAbleToMoveFromInPlayStack);
+	assert.strictEqual(
+		good.getCardNumAbleToMoveFromInPlayStack(),
+		goodCardNumAbleToMoveFromInPlayStack,
+		'The Integer returned from `getCardNumAbleToMoveFromInPlayStack()` (' + 
+			good.getCardNumAbleToMoveFromInPlayStack() + 
+			') does not match the one passed into `__setCardNumAbleToMoveFromInPlayStack()` (' + 
+			goodCardNumAbleToMoveFromInPlayStack + ').'
+	);
+});
+
 QUnit.test( "`__setNumDecksInGame()` and `getNumDecksInGame()` tests", function( assert ) {
 	expect(2);
 
@@ -313,7 +359,6 @@ QUnit.test( "`getStacksByType()` tests", function( assert ) {
 	);
 });
 
-
 QUnit.test( "`runForEachStackObject()` tests", function( assert ) {
 	expect(4);
 
@@ -332,4 +377,28 @@ QUnit.test( "`runForEachStackObject()` tests", function( assert ) {
 		);
 	};
 	good.runForEachStackObject(this, f);
+});
+
+QUnit.test( "`cardsCanDropIntoStack()` tests", function( assert ) {
+	expect(1);
+
+	var good = new GameRules();
+	var ccd = good.cardsCanDropIntoStack($('<div></div>'), $('<div></div>'));
+	assert.strictEqual(
+		ccd,
+		true,
+		'Expected the return value to be Boolean `true`'
+	);
+});
+
+QUnit.test( "`gameWon()` tests", function( assert ) {
+	expect(1);
+
+	var good = new GameRules();
+	var gw = good.gameWon();
+	assert.strictEqual(
+		gw,
+		false,
+		'Expected the return value to be Boolean `false`'
+	);
 });

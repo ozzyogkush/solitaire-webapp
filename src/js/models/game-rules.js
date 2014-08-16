@@ -15,6 +15,54 @@ var GameRules = Class({ implements : IModelRules }, {
 	//--------------------------------------------------------------------------
 
 	/**
+	 * Contains the number of cards a player is able currently allowed to move
+	 * from an "In Play" stack to another "In Play" Stack (with cards or empty).
+	 *
+	 * @private		
+	 * @type		Integer
+	 * @memberOf	GameRules
+	 * @since		
+	 * @default		null
+	 */
+	_cardNumAbleToMoveFromInPlayStack : null,
+
+	/**
+	 * Sets the `_cardNumAbleToMoveFromInPlayStack` property to the parsed integer value of `cna`.
+	 * 
+	 * @private
+	 * @throws		TypeException
+	 * @memberOf	GameRules
+	 * @since		
+	 * 
+	 * @param		Integer			cna			The number of cards now allowed to be moved from an in play stack. Required.
+	 */
+	__setCardNumAbleToMoveFromInPlayStack : function(cna)
+	{
+		var parsed = null;
+		if (typeof cna !== "number" || isNaN(parsed = parseInt(cna))) {
+			throw new TypeException("Integer", "GameRules.__setCardNumAbleToMoveFromInPlayStack");
+		}
+		else if (parsed < 0) {
+			throw new CardGameException('Expected the `cna` param to be a positive integer.', "GameRules.__setCardNumAbleToMoveFromInPlayStack");
+		}
+		this._cardNumAbleToMoveFromInPlayStack = parsed;
+	},
+
+	/**
+	 * Returns the `_cardNumAbleToMoveFromInPlayStack` property.
+	 * 
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		String			_cardNumAbleToMoveFromInPlayStack		Returns the name string.
+	 */
+	getCardNumAbleToMoveFromInPlayStack : function()
+	{
+		return this._cardNumAbleToMoveFromInPlayStack;
+	},
+
+	/**
 	 * The number of full Decks of Cards that the game will require to be played.
 	 *
 	 * @private
@@ -429,6 +477,38 @@ var GameRules = Class({ implements : IModelRules }, {
 				methodToRun.call(context, curStack, i, j);
 			}
 		}
-	}
+	},
 
+	/**
+	 * This function will perform a check of specified logic conditions that, when
+	 * evaluated to `true`, indicates that the Player can put a set of Cards on
+	 * a specified Stack.
+	 *
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		Boolean					Returns true when the conditions for allowing the move have been met; false otherwise.
+	 */
+	cardsCanDropIntoStack : function($cards, $stack)
+	{
+		// By default, we let the player move the cards.
+		return true;
+	},
+
+	/**
+	 * This function will perform a check of specified logic conditions that, when 
+	 * evaluated to `true`, indicates that the Player has won the current game.
+	 *
+	 * @public
+	 * @memberOf	GameRules
+	 * @since		
+	 *
+	 * @return		Boolean					Returns true when the conditions for winning the game have been met; false otherwise.
+	 */
+	gameWon : function() 
+	{
+		// By default, the user NEVER wins the game.
+		return false;
+	}
 });
