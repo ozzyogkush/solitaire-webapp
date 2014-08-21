@@ -574,4 +574,39 @@ QUnit.test( "`beginGamePlay()` tests", function( assert ) {
 	);
 });
 
+QUnit.test( "`addEventHandlers()` tests", function( assert ) {
+	expect(2);
+
+	var good = new GameController(goodGameName, goodImgDir);
+	var gameContainerEvents = $._data(good.getGameView().getGameContainer(), 'events');
+	assert.ok(
+		gameContainerEvents === undefined,
+		'Expected the `_gameContainer` element has no events attached.'
+	);
+	var added = good.addEventHandlers();
+	assert.ok(
+		added,
+		'Expected the method to return true'
+	);
+
+	/*
+	gameContainerEvents = $._data(good.getGameView().getGameContainer(), 'events');
+	assert.ok(
+		gameContainerEvents !== undefined,
+		'Expected the `_gameContainer` element has events attached.'
+	);*/
+});
+
+QUnit.test( "`removeEventHandlers()` tests", function( assert ) {
+	expect(1);
+
+	var good = new GameController(goodGameName, goodImgDir);
+
+	var removed = good.removeEventHandlers();
+	assert.ok(
+		removed,
+		'Expected the method to return true'
+	);
+});
+
 /** **/

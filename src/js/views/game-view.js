@@ -7,7 +7,7 @@
  * @version		0.3
  * @author		Derek Rosenzweig <derek.rosenzweig@gmail.com>
  */
-var GameView = Class({
+var GameView = Class({ implements : IViewRules }, {
 	//--------------------------------------------------------------------------
 	//
 	//  Variables and get/set functions
@@ -190,20 +190,8 @@ var GameView = Class({
 				
 			for (var j = 0; j < stackRow.length; j++) {
 				var stack = stackRow[j];
-				var fanClass = 'fan-' + (stack !== null ? 
-					stack.getFanningDirection().getFanningDirectionName() :
-					"none"
-				);
-				
-				var $stackDOMElement = $('<div></div>')
-					.attr('data-card-game-view-element', 'stack')
-					.addClass(fanClass)
-					.data({
-						'stack' : (stack !== null ? stack : "empty")
-					})
-					.append(
-						 $('<div></div>').attr('data-card-game-view-element', 'card-container')
-					);
+
+				var $stackDOMElement = this.__createStackView(stack);
 
 				// Add this cell to the DOM row
 				$domRow.append($stackDOMElement);
@@ -214,6 +202,55 @@ var GameView = Class({
 		}
 
 		return $gameViewContainer;
+	},
+
+	/**
+	 * Generate an individual Stack View DOM element based on the provided Stack
+	 * object. If the `stack` param is null or undefined, we create an "empty" 
+	 * Stack View which can be used as a placeholder or to take up space. Otherwise,
+	 * it will add a class specifying the fanning direction, and add the Stack object
+	 * as `data` on the Stack View for future reference.
+	 * 
+	 * @throws		TypeException	If the provided non-undefined, non-null Stack is not an instance of the `Stack` class.
+	 * @private
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Stack			stack					The Stack object. Optional.
+	 *
+	 * @return		jQuery			$stackDOMElement		Returns the generated Stack View DOM element.
+	 */
+	__createStackView : function(stack)
+	{
+		var callStackCurrent = 'GameView.__createStackView';
+		var undefNullStack = (stack === undefined || stack === null);
+		var fanClass = 'fan-';
+
+		if (undefNullStack) {
+			fanClass += 'none';
+		}
+		else if (! stack.hasOwnProperty('instanceOf') || ! stack.instanceOf(Stack)) {
+			throw new TypeException("Stack", callStackCurrent);
+		}
+		else {
+			fanClass += stack.getFanningDirection().getFanningDirectionName();
+		}
+
+		var $stackDOMElement = $('<div></div>')
+			.attr('data-card-game-view-element', 'stack')
+			.addClass(fanClass)
+			.data({
+				'stack' : (undefNullStack ? "empty" : stack)
+			})
+			.append(
+				$('<div></div>').attr('data-card-game-view-element', 'card-container')
+			);
+
+		if (undefNullStack) {
+			$stackDOMElement.addClass('empty');
+		}
+
+		return $stackDOMElement;
 	},
 
 	/**
@@ -477,12 +514,69 @@ var GameView = Class({
 
 		if ($matchedView.length === 0) {
 			throw new CardGameException(
-				'No Stack View could be found for the supplied Stack object', 
+				'No Stack View could be found for the supplied Stack object.', 
 				'GameView.getStackView'
 			);
 		}
 
 		return $matchedView;
+	},
+
+	/**
+	 * Determine which Stack View exists below the specified (x, y) coordinates.
+	 *
+	 * Will ignore empty or moving/roving stacks.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Integer			x					The x coordinate. Required.
+	 * @param		Integer			y					The y coordinate. Required.
+	 *
+	 * @return		mixed			$matchedView		A jQuery extended Stack view element or null if none are in bounds.
+	 */
+	getStackViewFromCoords : function(x, y)
+	{
+		var $allStackDOMElements = this.getGameContainer()
+			.find('div')
+				.filter('[data-card-game-view-element="stack"]');
+
+		var $matchedView = $allStackDOMElements
+			.filter(function() {
+				if ($(this).hasClass('moving') || $(this).hasClass('empty')) { 
+					// Ignore moving or empty stack views.
+					return false; 
+				}
+
+				var bounds = {
+					x0 : $(this).offset().left,
+					y0 : $(this).offset().top,
+					x1 : ($(this).offset().left + $(this).outerWidth()),
+					y1 : ($(this).offset().top + $(this).outerHeight())
+				};
+
+				// Check to see if this Stack has any Cards in it...
+				var $cards = $(this).find('img').filter('[data-card-game-view-element="card"]');
+				if ($cards.length > 1) {
+					// ...if so, set the (x1, y1) bounds to the final card's offset + dimensions.
+					$lastCard = $cards.last();
+					bounds.x1 = ($lastCard.offset().left + $lastCard.outerWidth());
+					bounds.y1 = ($lastCard.offset().top + $lastCard.outerHeight());
+				}
+
+				if ((bounds.x0 > x || x > bounds.x1) ||
+					(bounds.y0 > y || y > bounds.y1)) {
+					// Not in bounds, so don't include it in the set.
+					return false;
+				}
+
+				// It's in the bounds!
+				return true;
+			});
+
+		// Return the matched Stack view if found, or null if not found.
+		return ($matchedView.length > 0 ? $matchedView : null);
 	},
 
 	/**
@@ -512,7 +606,182 @@ var GameView = Class({
 					.filter('[data-card-game-view-element="card"]')
 						.detach();
 		}
-	}
+	},
 
 	/** Event Handlers **/
+
+	/**
+	 * Figures out what card elements to put into a 'moving' state, and adds
+	 * the `mousemove`, `touchmove`, `mouseup`, `touchend`, and `touchcancel`
+	 * events to the relevant elements. Passes along relevant element references
+	 * in data.
+	 *
+	 * The `this` object is expected to refer to an instance of this class.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Event			event			jQuery `mousedown` or `touchstart` event object. Required.
+	 */
+	mouseDownTouchStartEventHandler : function(event)
+	{
+		event.stopImmediatePropagation();
+		var $target = $(event.target);
+		if (this.__isCard($target)) {
+			var targetOffset = $target.offset();
+			var $parentStack = $target.closest('div[data-card-game-view-element="stack"]');
+
+			// Create a new stackview...
+			var $se = this.__createStackView($parentStack.data('stack'));
+			var $cardsToMove = $target
+				.nextAll('[data-card-game-view-element="card"]')
+				.addBack();
+			
+			// ...and add the selected cards to it.
+			$se.removeClass('empty')
+				.addClass('moving')
+				.css({
+					width: $target.width() + "px",
+					left: targetOffset.left + "px",
+					top: (targetOffset.top - this.getGameContainer().offset().top) + "px"
+				});
+
+			// Add the mouseup and mousemove event handlers.
+			this.getGameContainer()
+				.one(
+					'mouseup touchend touchcancel',
+					{ 
+						rules : event.data.rules,
+						originalStackView : $parentStack,
+						rovingStack : $se
+					},
+					$.proxy(
+						this.mouseUpTouchEndEventHandler,
+						this
+					)
+				)
+				.append($se)
+				//.closest('body')
+					.on(
+						'mousemove touchmove',
+						{ 
+							rules : event.data.rules,
+							rovingStack : $se
+						},
+						$.proxy(
+							this.mouseMoveTouchMoveEventHandler,
+							this
+						)
+					);
+
+			$cardsToMove.appendTo($se.children('div[data-card-game-view-element="card-container"]'));
+		}
+	},
+
+	/**
+	 * Removes the `mousemove` and `touchmove` events from the body
+	 *
+	 * The `this` object is expected to refer to an instance of this class.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Event			event			jQuery `mouseup` or `touchend` event object. Required.
+	 */
+	mouseUpTouchEndEventHandler : function(event)
+	{
+		this.getGameContainer().closest('body').off('mousemove touchmove');
+
+		var $rovingStack = event.data.rovingStack;
+		var $ct = $(event.currentTarget);
+		var $originalStackView = event.data.originalStackView;
+		if ($rovingStack.attr('data-card-game-view-element') !== null &&
+			$rovingStack.attr('data-card-game-view-element') === "stack" &&
+			$rovingStack.hasClass('moving')) {
+
+			var x = event.pageX;
+			var y = event.pageY;
+			if (event.type === "touchend") {
+				var touches = event.originalEvent.changedTouches;
+				x = touches[0].pageX;
+				y = touches[0].pageY;
+			}
+			var $cards = $rovingStack
+				.find('img')
+				.filter('[data-card-game-view-element="card"]');
+
+			var $targetStack = this.getStackViewFromCoords(x, y);
+
+			if ($targetStack !== null &&
+				event.data.rules.cardsCanDropIntoStack($cards, $targetStack)) {
+				$targetStack.children('div[data-card-game-view-element="card-container"]').append($cards);
+			}
+			else {
+				$originalStackView.children('div[data-card-game-view-element="card-container"]').append($cards);
+			}
+
+			$rovingStack.remove();
+		}
+	},
+
+	/**
+	 * 
+	 *
+	 * The `this` object is expected to refer to an instance of this class.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Event			event			jQuery `click` event object. Required.
+	 */
+	mouseClickEventHandler : function(event)
+	{
+		event.preventDefault();
+		var $target = $(event.target);
+		var numMovesAllowed = event.data.rules.getCardNumAbleToMoveFromInPlayStack();
+
+		if (this.__isCard($target)) {
+			var $cardsToMove = $target
+				.nextAll('[data-card-game-view-element="card"]')
+				.addBack();
+		}
+	},
+
+	/**
+	 * Moves the 'roving' stack of cards to the current mouse or touch point
+	 * in the DOM.
+	 *
+	 * The `this` object is expected to refer to an instance of this class.
+	 *
+	 * @public
+	 * @memberOf	GameView
+	 * @since		
+	 * 
+	 * @param		Event			event			jQuery `mousemove` or `touchmove` event object. Required.
+	 */
+	mouseMoveTouchMoveEventHandler : function(event)
+	{
+		event.preventDefault();
+		var $rovingStack = event.data.rovingStack;
+		
+		var baseLeft = event.pageX;
+		var baseTop = event.pageY;
+
+		if (event.type === "touchmove") {
+			var touches = event.originalEvent.touches;
+			baseLeft = touches[0].pageX;
+			baseTop = touches[0].pageY;
+		}
+
+		var newLeft = (baseLeft - ($rovingStack.width() / 2));
+		var newTop = (baseTop - this.getGameContainer().offset().top - 5);
+
+		$rovingStack.css({
+			left: newLeft + "px",
+			top: newTop + "px"
+		});
+	}
 });

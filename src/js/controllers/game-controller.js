@@ -607,5 +607,79 @@ var GameController = Class({
 		success = true;
 
 		return success;
+	},
+
+	/**
+	 * Adds the `dragstart`, `mousedown`, `touchstart`, and `click` events to the
+	 * Game View container element ('div[data-card-game-view-element="canvas-container"]')
+	 * 
+	 * @public
+	 * @memberOf	GameController
+	 * @since		
+	 *
+	 * @return		Boolean			success				Flag indicating that all events were added (true) or not (false).
+	 */
+	addEventHandlers : function()
+	{
+		var success = true;
+		try {
+			this.getGameView()
+				.getGameContainer()
+					.on(
+						'dragstart',
+						function(event) {
+							event.preventDefault();
+							event.stopImmediatePropagation();
+						}
+					)
+					.on(
+						'mousedown touchstart',
+						{ rules : this.getGameRules() },
+						$.proxy(
+							this.getGameView().mouseDownTouchStartEventHandler,
+							this.getGameView()
+						)
+					)
+					.on(
+						'click',
+						{ rules : this.getGameRules() },
+						$.proxy(
+							this.getGameView().mouseClickEventHandler,
+							this.getGameView()
+						)
+					);
+		}
+		catch (exception) {
+			// Something failed while adding one or more of the event handlers.
+			success = false;
+		}
+
+		return success;
+	},
+
+	/**
+	 * Removes the `dragstart`, `mousedown`, `touchstart`, and `click` events from the
+	 * Game View container element ('div[data-card-game-view-element="canvas-container"]')
+	 * 
+	 * @public
+	 * @memberOf	GameController
+	 * @since		
+	 *
+	 * @return		Boolean			success				Flag indicating that all events were removed (true) or not (false).
+	 */
+	removeEventHandlers : function()
+	{
+		var success = true;
+		try {
+			this.getGameView()
+				.getGameContainer()
+					.off('dragstart mousedown touchstart click');
+		}
+		catch (exception) {
+			// Something failed while removing the event handlers.
+			success = false;
+		}
+
+		return success;
 	}
 });

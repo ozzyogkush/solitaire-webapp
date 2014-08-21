@@ -25,7 +25,7 @@ var badStackModel2 = [];
 
 var badImgDir = { a : "b" };
 var badImgDirEmpty = "";
-var goodImgDir = 'img/cards';
+var goodImgDir = '../../devbuild/img/cards';
 
 var $goodContainer = $('<div></div>');
 var $badContainer = "a string";
@@ -126,12 +126,16 @@ QUnit.test( "constructor failure tests", function( assert ) {
 });
 
 QUnit.test( "constructor success tests", function( assert ) {
-	expect(1);
+	expect(2);
 
 	var good = new GameView(goodStackModel, goodImgDir);
 	assert.ok(
 		good.instanceOf(GameView) === true,
 		"Expected that the instantiated object is a `GameView` class."
+	);
+	assert.ok(
+		good.instanceOf(IViewRules) === true,
+		"Expected that the instantiated object is a `IViewRules` interface."
 	);
 });
 
@@ -231,6 +235,74 @@ QUnit.test( "`__createLayoutFromSpecs()` tests", function( assert ) {
 	);
 });
 
+QUnit.test( "`__createStackView()` tests", function( assert ) {
+	expect(10);
+
+	var good = new GameView(goodStackModel, goodImgDir);
+	var $stackView = null;
+	assert.throws(
+		function() { $stackView = good.__createStackView("a string"); },
+		function (e) {
+			return (
+				e.instanceOf(TypeException) === true &&
+				e.getType() === 'Stack'
+			);
+		},
+		"Expected that `stack` param is a Stack was not thrown!"
+	);
+
+	// No Stack...
+	$stackView = good.__createStackView();
+	assert.strictEqual(
+		$stackView.hasClass('fan-none'),
+		true,
+		'Expected a class name of "fan-none".'
+	);
+	assert.strictEqual(
+		$stackView.hasClass('empty'),
+		true,
+		'Expected an extra class name of "empty".'
+	);
+	assert.strictEqual(
+		$stackView.attr('data-card-game-view-element'),
+		"stack",
+		'Expected the `data-card-game-view-element` attribute to equal "stack".'
+	);
+	assert.strictEqual(
+		$stackView.children('div[data-card-game-view-element="card-container"]').length,
+		1,
+		'Expected the stack view to have one child `div` element with its `data-card-game-view-element` attribute to equal "card-container".'
+	);
+	assert.strictEqual(
+		$stackView.data('stack'),
+		"empty",
+		'Expected the stack data to be "empty".'
+	);
+
+	// A Stack...
+	$stackView = good.__createStackView(goodStackModel[0][2]);
+	assert.strictEqual(
+		$stackView.hasClass('fan-down'),
+		true,
+		'Expected a class name of "fan-down".'
+	);
+	assert.strictEqual(
+		$stackView.attr('data-card-game-view-element'),
+		"stack",
+		'Expected the `data-card-game-view-element` attribute to equal "stack".'
+	);
+	assert.strictEqual(
+		$stackView.children('div[data-card-game-view-element="card-container"]').length,
+		1,
+		'Expected the stack view to have one child `div` element with its `data-card-game-view-element` attribute to equal "card-container".'
+	);
+	assert.strictEqual(
+		$stackView.data('stack'),
+		goodStackModel[0][2],
+		'Expected the stack data to be the same as the last one of the second row in the `goodStackModel`.'
+	);
+});
+
 QUnit.test( "`__isCard()` tests", function( assert ) {
 	expect(2);
 
@@ -261,8 +333,9 @@ QUnit.test( "`__createCard()` tests", function( assert ) {
 	);
 
 	var expectedSrc = goodImgDir + "/" + ace.getCardNumberName() + "_of_" + spades.getSuitName() + ".png";
-	assert.ok(
-		$card.prop('src').match(expectedSrc) !== null,
+	assert.strictEqual(
+		$card.attr('src'),
+		expectedSrc,
 		'Expected the `src` property to equate to "' + expectedSrc + "'."
 	);
 	assert.strictEqual(
@@ -617,9 +690,21 @@ QUnit.test( "`showCardFront()` tests", function( assert ) {
 });
 
 QUnit.test("`getStackView()` tests", function( assert ) {
-	expect(2);
+	expect(3);
 
 	var good = new GameView(goodStackModel, goodImgDir);
+	assert.throws(
+		function() { var $goodStackView = good.getStackView(null); },
+		function (e) {
+			return (
+				e.instanceOf(CardGameException) === true &&
+				e.getMessage() === 'No Stack View could be found for the supplied Stack object.' &&
+				e.getCallingMethod() === 'GameView.getStackView'
+			);
+		},
+		"Expected that no Stack View could be found was not thrown!"
+	);
+
 	var $goodStackView = good.getStackView(goodStackModel[0][0]);
 	assert.strictEqual(
 		$goodStackView.length,
@@ -630,6 +715,47 @@ QUnit.test("`getStackView()` tests", function( assert ) {
 		$goodStackView.data('stack'),
 		goodStackModel[0][0],
 		'Expected the `stack` data in the `$goodStackView` jQuery object to be the one passed into `getStackView()`.'
+	);
+});
+
+QUnit.test("`getStackViewFromCoords()` tests", function( assert ) {
+	expect(5);
+
+	var good = new GameView(goodStackModel, goodImgDir);
+	var $stackView = good.getStackViewFromCoords(5, 5);
+	assert.strictEqual(
+		$stackView,
+		null,
+		'Expected the `$stackView` object to be null'
+	);
+
+	var $goodStackView = good.getStackView(goodStackModel[0][0]);
+	$goodStackView.css({
+		position : 'absolute',
+		top : '50px',
+		left : '50px',
+		width : '100px',
+		height : '100px'
+	});
+	$stackView = good.getStackViewFromCoords(100, 100);
+	assert.ok(
+		$stackView !== null && $stackView.jquery !== undefined,
+		'Expected the `$stackView` object to be a jQuery element'
+	);
+	assert.strictEqual(
+		$stackView.length,
+		1,
+		'Expected only one element in the `$stackView` object.'
+	);
+	assert.strictEqual(
+		$stackView.get(0),
+		$goodStackView.get(0),
+		'Expected the `$stackView` object found in `getStackViewFromCoords()` to match the one found by `getStackView()`'
+	);
+	assert.strictEqual(
+		$stackView.data('stack'),
+		goodStackModel[0][0],
+		'Expected the `stack` data in the `$stackView` object to be the first one in the first row of the `goodStackModel` object.'
 	);
 });
 
@@ -657,4 +783,224 @@ QUnit.test("`emptyStackView()` tests", function( assert ) {
 		0,
 		'Expected all the children of the first Stacks View\'s card container to be deleted'
 	);
+});
+
+/** Event Handlers **/
+QUnit.test("`mouseDownTouchStartEventHandler()` tests", function( assert ) {
+	expect(3);
+
+	var good = new GameView(goodStackModel, goodImgDir);
+	good.getGameContainer()
+		.on(
+			'mousedown touchstart',
+			{ rules : new GameRules() },
+			$.proxy(
+				good.mouseDownTouchStartEventHandler,
+				good
+			)
+		);
+
+	var $stackView = good.getStackView(goodStackModel[0][0]);
+	var $card = $goodCard.clone(true, true);
+
+	$card.appendTo(
+		$stackView.children('div[data-card-game-view-element="card-container"]')
+	);
+	assert.strictEqual(
+		$stackView.find('img[data-card-game-view-element="card"]').length,
+		1,
+		'Expected the StackView to have one card in it.'
+	);
+
+	// Trigger the `mousedown` event
+	$card.trigger('mousedown');
+
+	var $movingStack = good
+		.getGameContainer()
+			.find('div[data-card-game-view-element="stack"]')
+			.filter('.moving');
+	assert.strictEqual(
+		$movingStack.length,
+		1,
+		'Expected one moving Stack View in the DOM.'
+	);
+	assert.strictEqual(
+		$movingStack.find($card).length,
+		1,
+		'Expected to find the specified card in the moving stack'
+	);
+});
+
+QUnit.test("`mouseUpTouchEndEventHandler()` tests", function( assert ) {
+	expect(5);
+
+	var good = new GameView(goodStackModel, goodImgDir);
+	good.getGameContainer()
+		.on(
+			'mousedown touchstart',
+			{ rules : new GameRules() },
+			$.proxy(
+				good.mouseDownTouchStartEventHandler,
+				good
+			)
+		);
+
+	var $stackView = good.getStackView(goodStackModel[0][0]);
+	$stackView.css({
+		position : 'absolute',
+		top : '50px',
+		left : '50px',
+		width : '100px',
+		height : '100px'
+	});
+	var $card = $goodCard.clone(true, true);
+
+	$card.appendTo(
+		$stackView.children('div[data-card-game-view-element="card-container"]')
+	);
+	assert.strictEqual(
+		$stackView.find('img[data-card-game-view-element="card"]').length,
+		1,
+		'Expected the StackView to have one card in it.'
+	);
+
+	// Trigger the `mousedown` event
+	$card.trigger('mousedown');
+
+	var $movingStack = good
+			.getGameContainer()
+				.find('div[data-card-game-view-element="stack"]')
+				.filter('.moving');
+	assert.strictEqual(
+		$movingStack.length,
+		1,
+		'Expected one moving Stack View in the DOM.'
+	);
+	assert.strictEqual(
+		$stackView.find('img[data-card-game-view-element="card"]').length,
+		0,
+		'Expected the StackView to have one card in it.'
+	);
+
+	// Trigger the `mouseup` event
+	var muEvent = jQuery.Event('mouseup', {
+		pageX : 100,
+		pageY : 100
+	});
+	$card.trigger(muEvent);
+	$movingStack = good
+		.getGameContainer()
+			.find('div[data-card-game-view-element="stack"]')
+			.filter('.moving');
+	assert.strictEqual(
+		$movingStack.length,
+		0,
+		'Expected no moving Stack Views in the DOM.'
+	);
+	assert.strictEqual(
+		$stackView.find('img[data-card-game-view-element="card"]').length,
+		1,
+		'Expected the StackView to have one card in it.'
+	);
+});
+
+QUnit.test("`mouseMoveTouchMoveEventHandler()` tests", function( assert ) {
+	expect(5);
+	var cssStackProps = {
+		position : 'absolute',
+		top : '50px',
+		left : '50px',
+		width : '100px',
+		height : '100px'
+	};
+
+	var good = new GameView(goodStackModel, goodImgDir);
+	good.getGameContainer()
+		.css(cssStackProps)
+		.css({
+			position : 'relative',
+			width : '400px',
+			height : '400px'
+		})
+		.on(
+			'mousedown touchstart',
+			{ rules : new GameRules() },
+			$.proxy(
+				good.mouseDownTouchStartEventHandler,
+				good
+			)
+		);
+
+	var $stackView = good.getStackView(goodStackModel[0][0]);
+	$stackView.css(cssStackProps);
+	var $card = $goodCard.clone(true, true);
+
+	$card.appendTo(
+		$stackView.children('div[data-card-game-view-element="card-container"]')
+	);
+	assert.strictEqual(
+		$stackView.find('img[data-card-game-view-element="card"]').length,
+		1,
+		'Expected the StackView to have one card in it.'
+	);
+
+	// Trigger the `mousedown` event
+	$card.trigger('mousedown');
+
+	var $movingStack = good
+			.getGameContainer()
+				.find('div[data-card-game-view-element="stack"]')
+				.filter('.moving');
+	assert.strictEqual(
+		$movingStack.length,
+		1,
+		'Expected one moving Stack View in the DOM.'
+	);
+	assert.strictEqual(
+		$stackView.find('img[data-card-game-view-element="card"]').length,
+		0,
+		'Expected the StackView to have one card in it.'
+	);
+
+	$movingStack.css(cssStackProps);
+
+	// Trigger the `mousemove` event
+	var baseLeft = 110;
+	var baseTop = 110;
+	var mmEvent = jQuery.Event('mousemove', {
+		pageX : baseLeft,
+		pageY : baseTop,
+		target : $card.get(0)
+	});
+	good.getGameContainer().trigger(mmEvent);
+	assert.strictEqual(
+		$movingStack.css('left'),
+		(baseLeft - ($movingStack.width() / 2)) + 'px',
+		'The roving stacks css `left` property does not equal the expected value.'
+	);
+	assert.strictEqual(
+		$movingStack.css('top'),
+		(baseTop - good.getGameContainer().offset().top - 5) + 'px',
+		'The roving stacks css `top` property does not equal the expected value.'
+	);
+});
+
+QUnit.test("`mouseClickEventHandler()` tests", function( assert ) {
+	//expect(3);
+
+	var good = new GameView(goodStackModel, goodImgDir);
+	good.getGameContainer()
+		.on(
+			'click',
+			{ rules : new GameRules() },
+			$.proxy(
+				good.mouseClickEventHandler,
+				good
+			)
+		);
+
+	var $stackView = good.getStackView(goodStackModel[0][0]);
+	var $card = $goodCard.clone(true, true);
+
+	assert.ok(true, 'bong');
 });
