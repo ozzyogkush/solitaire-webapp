@@ -551,10 +551,10 @@ var CardGameApp = Class({
 	{
 		var gameNameLoaded = null;
 
-		/*if (this.getAppView().getContainer() !== null) {
-			this.__removeGameViewEventHandlers();
-		}*/
-		//this.getAppView().resetAppView();
+		if (this.getGameController() !== null) {
+			// Remove the existing event handlers.
+			this.getGameController().removeEventHandlers();
+		}
 
 		try {
 			// Generate the GameController...
@@ -569,6 +569,9 @@ var CardGameApp = Class({
 			// Begin the game!
 			this.getGameController().beginGamePlay();
 
+			// Add the event handlers so the user can start playing.
+			this.getGameController().addEventHandlers();
+
 			if (this.getGameController().getGameRules().getUseTimer()) {
 				// Clear the current game timer, if one exists...
 				clearInterval(this.__timer);
@@ -582,7 +585,9 @@ var CardGameApp = Class({
 		}
 		catch (e) {
 			this.logConsoleDebugMessage(e);
-			//this.getAppView().resetAppView();
+			if (this.getGameController() !== null) {
+				this.getGameController().removeEventHandlers();
+			}
 		}
 
 		return gameNameLoaded;
