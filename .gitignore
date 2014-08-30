@@ -19,3 +19,7 @@ nbproject
 prototype/
 node_modules/
 bower_components/
+
+# Specific Files to ignore
+notepad.txt
+out.txt
